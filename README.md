@@ -11,6 +11,7 @@ Then folder structure as follows:
     ├── ipfs-lite-cpp                    # current repo
         ├── ipfs-lite                    # sub folder
         ├── readme.md                    # readme
+        ├── CMakeList.txt                # CMake file
 
 # Build on Windows
 please refer grpc build requirements.

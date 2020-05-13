@@ -31,44 +31,79 @@
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
-using ipfs_lite::HelloRequest;
-using ipfs_lite::HelloReply;
-using ipfs_lite::Greeter;
 
-class GreeterClient {
+// Model messages
+
+using ipfs_lite::AddParams;
+using ipfs_lite::Block;
+using ipfs_lite::Link;
+using ipfs_lite::NodeStat;
+using ipfs_lite::Node;
+
+// Request and Response messages
+
+using ipfs_lite::AddFileRequest;
+using ipfs_lite::AddFileResponse;
+
+using ipfs_lite::GetFileRequest;
+using ipfs_lite::GetFileResponse;
+
+using ipfs_lite::AddNodeRequest;
+using ipfs_lite::AddNodeResponse;
+
+using ipfs_lite::AddNodesRequest;
+using ipfs_lite::AddNodesResponse;
+
+using ipfs_lite::GetNodeRequest;
+using ipfs_lite::GetNodeResponse;
+
+using ipfs_lite::GetNodesRequest;
+using ipfs_lite::GetNodesResponse;
+
+using ipfs_lite::RemoveNodeRequest;
+using ipfs_lite::RemoveNodeResponse;
+
+using ipfs_lite::RemoveNodesRequest;
+using ipfs_lite::RemoveNodesResponse;
+
+using ipfs_lite::ResolveLinkRequest;
+using ipfs_lite::ResolveLinkResponse;
+
+using ipfs_lite::TreeRequest;
+using ipfs_lite::TreeResponse;
+
+using ipfs_lite::DeleteBlockRequest;
+using ipfs_lite::DeleteBlockResponse;
+
+using ipfs_lite::HasBlockRequest;
+using ipfs_lite::HasBlockResponse;
+using ipfs_lite::GetBlockSizeRequest;
+
+using ipfs_lite::GetBlockSizeResponse;
+using ipfs_lite::PutBlockRequest;
+using ipfs_lite::PutBlockResponse;
+using ipfs_lite::PutBlocksRequest;
+
+using ipfs_lite::PutBlocksResponse;
+
+using ipfs_lite::AllKeysRequest;
+
+using ipfs_lite::AllKeysResponse;
+
+using ipfs_lite::HashOnReadRequest;
+
+using ipfs_lite::HashOnReadResponse;
+
+using ipfs_lite::IpfsLite;
+
+class IpfsLiteClient {
  public:
-  GreeterClient(std::shared_ptr<Channel> channel)
-      : stub_(Greeter::NewStub(channel)) {}
+  IpfsLiteClient(std::shared_ptr<Channel> channel)
+      : stub_(IpfsLite::NewStub(channel)) {}
 
-  // Assembles the client's payload, sends it and presents the response back
-  // from the server.
-  std::string SayHello(const std::string& user) {
-    // Data we are sending to the server.
-    HelloRequest request;
-    request.set_name(user);
-
-    // Container for the data we expect from the server.
-    HelloReply reply;
-
-    // Context for the client. It could be used to convey extra information to
-    // the server and/or tweak certain RPC behaviors.
-    ClientContext context;
-
-    // The actual RPC.
-    Status status = stub_->SayHello(&context, request, &reply);
-
-    // Act upon its status.
-    if (status.ok()) {
-      return reply.message();
-    } else {
-      std::cout << status.error_code() << ": " << status.error_message()
-                << std::endl;
-      return "RPC failed";
-    }
-  }
-
+  
  private:
-  std::unique_ptr<Greeter::Stub> stub_;
+  std::unique_ptr<IpfsLite::Stub> stub_;
 };
 
 int main(int argc, char** argv) {
@@ -97,11 +132,10 @@ int main(int argc, char** argv) {
   } else {
     target_str = "localhost:50051";
   }
-  GreeterClient greeter(grpc::CreateChannel(
+  IpfsLiteClient ipfsliter(grpc::CreateChannel(
       target_str, grpc::InsecureChannelCredentials()));
-  std::string user("world");
-  std::string reply = greeter.SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+
+  std::cout << "Greeter received: " << std::endl;
 
   return 0;
 }
