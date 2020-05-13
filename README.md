@@ -1,9 +1,7 @@
 # Assume folder structure
 
-root
-  |
-  |----grpc
-  |
-  |----ipfs-lite-cpp
-              |
-              |----ipfs-lite
+    .
+    ├── grpc                             # grpc v1.28.0
+    ├── ipfs-lite-cpp                    # current repo
+        ├── ipfs-lite                    # sub folder
+       
