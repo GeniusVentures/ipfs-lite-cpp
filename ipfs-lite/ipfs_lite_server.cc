@@ -34,6 +34,8 @@ using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
 using grpc::Status;
+using grpc::ServerReader;
+using grpc::ServerWriter;
 // Model messages
 
 using ipfs_lite::AddParams;
@@ -101,6 +103,43 @@ using ipfs_lite::IpfsLite;
 // Logic and data behind the server's behavior.
 class IpfsLiteServiceImpl final : public IpfsLite::Service {
 
+  Status AddFile(ServerContext* context, ServerReader<AddFileRequest>* reader, AddFileResponse* response) override {
+    return Status::OK;
+  }
+  Status GetFile(ServerContext* context, const GetFileRequest* request, ServerWriter<GetFileResponse>* writer) override {
+    return Status::OK;
+  }
+  Status HasBlock(ServerContext* context, const HasBlockRequest* request, HasBlockResponse* response) override {
+    return Status::OK;
+  }
+  // DAGService
+  //
+  Status AddNode(ServerContext* context, const AddNodeRequest* request, AddNodeResponse* response) override {
+    return Status::OK;
+  }
+  Status AddNodes(ServerContext* context, const AddNodesRequest* request, AddNodesResponse* response) override {
+    return Status::OK;
+  }
+  Status GetNode(ServerContext* context, const GetNodeRequest* request, GetNodeResponse* response) override {
+    return Status::OK;
+  }
+  Status GetNodes(ServerContext* context, const GetNodesRequest* request, ServerWriter<GetNodesResponse>* writer) override {
+    return Status::OK;
+  }
+  Status RemoveNode(ServerContext* context, const RemoveNodeRequest* request, RemoveNodeResponse* response) override {
+    return Status::OK;
+  }
+  Status RemoveNodes(ServerContext* context, const RemoveNodesRequest* request, RemoveNodesResponse* response) override {
+    return Status::OK;
+  }
+  // Node provides a ResloveLink method and the Resolver methods Resolve and Tree
+  //
+  Status ResolveLink(ServerContext* context, const ResolveLinkRequest* request, ResolveLinkResponse* response) override {
+    return Status::OK;
+  }
+  Status Tree(ServerContext* context, const TreeRequest* request, TreeResponse* response) override {
+    return Status::OK;
+  }
 };
 
 void RunServer() {
