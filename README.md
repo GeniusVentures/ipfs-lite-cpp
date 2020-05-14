@@ -7,7 +7,7 @@ This projects needs grpc, so you have to download grpc repository first.
 Then folder structure as follows:
 
     .
-    ├── grpc                             # grpc v1.28.0
+    ├── grpc                             # grpc latest version (current v1.28.1)
     ├── ipfs-lite-cpp                    # current repo
         ├── ipfs-lite                    # sub folder
         ├── readme.md                    # readme

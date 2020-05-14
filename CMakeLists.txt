@@ -105,7 +105,14 @@ ExternalProject_Add(grpc
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc
   DEPENDS c-ares protobuf zlib absl
 )
-
+# Builds libp2p
+ExternalProject_Add(libp2p
+  PREFIX libp2p
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libp2p/src"
+  CMAKE_CACHE_ARGS
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
+)
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
 # Even though helloworld is not really an "external project" from perspective of this build,
@@ -125,5 +132,5 @@ ExternalProject_Add(ipfs-lite
         -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
-  DEPENDS protobuf grpc
+  DEPENDS protobuf grpc libp2p
 )
