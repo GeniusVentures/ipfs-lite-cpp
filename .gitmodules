@@ -1,6 +1,0 @@
-[submodule "libp2p"]
-	path = libp2p
-	url = https://github.com/jmjatlanta/libp2p
-[submodule "leveldb"]
-	path = leveldb
-	url = https://github.com/google/leveldb
