@@ -1,0 +1,8 @@
+*.o
+*.pb.cc
+*.pb.h
+ipfs_lite_client
+ipfs_lite_server
+.build/
+.vscode/
+.vs/
