@@ -127,7 +127,7 @@ ExternalProject_Add(leveldb
 set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost CONFIG REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
+find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
 
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
