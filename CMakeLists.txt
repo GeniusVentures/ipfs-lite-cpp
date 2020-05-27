@@ -127,6 +127,13 @@ ExternalProject_Add(spdlog
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
 )
+# Builds tsl_hat_trie 343e0dac54fc8491065e8a059a02db9a2b1248ab
+ExternalProject_Add(tsl_hat_trie
+  PREFIX tsl_hat_trie
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../hat-trie"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/hat-trie
+)
 # Builds libp2p
 #ExternalProject_Add(libp2p
 #  PREFIX libp2p
