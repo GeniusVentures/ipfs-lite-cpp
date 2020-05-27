@@ -120,7 +120,13 @@ ExternalProject_Add(Microsoft.GSL
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GSL
 )
-
+# Builds spdlog v1.4.2
+ExternalProject_Add(spdlog
+  PREFIX spdlog
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../spdlog"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
+)
 # Builds libp2p
 #ExternalProject_Add(libp2p
 #  PREFIX libp2p
