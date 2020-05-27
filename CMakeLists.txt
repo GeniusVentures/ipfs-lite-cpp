@@ -113,14 +113,22 @@ ExternalProject_Add(leveldb
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/leveldb
 )
+# Builds Microsoft.GSL
+ExternalProject_Add(Microsoft.GSL
+  PREFIX Microsoft.GSL
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GSL"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GSL
+)
 
-## Builds libp2p
+# Builds libp2p
 #ExternalProject_Add(libp2p
 #  PREFIX libp2p
-#  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p/src"
+#  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
 #  CMAKE_CACHE_ARGS
 #        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
 #        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
+#  DEPENDS 
 #)
 
 # BOOST library 
