@@ -123,6 +123,12 @@ ExternalProject_Add(leveldb
 #        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
 #)
 
+# BOOST library 
+set(Boost_USE_STATIC_LIBS OFF) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost CONFIG REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
+
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
 # Even though helloworld is not really an "external project" from perspective of this build,
