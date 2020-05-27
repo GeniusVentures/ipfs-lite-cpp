@@ -116,7 +116,7 @@ ExternalProject_Add(libp2p
 # Builds leveldb
 ExternalProject_Add(leveldb
   PREFIX leveldb
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/leveldb"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../leveldb"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/leveldb
 )
