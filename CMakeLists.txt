@@ -134,6 +134,15 @@ ExternalProject_Add(tsl_hat_trie
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/hat-trie
 )
+# Builds Boost.DI c5287ee710ad90f5286d0cc2b9e49b72d89267a6
+ExternalProject_Add(Boost.DI
+  PREFIX Boost.DI
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Boost.DI"
+  CMAKE_CACHE_ARGS
+        -DBOOST_DI_OPT_BUILD_TESTS:BOOL=OFF
+        -DBOOST_DI_OPT_BUILD_EXAMPLES:BOOL=OFF
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost.DI
+)
 # Builds libp2p
 #ExternalProject_Add(libp2p
 #  PREFIX libp2p
