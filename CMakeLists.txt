@@ -121,7 +121,9 @@ ExternalProject_Add(Microsoft.GSL
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GSL"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GSL
+        -DGSL_TEST:BOOL=OFF
 )
+set(_FINDPACKAGE_GSL_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/GSL/include")
 # Builds spdlog v1.4.2
 ExternalProject_Add(spdlog
   PREFIX spdlog
@@ -130,6 +132,7 @@ ExternalProject_Add(spdlog
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
 )
 set(_FINDPACKAGE_SPDLOG_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/lib/spdlog/cmake")
+set(_FINDPACKAGE_SPDLOG_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/include")
 
 # Builds tsl_hat_trie 343e0dac54fc8491065e8a059a02db9a2b1248ab
 ExternalProject_Add(tsl_hat_trie
@@ -147,6 +150,7 @@ ExternalProject_Add(Boost.DI
         -DBOOST_DI_OPT_BUILD_EXAMPLES:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost.DI
 )
+set(_FINDPACKAGE_BOOST_DI_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/Boost.DI/lib/cmake/Boost.DI")
 
 
 # BOOST library 
@@ -156,11 +160,13 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
 
 # Builds libp2p
+
 ExternalProject_Add(libp2p
   PREFIX libp2p
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
   CMAKE_CACHE_ARGS
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DCMAKE_USE_OPENSSL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
         -DTESTING:BOOL=OFF 
         -DEXPOSE_MOCKS:BOOL=ON
@@ -170,6 +176,12 @@ ExternalProject_Add(libp2p
         -DProtobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
         -DProtobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}
         -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
+        -DBoost.DI_DIR:PATH=${_FINDPACKAGE_BOOST_DI_CONFIG_DIR}
+        -DBOOST_ROOT:PATH="${BOOST_ROOT}"
+        -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
+        -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+
   DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
 )
 
