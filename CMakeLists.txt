@@ -76,6 +76,8 @@ if (WIN32)
 else()
   set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/lib/cmake/protobuf")
 endif()
+set(_FINDPACKAGE_PROTOBUF_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/include")
+set(_FINDPACKAGE_PROTOBUF_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/lib")
 
 # if OPENSSL_ROOT_DIR is set, propagate that hint path to the external projects with OpenSSL dependency.
 set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "")
@@ -127,6 +129,8 @@ ExternalProject_Add(spdlog
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
 )
+set(_FINDPACKAGE_SPDLOG_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/lib/spdlog/cmake")
+
 # Builds tsl_hat_trie 343e0dac54fc8491065e8a059a02db9a2b1248ab
 ExternalProject_Add(tsl_hat_trie
   PREFIX tsl_hat_trie
@@ -143,21 +147,31 @@ ExternalProject_Add(Boost.DI
         -DBOOST_DI_OPT_BUILD_EXAMPLES:BOOL=OFF
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost.DI
 )
-# Builds libp2p
-#ExternalProject_Add(libp2p
-#  PREFIX libp2p
-#  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
-#  CMAKE_CACHE_ARGS
-#        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-#        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
-#  DEPENDS 
-#)
+
 
 # BOOST library 
 set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME OFF) 
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
+
+# Builds libp2p
+ExternalProject_Add(libp2p
+  PREFIX libp2p
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
+  CMAKE_CACHE_ARGS
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
+        -DTESTING:BOOL=OFF 
+        -DEXPOSE_MOCKS:BOOL=ON
+        -DHUNTER_ENABLED:BOOL=OFF
+        -DBUILD_EXAMPLES:BOOL=OFF
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DProtobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}
+        -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
+  DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
+)
 
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
@@ -178,6 +192,6 @@ ExternalProject_Add(ipfs-lite
         -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
-#  DEPENDS protobuf grpc libp2p leveldb
-  DEPENDS protobuf grpc leveldb
+  DEPENDS protobuf grpc libp2p leveldb
+#  DEPENDS protobuf grpc leveldb
 )
