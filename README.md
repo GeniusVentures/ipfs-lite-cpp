@@ -24,8 +24,8 @@ please refer grpc build requirements.
     cd .build
     cmake .. -G "Visual Studio 15 2017 Win64" \
         -DBUILD_TESTING=OFF -DCMAKE_USE_OPENSSL=ON \
-        -DBOOST_ROOT="C:\local\boost_1_70_0" \
-        -DBOOST_INCLUDE_DIR="C:\local\boost_1_70_0\include" \
-        -DBOOST_LIBRARY_DIR="C:\local\boost_1_70_0\lib64-msvc-14.1"
+        -DBOOST_ROOT="C:/local/boost_1_70_0" \
+        -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
+        -DBOOST_LIBRARY_DIR="C:/local/boost_1_70_0/lib64-msvc-14.1"
     cmake --build . --config Release
 
