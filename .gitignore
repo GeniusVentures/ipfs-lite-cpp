@@ -6,3 +6,4 @@ ipfs_lite_server
 .build/
 .vscode/
 .vs/
+*.code-workspace
