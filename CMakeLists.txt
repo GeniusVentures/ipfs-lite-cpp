@@ -141,6 +141,7 @@ ExternalProject_Add(tsl_hat_trie
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/hat-trie
 )
+set(_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/hat-trie/lib/cmake/tsl_hat_trie")
 # Builds Boost.DI c5287ee710ad90f5286d0cc2b9e49b72d89267a6
 ExternalProject_Add(Boost.DI
   PREFIX Boost.DI
@@ -184,6 +185,7 @@ ExternalProject_Add(libp2p
 
   DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
 )
+set(libp2p_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
 
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
@@ -205,5 +207,20 @@ ExternalProject_Add(ipfs-lite
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
   DEPENDS protobuf grpc libp2p leveldb
-#  DEPENDS protobuf grpc leveldb
 )
+# find packages for common
+message("libp2p_DIR=" ${libp2p_DIR})
+find_package(libp2p CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+set(spdlog_DIR "${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
+find_package(spdlog CONFIG REQUIRED)
+
+set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
+find_package(tsl_hat_trie CONFIG REQUIRED)
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${_FINDPACKAGE_GSL_INCLUDE_DIR}
+)
+add_subdirectory(common)
