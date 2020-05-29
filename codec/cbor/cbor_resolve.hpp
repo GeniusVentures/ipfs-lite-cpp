@@ -1,5 +1,5 @@
-#ifndef CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_RESOLVE_HPP
-#define CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_RESOLVE_HPP
+#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
+#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
 
 #include "codec/cbor/cbor_decode_stream.hpp"
 
@@ -20,6 +20,6 @@ namespace ipfs_lite::codec::cbor {
                                 const std::string &part);
 }  // namespace ipfs_lite::codec::cbor
 
-OUTCOME_HPP_DECLARE_ERROR(ipfs_lite::codec::cbor, CborResolveError);
+OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::cbor, CborResolveError);
 
-#endif  // CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_RESOLVE_HPP
+#endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP

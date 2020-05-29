@@ -1,6 +1,6 @@
 #include "codec/cbor/cbor_resolve.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY(ipfs_lite::codec::cbor, CborResolveError, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborResolveError, e) {
   using ipfs_lite::codec::cbor::CborResolveError;
   switch (e) {
     case CborResolveError::INT_KEY_EXPECTED:

@@ -1,6 +1,6 @@
 
-#ifndef CPP_IPFS_LITE_CORE_PRIMITIVES_CID_JSON_CODEC_HPP
-#define CPP_IPFS_LITE_CORE_PRIMITIVES_CID_JSON_CODEC_HPP
+#ifndef CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP
+#define CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP
 
 #include "common/outcome.hpp"
 #include "primitives/cid/cid.hpp"
@@ -21,6 +21,6 @@ namespace ipfs_lite::codec::json {
   outcome::result<std::vector<CID>> decodeCidVector(std::string_view data);
 }  // namespace ipfs_lite::codec::json
 
-OUTCOME_HPP_DECLARE_ERROR(ipfs_lite::codec::json, JsonCodecError);
+OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::json, JsonCodecError);
 
-#endif  // CPP_IPFS_LITE_CORE_PRIMITIVES_CID_JSON_CODEC_HPP
+#endif  // CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP
