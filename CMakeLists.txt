@@ -223,4 +223,8 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
 )
+add_subdirectory(primitives)
+add_subdirectory(codec)
 add_subdirectory(common)
+
+
