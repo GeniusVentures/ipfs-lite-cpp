@@ -51,6 +51,6 @@ namespace ipfs_lite::common {
 
 }  // namespace filecoin::common
 
-OUTCOME_HPP_DECLARE_ERROR(ipfs_lite::common, UnhexError);
+OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common, UnhexError);
 
 #endif  // IPFS_LITE_COMMON_HEXUTIL_HPP
