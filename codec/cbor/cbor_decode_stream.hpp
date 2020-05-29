@@ -1,5 +1,5 @@
-#ifndef CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_DECODE_STREAM_HPP
-#define CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_DECODE_STREAM_HPP
+#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP
+#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP
 
 #include "codec/cbor/cbor_common.hpp"
 
@@ -144,4 +144,4 @@ namespace ipfs_lite::codec::cbor {
   };
 }  // namespace ipfs_lite::codec::cbor
 
-#endif  // CPP_IPFS_LITE_CORE_CODEC_CBOR_CBOR_DECODE_STREAM_HPP
+#endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP

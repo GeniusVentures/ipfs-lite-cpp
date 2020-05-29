@@ -6,7 +6,13 @@ target_link_libraries(hexutil
     Boost::boost
     outcome
     )
-
+add_library(blob
+    blob.hpp
+    blob.cpp
+    )
+target_link_libraries(blob
+    hexutil
+    )
 add_library(outcome INTERFACE)
 target_link_libraries(outcome INTERFACE
     Boost::boost

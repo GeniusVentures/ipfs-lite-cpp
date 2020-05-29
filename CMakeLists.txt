@@ -12,18 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# cmake "superbuild" file for C++ helloworld example.
-# This build file demonstrates how to build the helloworld project
-# and all its dependencies in a single cmake build (hence "superbuild")
-# that is easy to build and maintain.
-# cmake's ExternalProject_Add() is used to import all the sub-projects,
-# including the "helloworld" project itself.
-# See https://blog.kitware.com/cmake-superbuilds-git-submodules/
-
 cmake_minimum_required(VERSION 3.5.1)
 
 # Project
-project(ipfs-lite-SuperBuild C CXX)
+project(ipfs-lite-cpp C CXX)
+
+include(cmake/functions.cmake)
+
 
 include(ExternalProject)
 
@@ -167,7 +162,7 @@ ExternalProject_Add(libp2p
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
   CMAKE_CACHE_ARGS
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DCMAKE_USE_OPENSSL=ON
+        -DCMAKE_USE_OPENSSL:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
         -DTESTING:BOOL=OFF 
         -DEXPOSE_MOCKS:BOOL=ON
@@ -222,7 +217,10 @@ find_package(tsl_hat_trie CONFIG REQUIRED)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
+  deps/tinycbor/src
 )
+
+add_subdirectory(deps)
 add_subdirectory(primitives)
 add_subdirectory(codec)
 add_subdirectory(common)

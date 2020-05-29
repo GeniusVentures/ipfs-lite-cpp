@@ -55,7 +55,7 @@ namespace ipfs_lite::codec::json {
   }
 }  // namespace ipfs_lite::codec::json
 
-OUTCOME_CPP_DEFINE_CATEGORY(ipfs_lite::codec::json, JsonCodecError, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::json, JsonCodecError, e) {
   using ipfs_lite::codec::json::JsonCodecError;
   switch (e) {
     case JsonCodecError::BAD_JSON:

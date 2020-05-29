@@ -1,5 +1,5 @@
-#ifndef CPP_IPFS_LITE_CORE_COMMON_CID_HPP
-#define CPP_IPFS_LITE_CORE_COMMON_CID_HPP
+#ifndef CPP_IPFS_LITE__COMMON_CID_HPP
+#define CPP_IPFS_LITE__COMMON_CID_HPP
 
 #include <libp2p/multi/content_identifier.hpp>
 
@@ -69,4 +69,4 @@ namespace ipfs_lite::common {
 
 }  // namespace ipfs_lite::common
 
-#endif  // CPP_IPFS_LITE_CORE_COMMON_CID_HPP
+#endif  // CPP_IPFS_LITE__COMMON_CID_HPP

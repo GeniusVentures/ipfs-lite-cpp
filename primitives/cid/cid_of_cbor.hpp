@@ -1,6 +1,6 @@
 
-#ifndef CPP_IPFS_LITE_CORE_PRIMITIVES_CID_CID_OF_CBOR_HPP
-#define CPP_IPFS_LITE_CORE_PRIMITIVES_CID_CID_OF_CBOR_HPP
+#ifndef CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP
+#define CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP
 
 #include "primitives/cid/cid.hpp"
 #include "codec/cbor/cbor.hpp"
@@ -20,4 +20,4 @@ namespace ipfs_lite::primitives::cid {
   }
 }  // namespace ipfs_lite::primitives::cid
 
-#endif  // CPP_IPFS_LITE_CORE_PRIMITIVES_CID_CID_OF_CBOR_HPP
+#endif  // CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP
