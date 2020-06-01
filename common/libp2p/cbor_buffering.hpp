@@ -55,6 +55,6 @@ namespace ipfs_lite::common::libp2p {
   };
 }  // namespace ipfs_lite::common::libp2p
 
-OUTCOME_HPP_DECLARE_ERROR(ipfs_lite::common::libp2p, CborBuffering::Error)
+OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common::libp2p, CborBuffering::Error)
 
 #endif  // CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_BUFFERING_HPP

@@ -1,7 +1,7 @@
 
 #include "common/libp2p/cbor_buffering.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY(ipfs_lite::common::libp2p, CborBuffering::Error, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common::libp2p, CborBuffering::Error, e) {
   return "CborBuffering::Error";
 }
 

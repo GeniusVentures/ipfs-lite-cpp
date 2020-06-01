@@ -28,7 +28,7 @@ namespace libp2p::peer {
   CBOR_DECODE(PeerId, peer) {
     std::vector<uint8_t> bytes;
     s >> bytes;
-    OUTCOME_EXCEPT(peer_id, PeerId::fromBytes(bytes));
+    _OUTCOME_EXCEPT_2(UNIQUE_NAME(_r), peer_id, PeerId::fromBytes(bytes));
     peer = std::move(peer_id);
     return s;
   }
