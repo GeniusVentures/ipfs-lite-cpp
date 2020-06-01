@@ -1,5 +1,5 @@
-#ifndef CPP_FILECOIN_BUFFER_MAP_HPP
-#define CPP_FILECOIN_BUFFER_MAP_HPP
+#ifndef CPP_IPFS_LITE_BUFFER_MAP_HPP
+#define CPP_IPFS_LITE_BUFFER_MAP_HPP
 
 /**
  * This file contains:
@@ -15,7 +15,7 @@
 #include "ipfs_lite/face/persistent_map.hpp"
 #include "ipfs_lite/face/write_batch.hpp"
 
-namespace fc::storage {
+namespace sgns::storage {
 
   using Buffer = common::Buffer;
 
@@ -27,6 +27,6 @@ namespace fc::storage {
 
   using BufferMapCursor = face::MapCursor<Buffer, Buffer>;
 
-}  // namespace fc::storage
+}  // namespace sgns::storage
 
-#endif  // CPP_FILECOIN_BUFFER_MAP_HPP
+#endif  // CPP_IPFS_LITE_BUFFER_MAP_HPP
