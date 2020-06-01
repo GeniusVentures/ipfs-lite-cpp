@@ -10,7 +10,7 @@
 
 #include "codec/cbor/streams_annotation.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   /** Decodes CBOR */
   class CborDecodeStream {
    public:
@@ -142,6 +142,6 @@ namespace ipfs_lite::codec::cbor {
     std::shared_ptr<CborParser> parser_;
     CborValue value_{};
   };
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP

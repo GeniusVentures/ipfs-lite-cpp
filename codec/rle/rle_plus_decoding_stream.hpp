@@ -10,7 +10,7 @@
 #include "codec/rle/rle_plus_config.hpp"
 #include "codec/rle/rle_plus_errors.hpp"
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
   /**
    * @class Decode RLE+ byte stream
    */
@@ -170,6 +170,6 @@ namespace ipfs_lite::codec::rle {
       magnitude_ = !magnitude_;
     }
   };
-};  // namespace ipfs_lite::codec::rle
+};  // namespace sgns::codec::rle
 
 #endif

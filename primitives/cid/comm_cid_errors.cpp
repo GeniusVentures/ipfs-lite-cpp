@@ -1,8 +1,8 @@
 
 #include "primitives/cid/comm_cid_errors.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, CommCidError, e) {
-  using ipfs_lite::common::CommCidError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::common, CommCidError, e) {
+  using sgns::common::CommCidError;
 
   switch (e) {
     case (CommCidError::TOO_SHORT):

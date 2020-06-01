@@ -6,7 +6,7 @@
 #include "primitives/cid/cid.hpp"
 #include "common/buffer.hpp"
 
-namespace ipfs_lite::codec::json {
+namespace sgns::codec::json {
   enum class JsonCodecError : int { BAD_JSON = 1, WRONG_CID_ARRAY_FORMAT };
   /**
    * @brief json-encodes span of CID objects
@@ -19,8 +19,8 @@ namespace ipfs_lite::codec::json {
    * @return vector of CID objects or error
    */
   outcome::result<std::vector<CID>> decodeCidVector(std::string_view data);
-}  // namespace ipfs_lite::codec::json
+}  // namespace sgns::codec::json
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::json, JsonCodecError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::json, JsonCodecError);
 
 #endif  // CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP

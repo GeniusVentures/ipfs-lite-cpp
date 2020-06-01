@@ -8,7 +8,7 @@
 
 #include "codec/cbor/cbor.hpp"
 
-namespace ipfs_lite::codec::json {
+namespace sgns::codec::json {
   using boost::property_tree::ptree;
 
   outcome::result<std::string> encodeCidVector(gsl::span<const CID> span) {
@@ -53,10 +53,10 @@ namespace ipfs_lite::codec::json {
 
     return cids;
   }
-}  // namespace ipfs_lite::codec::json
+}  // namespace sgns::codec::json
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::json, JsonCodecError, e) {
-  using ipfs_lite::codec::json::JsonCodecError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::json, JsonCodecError, e) {
+  using sgns::codec::json::JsonCodecError;
   switch (e) {
     case JsonCodecError::BAD_JSON:
       return "Source data is not json document";

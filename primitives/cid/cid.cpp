@@ -9,7 +9,7 @@
 using libp2p::multi::HashType;
 using libp2p::multi::Multihash;
 
-namespace ipfs_lite {
+namespace sgns {
   CID::CID() : ContentIdentifier({}, {}, Multihash::create({}, {}).value()) {}
 
   CID::CID(const ContentIdentifier &cid) : ContentIdentifier(cid) {}
@@ -108,12 +108,12 @@ namespace ipfs_lite {
     cid.content_address = std::move(hash);
     return cid;
   }
-}  // namespace ipfs_lite
+}  // namespace sgns
 
-namespace ipfs_lite::common {
+namespace sgns::common {
   outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes) {
     auto hash_raw = crypto::blake2b::blake2b_256(bytes);
     OUTCOME_TRY(hash, Multihash::create(HashType::blake2b_256, hash_raw));
     return CID(CID::Version::V1, CID::Multicodec::DAG_CBOR, hash);
   }
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common

@@ -2,7 +2,7 @@
 #ifndef CODEC_RLE_PLUS_CONFIG_HPP
 #define CODEC_RLE_PLUS_CONFIG_HPP
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
   /**
    * @var Num of bits to store small block value
    */
@@ -38,6 +38,6 @@ namespace ipfs_lite::codec::rle {
    */
   const int OBJECT_MAX_SIZE = 0x100000;
 
-};  // namespace ipfs_lite::codec::rle
+};  // namespace sgns::codec::rle
 
 #endif

@@ -1,8 +1,8 @@
 
 #include "codec/rle/rle_plus_errors.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::rle, RLEPlusDecodeError, e) {
-  using ipfs_lite::codec::rle::RLEPlusDecodeError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::rle, RLEPlusDecodeError, e) {
+  using sgns::codec::rle::RLEPlusDecodeError;
   switch (e) {
     case (RLEPlusDecodeError::VersionMismatch):
       return "RLE+ data header has invalid version";

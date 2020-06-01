@@ -1,6 +1,6 @@
 #include "common/buffer.hpp"
 
-using ipfs_lite::common::Buffer;
+using sgns::common::Buffer;
 
 class value_type;
 namespace std {

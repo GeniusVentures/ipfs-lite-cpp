@@ -1,7 +1,7 @@
 #include "common/blob.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, BlobError, e) {
-  using ipfs_lite::common::BlobError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::common, BlobError, e) {
+  using sgns::common::BlobError;
 
   switch (e) {
     case BlobError::INCORRECT_LENGTH:
@@ -11,7 +11,7 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, BlobError, e) {
   return "Unknown error";
 }
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   // explicit instantiations for the most frequently used blobs
   template class Blob<8ul>;
@@ -19,4 +19,4 @@ namespace ipfs_lite::common {
   template class Blob<32ul>;
   template class Blob<64ul>;
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common

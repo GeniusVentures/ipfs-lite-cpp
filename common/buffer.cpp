@@ -3,7 +3,7 @@
 
 #include "common/hexutil.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   size_t Buffer::size() const {
     return data_.size();
@@ -164,4 +164,4 @@ namespace ipfs_lite::common {
     return os << buffer.toHex();
   }
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common

@@ -9,12 +9,12 @@
 using libp2p::peer::PeerId;
 using libp2p::peer::PeerInfo;
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   template <>
   inline PeerInfo kDefaultT<PeerInfo>() {
     return PeerInfo{.id = kDefaultT<PeerId>(), .addresses = {}};
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 namespace libp2p::peer {
 

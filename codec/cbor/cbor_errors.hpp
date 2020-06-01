@@ -3,7 +3,7 @@
 
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   enum class CborEncodeError { INVALID_CID = 1, EXPECTED_MAP_VALUE_SINGLE };
 
   enum class CborDecodeError {
@@ -14,9 +14,9 @@ namespace ipfs_lite::codec::cbor {
     INVALID_CID,
     WRONG_SIZE,
   };
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::cbor, CborEncodeError);
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::cbor, CborDecodeError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::cbor, CborEncodeError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::cbor, CborDecodeError);
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_ERRORS_HPP

@@ -1,11 +1,11 @@
 
 #include "common/libp2p/cbor_buffering.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common::libp2p, CborBuffering::Error, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::common::libp2p, CborBuffering::Error, e) {
   return "CborBuffering::Error";
 }
 
-namespace ipfs_lite::common::libp2p {
+namespace sgns::common::libp2p {
   using Head = CborBuffering::Head;
 
   outcome::result<Head> Head::first(size_t &more, uint8_t first) {
@@ -127,4 +127,4 @@ namespace ipfs_lite::common::libp2p {
     }
     return consumed;
   }
-}  // namespace ipfs_lite::common::libp2p
+}  // namespace sgns::common::libp2p

@@ -71,7 +71,7 @@
     return s;                              \
   }
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   /**
    * Default value for CBORed value instantiation
    * In case of non default constructible type instantiate default value with
@@ -82,6 +82,6 @@ namespace ipfs_lite::codec::cbor {
   inline T kDefaultT() {
     return {};
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 #endif  // CPP_IPFS_LITE_STREAMS_ANNOTATION_HPP

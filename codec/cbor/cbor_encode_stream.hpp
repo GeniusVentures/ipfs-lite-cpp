@@ -11,7 +11,7 @@
 #include "common/enum.hpp"
 #include "platform/platform.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   /** Encodes CBOR */
   class CborEncodeStream {
    public:
@@ -117,6 +117,6 @@ namespace ipfs_lite::codec::cbor {
     std::vector<uint8_t> data_{};
     size_t count_{0};
   };
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_ENCODE_STREAM_HPP

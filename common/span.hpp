@@ -3,7 +3,7 @@
 
 #include <gsl/span>
 
-namespace ipfs_lite::common::span {
+namespace sgns::common::span {
   template <typename To, typename From>
   constexpr auto cast(gsl::span<From> span) {
     static_assert(sizeof(To) == 1);
@@ -22,6 +22,6 @@ namespace ipfs_lite::common::span {
   constexpr auto string(gsl::span<uint8_t> span) {
     return cast<char>(span);
   }
-}  // namespace ipfs_lite::common::span
+}  // namespace sgns::common::span
 
 #endif  // CPP_IPFS_LITE_COMMON_SPAN_HPP

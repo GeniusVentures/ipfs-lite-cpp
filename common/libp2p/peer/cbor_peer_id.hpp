@@ -8,7 +8,7 @@
 
 using libp2p::peer::PeerId;
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   /// Default value of PeerId for CBOR stream decoder
   template <>
   inline PeerId kDefaultT<PeerId>() {
@@ -17,7 +17,7 @@ namespace ipfs_lite::codec::cbor {
                    .value())
         .value();
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 namespace libp2p::peer {
 

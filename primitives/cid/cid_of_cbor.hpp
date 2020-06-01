@@ -5,7 +5,7 @@
 #include "primitives/cid/cid.hpp"
 #include "codec/cbor/cbor.hpp"
 
-namespace ipfs_lite::primitives::cid {
+namespace sgns::primitives::cid {
 
   /**
    * @brief helper function to calculate cid of an object
@@ -15,9 +15,9 @@ namespace ipfs_lite::primitives::cid {
    */
   template <class T>
   outcome::result<CID> getCidOfCbor(const T &value) {
-    OUTCOME_TRY(bytes, ipfs_lite::codec::cbor::encode(value));
+    OUTCOME_TRY(bytes, sgns::codec::cbor::encode(value));
     return common::getCidOf(bytes);
   }
-}  // namespace ipfs_lite::primitives::cid
+}  // namespace sgns::primitives::cid
 
 #endif  // CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP

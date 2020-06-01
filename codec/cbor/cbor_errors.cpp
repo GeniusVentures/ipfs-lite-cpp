@@ -1,7 +1,7 @@
 #include "codec/cbor/cbor_errors.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborEncodeError, e) {
-  using ipfs_lite::codec::cbor::CborEncodeError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::cbor, CborEncodeError, e) {
+  using sgns::codec::cbor::CborEncodeError;
   switch (e) {
     case CborEncodeError::INVALID_CID:
       return "Invalid CID";
@@ -12,8 +12,8 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborEncodeError, e) {
   }
 }
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborDecodeError, e) {
-  using ipfs_lite::codec::cbor::CborDecodeError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::cbor, CborDecodeError, e) {
+  using sgns::codec::cbor::CborDecodeError;
   switch (e) {
     case CborDecodeError::INVALID_CBOR:
       return "Invalid CBOR";

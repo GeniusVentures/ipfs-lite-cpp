@@ -1,7 +1,7 @@
 #include "codec/cbor/cbor_resolve.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborResolveError, e) {
-  using ipfs_lite::codec::cbor::CborResolveError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::cbor, CborResolveError, e) {
+  using sgns::codec::cbor::CborResolveError;
   switch (e) {
     case CborResolveError::INT_KEY_EXPECTED:
       return "Int key expected";
@@ -16,7 +16,7 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::codec::cbor, CborResolveError, e) {
   }
 }
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   outcome::result<uint64_t> parseIndex(const std::string &str) {
     uint64_t value;
     size_t chars;
@@ -63,4 +63,4 @@ namespace ipfs_lite::codec::cbor {
     }
     return outcome::success();
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor

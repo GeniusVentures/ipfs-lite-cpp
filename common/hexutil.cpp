@@ -9,8 +9,8 @@
 #include <boost/format.hpp>
 #include <gsl/span>
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, UnhexError, e) {
-  using ipfs_lite::common::UnhexError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::common, UnhexError, e) {
+  using sgns::common::UnhexError;
   switch (e) {
     case UnhexError::NON_HEX_INPUT:
       return "Input contains non-hex characters";
@@ -21,7 +21,7 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, UnhexError, e) {
   }
 }
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   std::string int_to_hex(uint64_t n, size_t fixed_width) noexcept {
     std::stringstream result;
@@ -69,4 +69,4 @@ namespace ipfs_lite::common {
       return UnhexError::UNKNOWN;
     }
   }
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common

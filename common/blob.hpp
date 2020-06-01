@@ -10,7 +10,7 @@
 #include "common/hexutil.hpp"
 #include "common/span.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   /**
    * Error codes for exceptions that may occur during blob initialization
@@ -161,15 +161,15 @@ namespace ipfs_lite::common {
     return os << blob.toHex();
   }
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common
 
 template <size_t N>
-struct std::hash<ipfs_lite::common::Blob<N>> {
-  auto operator()(const ipfs_lite::common::Blob<N> &blob) const {
+struct std::hash<sgns::common::Blob<N>> {
+  auto operator()(const sgns::common::Blob<N> &blob) const {
     return boost::hash_range(blob.data(), blob.data() + N);  // NOLINT
   }
 };
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common, BlobError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::common, BlobError);
 
 #endif  // CPP_IPFS_LITE__COMMON_BLOB_HPP

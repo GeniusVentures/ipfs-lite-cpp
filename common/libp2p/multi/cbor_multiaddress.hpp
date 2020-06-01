@@ -7,13 +7,13 @@
 
 using libp2p::multi::Multiaddress;
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   /// Default value of Multiaddress for CBOR stream decoder
   template <>
   inline Multiaddress kDefaultT<Multiaddress>() {
     return Multiaddress::create("/ip4/0.0.0.1/udp/1").value();
   };
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 namespace libp2p::multi {
 

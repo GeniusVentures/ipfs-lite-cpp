@@ -1,6 +1,6 @@
 #include "codec/cbor/cbor_decode_stream.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   CborDecodeStream::CborDecodeStream(gsl::span<const uint8_t> data)
       : data_(std::make_shared<std::vector<uint8_t>>(data.begin(), data.end())),
         parser_(std::make_shared<CborParser>()) {
@@ -216,4 +216,4 @@ namespace ipfs_lite::codec::cbor {
     }
     return stream;
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor

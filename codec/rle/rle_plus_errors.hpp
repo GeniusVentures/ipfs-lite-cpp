@@ -4,7 +4,7 @@
 
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
 
   namespace errors {
 
@@ -27,8 +27,8 @@ namespace ipfs_lite::codec::rle {
     UnpackOverflow,      /**< RLE+ invalid encoding */
     MaxSizeExceed        /**< RLE+ object size too large */
   };
-}  // namespace ipfs_lite::codec::rle
+}  // namespace sgns::codec::rle
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::rle, RLEPlusDecodeError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::rle, RLEPlusDecodeError);
 
 #endif
