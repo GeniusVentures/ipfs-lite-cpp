@@ -1,6 +1,6 @@
-#include "ipfs-lite/leveldb/leveldb_cursor.hpp"
+#include "ipfs_lite/leveldb/leveldb_cursor.hpp"
 
-#include "ipfs-lite/leveldb/leveldb_util.hpp"
+#include "ipfs_lite/leveldb/leveldb_util.hpp"
 
 namespace sgns::ipfs_lite {
 

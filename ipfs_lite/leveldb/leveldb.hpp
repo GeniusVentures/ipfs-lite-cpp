@@ -5,7 +5,7 @@
 #include <leveldb/db.h>
 #include <leveldb/write_batch.h>
 #include "common/logger.hpp"
-#include "ipfs-lite/buffer_map.hpp"
+#include "ipfs_lite/buffer_map.hpp"
 
 namespace sgns::ipfs_lite {
 

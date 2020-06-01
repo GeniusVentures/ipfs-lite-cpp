@@ -1,11 +1,11 @@
 
-#include "ipfs-lite/leveldb/leveldb.hpp"
+#include "ipfs_lite/leveldb/leveldb.hpp"
 
 #include <utility>
 
-#include "ipfs-lite/leveldb/leveldb_batch.hpp"
-#include "ipfs-lite/leveldb/leveldb_cursor.hpp"
-#include "ipfs-lite/leveldb/leveldb_util.hpp"
+#include "ipfs_lite/leveldb/leveldb_batch.hpp"
+#include "ipfs_lite/leveldb/leveldb_cursor.hpp"
+#include "ipfs_lite/leveldb/leveldb_util.hpp"
 
 namespace sgns::ipfs_lite {
 

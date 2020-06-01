@@ -6,7 +6,7 @@
 #include "common/outcome.hpp"
 #include "common/buffer.hpp"
 #include "common/logger.hpp"
-#include "ipfs-lite/leveldb/leveldb_error.hpp"
+#include "ipfs_lite/leveldb/leveldb_error.hpp"
 
 namespace sgns::ipfs_lite {
 

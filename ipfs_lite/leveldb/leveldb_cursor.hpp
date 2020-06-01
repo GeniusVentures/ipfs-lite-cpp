@@ -3,7 +3,7 @@
 #define CPP_IPFS_LITE_LEVELDB_CURSOR_HPP
 
 #include <leveldb/iterator.h>
-#include "ipfs-lite/leveldb/leveldb.hpp"
+#include "ipfs_lite/leveldb/leveldb.hpp"
 
 namespace sgns::ipfs_lite {
 
