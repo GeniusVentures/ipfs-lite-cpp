@@ -11,9 +11,9 @@
 #include <gsl/span>
 
 #include "common/buffer.hpp"
-#include "ipfs-lite/face/generic_map.hpp"
-#include "ipfs-lite/face/persistent_map.hpp"
-#include "ipfs-lite/face/write_batch.hpp"
+#include "ipfs_lite/face/generic_map.hpp"
+#include "ipfs_lite/face/persistent_map.hpp"
+#include "ipfs_lite/face/write_batch.hpp"
 
 namespace fc::storage {
 
