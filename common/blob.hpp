@@ -63,7 +63,9 @@ namespace ipfs_lite::common {
      * Converts current blob to hex string.
      */
     std::string toHex() const noexcept {
-      return hex_upper({this->begin(), this->end()});
+      //modified by jin
+      gsl::span<const uint8_t> bytes={&*(this->begin()), &*(this->end())};
+      return hex_upper(bytes);
     }
 
     /**
