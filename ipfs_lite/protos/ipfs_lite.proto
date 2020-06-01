@@ -5,7 +5,7 @@ option java_package = "io.textile.grpc_ipfs_lite";
 option java_outer_classname = "IpfsLiteProto";
 option objc_class_prefix = "TTE";
 
-package ipfs_lite;
+package sgns;
 
 // Model messages
 
