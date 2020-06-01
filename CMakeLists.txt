@@ -205,7 +205,7 @@ ExternalProject_Add(ipfs-lite
 )
 # find packages for common
 message("libp2p_DIR=" ${libp2p_DIR})
-find_package(libp2p CONFIG REQUIRED)
+
 find_package(OpenSSL REQUIRED)
 
 set(spdlog_DIR "${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
@@ -214,6 +214,7 @@ find_package(spdlog CONFIG REQUIRED)
 set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
 find_package(tsl_hat_trie CONFIG REQUIRED)
 
+find_package(libp2p CONFIG REQUIRED)
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
@@ -224,5 +225,6 @@ add_subdirectory(deps)
 add_subdirectory(primitives)
 add_subdirectory(codec)
 add_subdirectory(common)
+add_subdirectory(crypto)
 
 

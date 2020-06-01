@@ -8,13 +8,15 @@ namespace ipfs_lite::common {
   using libp2p::multi::HashType;
 
   CID replicaCommitmentV1ToCID(gsl::span<const uint8_t> comm_r) {
-    OUTCOME_EXCEPT(cid, commitmentToCID(comm_r, FC_SEALED_V1));
-    return cid;
+    _OUTCOME_EXCEPT_1(cid, commitmentToCID(comm_r, FC_SEALED_V1));
+    // return cid;
+    return cid.value();
   }
 
   CID dataCommitmentV1ToCID(gsl::span<const uint8_t> comm_d) {
-    OUTCOME_EXCEPT(cid, commitmentToCID(comm_d, FC_UNSEALED_V1));
-    return cid;
+    _OUTCOME_EXCEPT_1(cid, commitmentToCID(comm_d, FC_UNSEALED_V1));
+    // return cid;
+    return cid.value();
   }
 
   CID pieceCommitmentV1ToCID(gsl::span<const uint8_t> comm_p) {
