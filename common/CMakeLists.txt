@@ -26,3 +26,4 @@ add_library(buffer
 target_link_libraries(buffer
     hexutil
     )
+add_subdirectory(libp2p)
