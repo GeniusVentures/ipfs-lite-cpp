@@ -34,67 +34,67 @@ using grpc::Status;
 
 // Model messages
 
-using ipfs_lite::AddParams;
-using ipfs_lite::Block;
-using ipfs_lite::Link;
-using ipfs_lite::NodeStat;
-using ipfs_lite::Node;
+using sgns::AddParams;
+using sgns::Block;
+using sgns::Link;
+using sgns::NodeStat;
+using sgns::Node;
 
 // Request and Response messages
 
-using ipfs_lite::AddFileRequest;
-using ipfs_lite::AddFileResponse;
+using sgns::AddFileRequest;
+using sgns::AddFileResponse;
 
-using ipfs_lite::GetFileRequest;
-using ipfs_lite::GetFileResponse;
+using sgns::GetFileRequest;
+using sgns::GetFileResponse;
 
-using ipfs_lite::AddNodeRequest;
-using ipfs_lite::AddNodeResponse;
+using sgns::AddNodeRequest;
+using sgns::AddNodeResponse;
 
-using ipfs_lite::AddNodesRequest;
-using ipfs_lite::AddNodesResponse;
+using sgns::AddNodesRequest;
+using sgns::AddNodesResponse;
 
-using ipfs_lite::GetNodeRequest;
-using ipfs_lite::GetNodeResponse;
+using sgns::GetNodeRequest;
+using sgns::GetNodeResponse;
 
-using ipfs_lite::GetNodesRequest;
-using ipfs_lite::GetNodesResponse;
+using sgns::GetNodesRequest;
+using sgns::GetNodesResponse;
 
-using ipfs_lite::RemoveNodeRequest;
-using ipfs_lite::RemoveNodeResponse;
+using sgns::RemoveNodeRequest;
+using sgns::RemoveNodeResponse;
 
-using ipfs_lite::RemoveNodesRequest;
-using ipfs_lite::RemoveNodesResponse;
+using sgns::RemoveNodesRequest;
+using sgns::RemoveNodesResponse;
 
-using ipfs_lite::ResolveLinkRequest;
-using ipfs_lite::ResolveLinkResponse;
+using sgns::ResolveLinkRequest;
+using sgns::ResolveLinkResponse;
 
-using ipfs_lite::TreeRequest;
-using ipfs_lite::TreeResponse;
+using sgns::TreeRequest;
+using sgns::TreeResponse;
 
-using ipfs_lite::DeleteBlockRequest;
-using ipfs_lite::DeleteBlockResponse;
+using sgns::DeleteBlockRequest;
+using sgns::DeleteBlockResponse;
 
-using ipfs_lite::HasBlockRequest;
-using ipfs_lite::HasBlockResponse;
-using ipfs_lite::GetBlockSizeRequest;
+using sgns::HasBlockRequest;
+using sgns::HasBlockResponse;
+using sgns::GetBlockSizeRequest;
 
-using ipfs_lite::GetBlockSizeResponse;
-using ipfs_lite::PutBlockRequest;
-using ipfs_lite::PutBlockResponse;
-using ipfs_lite::PutBlocksRequest;
+using sgns::GetBlockSizeResponse;
+using sgns::PutBlockRequest;
+using sgns::PutBlockResponse;
+using sgns::PutBlocksRequest;
 
-using ipfs_lite::PutBlocksResponse;
+using sgns::PutBlocksResponse;
 
-using ipfs_lite::AllKeysRequest;
+using sgns::AllKeysRequest;
 
-using ipfs_lite::AllKeysResponse;
+using sgns::AllKeysResponse;
 
-using ipfs_lite::HashOnReadRequest;
+using sgns::HashOnReadRequest;
 
-using ipfs_lite::HashOnReadResponse;
+using sgns::HashOnReadResponse;
 
-using ipfs_lite::IpfsLite;
+using sgns::IpfsLite;
 
 class IpfsLiteClient {
  public:

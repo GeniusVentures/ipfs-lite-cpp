@@ -1,6 +1,6 @@
 #include "codec/cbor/cbor_encode_stream.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   CborEncodeStream &CborEncodeStream::operator<<(
       const std::vector<uint8_t> &bytes) {
     return *this << gsl::make_span(bytes);
@@ -156,4 +156,4 @@ namespace ipfs_lite::codec::cbor {
   void CborEncodeStream::addCount(size_t count) {
     count_ += count;
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor

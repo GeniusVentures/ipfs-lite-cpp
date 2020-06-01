@@ -9,8 +9,8 @@
 #include "common/outcome.hpp"
 #include "primitives/cid/cid.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   constexpr uint64_t kCidTag = 42;
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_COMMON_HPP

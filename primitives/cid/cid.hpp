@@ -5,7 +5,7 @@
 
 #include "common/outcome.hpp"
 
-namespace ipfs_lite {
+namespace sgns {
   class CID : public libp2p::multi::ContentIdentifier {
    public:
     using ContentIdentifier::ContentIdentifier;
@@ -61,12 +61,12 @@ namespace ipfs_lite {
     static outcome::result<CID> read(gsl::span<const uint8_t> &input,
                                      bool prefix = false);
   };
-}  // namespace ipfs_lite
+}  // namespace sgns
 
-namespace ipfs_lite::common {
+namespace sgns::common {
   /// Compute CID from bytes
   outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes);
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common
 
 #endif  // CPP_IPFS_LITE__COMMON_CID_HPP

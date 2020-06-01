@@ -1,7 +1,7 @@
 #ifndef CPP_IPFS_LITE__COMMON_ENUM_HPP
 #define CPP_IPFS_LITE__COMMON_ENUM_HPP
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   /**
    * @brief Convert enum class value as integer
@@ -29,6 +29,6 @@ namespace ipfs_lite::common {
     return static_cast<typename std::underlying_type<Enumeration>::type>(value);
   }
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common
 
 #endif  // CPP_IPFS_LITE__COMMON_ENUM_HPP

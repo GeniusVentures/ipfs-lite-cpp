@@ -8,7 +8,7 @@
 
 #include "codec/rle/rle_plus_config.hpp"
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
   /**
    * @class RLE+ encoding stream
    */
@@ -124,6 +124,6 @@ namespace ipfs_lite::codec::rle {
       return periods;
     }
   };
-};  // namespace ipfs_lite::codec::rle
+};  // namespace sgns::codec::rle
 
 #endif

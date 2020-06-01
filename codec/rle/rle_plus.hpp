@@ -6,7 +6,7 @@
 #include "codec/rle/rle_plus_decoding_stream.hpp"
 #include "codec/rle/rle_plus_encoding_stream.hpp"
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
   /**
    * @brief RLE+ encode
    * @tparam T - type of elements to encode
@@ -44,6 +44,6 @@ namespace ipfs_lite::codec::rle {
     }
     return data;
   }
-};  // namespace ipfs_lite::codec::rle
+};  // namespace sgns::codec::rle
 
 #endif

@@ -1,6 +1,6 @@
 #include "codec/rle/rle_plus_encoding_stream.hpp"
 
-namespace ipfs_lite::codec::rle {
+namespace sgns::codec::rle {
   void RLEPlusEncodingStream::initContent() {
     content_.clear();
     content_.push_back(false);
@@ -13,4 +13,4 @@ namespace ipfs_lite::codec::rle {
       content_.push_back(bit);
     }
   }
-}  // namespace ipfs_lite::codec::rle
+}  // namespace sgns::codec::rle

@@ -6,7 +6,7 @@
 #include "common/blob.hpp"
 #include "primitives/cid/cid.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
   // kCommitmentBytesLen is the number of bytes in a CommR, CommD, CommP, and
   // CommRStar.
   const int kCommitmentBytesLen = 32;
@@ -78,6 +78,6 @@ namespace ipfs_lite::common {
   outcome::result<Comm> CIDToDataCommitmentV1(const CID &cid);
   outcome::result<Multihash> CIDToCommitment(const CID &cid);
 
-};  // namespace ipfs_lite::common
+};  // namespace sgns::common
 
 #endif  // CPP_IPFS_LITE_COMM_CID_HPP

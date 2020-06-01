@@ -8,7 +8,7 @@
 
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::common::libp2p {
+namespace sgns::common::libp2p {
   /// Incrementally decodes length of cbor object bytes
   struct CborBuffering {
     enum class Error {
@@ -53,8 +53,8 @@ namespace ipfs_lite::common::libp2p {
     size_t more_bytes{};
     boost::optional<Head> partial_head;
   };
-}  // namespace ipfs_lite::common::libp2p
+}  // namespace sgns::common::libp2p
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common::libp2p, CborBuffering::Error)
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::common::libp2p, CborBuffering::Error)
 
 #endif  // CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_BUFFERING_HPP

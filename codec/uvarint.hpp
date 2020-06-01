@@ -6,7 +6,7 @@
 
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::codec::uvarint {
+namespace sgns::codec::uvarint {
   using Input = gsl::span<const uint8_t>;
 
   template <auto error, typename T = uint64_t>
@@ -29,6 +29,6 @@ namespace ipfs_lite::codec::uvarint {
     input = input.subspan(size);
     return result;
   }
-}  // namespace ipfs_lite::codec::uvarint
+}  // namespace sgns::codec::uvarint
 
 #endif  // CPP_IPFS_LITE_CODEC_UVARINT_HPP

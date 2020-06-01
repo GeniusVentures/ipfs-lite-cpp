@@ -20,7 +20,7 @@
  */
 #define _OUTCOME_EXCEPT_1(var, expr) \
   auto &&var = expr;                 \
-  if (!var) ::ipfs_lite::outcome::raise(var.error());
+  if (!var) ::sgns::outcome::raise(var.error());
 #define _OUTCOME_EXCEPT_2(var, val, expr) \
   _OUTCOME_EXCEPT_1(var, expr)            \
   auto &&val = var.value();
@@ -35,7 +35,7 @@
   val = std::move(var.value());
 #define OUTCOME_TRYA(val, expr) _OUTCOME_TRYA(UNIQUE_NAME(_r), val, expr)
 
-namespace ipfs_lite::outcome {
+namespace sgns::outcome {
   using libp2p::outcome::failure;
   using libp2p::outcome::result;
   using libp2p::outcome::success;
@@ -57,7 +57,7 @@ namespace ipfs_lite::outcome {
   [[noreturn]] inline void raise(T t) {
     raise(make_error_code(t));
   }
-}  // namespace ipfs_lite::outcome
+}  // namespace sgns::outcome
 
 #define _OUTCOME_ALTERNATIVE(res, var, expression, alternative) \
   auto &&res = (expression);                                    \

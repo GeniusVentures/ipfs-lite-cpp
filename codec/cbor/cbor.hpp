@@ -6,7 +6,7 @@
 #include "codec/cbor/cbor_resolve.hpp"
 #include "common/buffer.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   using common::Buffer;
 
   /**
@@ -44,6 +44,6 @@ namespace ipfs_lite::codec::cbor {
       return outcome::failure(e.code());
     }
   }
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_HPP

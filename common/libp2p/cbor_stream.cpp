@@ -1,7 +1,7 @@
 
 #include "common/libp2p/cbor_stream.hpp"
 
-namespace ipfs_lite::common::libp2p {
+namespace sgns::common::libp2p {
   CborStream::CborStream(std::shared_ptr<Stream> stream)
       : stream_{std::move(stream)} {}
 
@@ -47,4 +47,4 @@ namespace ipfs_lite::common::libp2p {
     size_ += consumed.value();
     readMore(std::move(cb));
   }
-}  // namespace ipfs_lite::common::libp2p
+}  // namespace sgns::common::libp2p

@@ -4,7 +4,7 @@
 #include <iostream>
 #include "crypto/blake2/blake2b.h"
 
-namespace ipfs_lite::crypto::blake2b {
+namespace sgns::crypto::blake2b {
 
   Blake2b160Hash blake2b_160(gsl::span<const uint8_t> to_hash) {
     Blake2b160Hash res{};
@@ -52,4 +52,4 @@ namespace ipfs_lite::crypto::blake2b {
     return hash;
   }
 
-}  // namespace ipfs_lite::crypto::blake2b
+}  // namespace sgns::crypto::blake2b

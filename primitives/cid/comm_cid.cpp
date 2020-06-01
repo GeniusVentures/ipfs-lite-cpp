@@ -3,7 +3,7 @@
 #include "common/outcome.hpp"
 #include "primitives/cid/comm_cid_errors.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   using libp2p::multi::HashType;
 
@@ -65,4 +65,4 @@ namespace ipfs_lite::common {
     }
     return Comm::fromSpan(result.getHash());
   }
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common

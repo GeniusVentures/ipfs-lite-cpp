@@ -8,7 +8,7 @@
 #include <gsl/span>
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
   /**
    * @brief error codes for exceptions that may occur during unhexing
    */
@@ -51,6 +51,6 @@ namespace ipfs_lite::common {
 
 }  // namespace filecoin::common
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common, UnhexError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::common, UnhexError);
 
 #endif  // IPFS_LITE_COMMON_HEXUTIL_HPP

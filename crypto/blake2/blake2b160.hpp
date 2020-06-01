@@ -8,7 +8,7 @@
 #include "common/outcome.hpp"
 #include <fstream>
 
-namespace ipfs_lite::crypto::blake2b {
+namespace sgns::crypto::blake2b {
 
   const size_t BLAKE2B160_HASH_LENGTH = 20;  // 160 BIT
   const size_t BLAKE2B256_HASH_LENGTH = 32;  // 256 BIT
@@ -34,6 +34,6 @@ namespace ipfs_lite::crypto::blake2b {
 
   Blake2b512Hash blake2b_512_from_file(std::ifstream &file_stream);
 
-}  // namespace ipfs_lite::crypto::blake2b
+}  // namespace sgns::crypto::blake2b
 
 #endif  // CPP_IPFS_LITE_BLAKE2B160_HPP

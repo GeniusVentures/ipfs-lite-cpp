@@ -189,10 +189,10 @@ set(libp2p_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
 # to locate all the dependencies (if we were building helloworld directly in this build we,
 # we would have needed to manually import the libraries as opposed to reusing targets exported by
 # gRPC and protobuf).
-ExternalProject_Add(ipfs-lite
-  PREFIX ipfs-lite
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs-lite"
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs-lite"
+ExternalProject_Add(ipfs_lite
+  PREFIX ipfs_lite
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs_lite"
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs_lite"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
         -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}

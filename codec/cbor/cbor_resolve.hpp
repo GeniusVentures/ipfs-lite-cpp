@@ -3,7 +3,7 @@
 
 #include "codec/cbor/cbor_decode_stream.hpp"
 
-namespace ipfs_lite::codec::cbor {
+namespace sgns::codec::cbor {
   enum class CborResolveError {
     INT_KEY_EXPECTED = 1,
     KEY_NOT_FOUND,
@@ -18,8 +18,8 @@ namespace ipfs_lite::codec::cbor {
   /** Resolves path in CBOR object to CBOR subobject */
   outcome::result<void> resolve(CborDecodeStream &stream,
                                 const std::string &part);
-}  // namespace ipfs_lite::codec::cbor
+}  // namespace sgns::codec::cbor
 
-OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::codec::cbor, CborResolveError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::cbor, CborResolveError);
 
 #endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP

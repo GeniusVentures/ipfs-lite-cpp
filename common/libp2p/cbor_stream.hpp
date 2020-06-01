@@ -7,7 +7,7 @@
 #include "codec/cbor/cbor.hpp"
 #include "common/libp2p/cbor_buffering.hpp"
 
-namespace ipfs_lite::common::libp2p {
+namespace sgns::common::libp2p {
   /// Reads and writes cbor objects
   class CborStream : public std::enable_shared_from_this<CborStream> {
    public:
@@ -60,6 +60,6 @@ namespace ipfs_lite::common::libp2p {
     std::vector<uint8_t> buffer_;
     size_t size_{};
   };
-}  // namespace ipfs_lite::common::libp2p
+}  // namespace sgns::common::libp2p
 
 #endif  // CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_STREAM_HPP

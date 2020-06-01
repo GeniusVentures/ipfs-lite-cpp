@@ -10,7 +10,7 @@
 #include "codec/cbor/streams_annotation.hpp"
 #include "common/outcome.hpp"
 
-namespace ipfs_lite::common {
+namespace sgns::common {
 
   /**
    * @brief Class represents arbitrary (including empty) byte buffer.
@@ -240,12 +240,12 @@ namespace ipfs_lite::common {
 
   std::ostream &operator<<(std::ostream &os, const Buffer &buffer);
 
-}  // namespace ipfs_lite::common
+}  // namespace sgns::common
 
 namespace std {
   template <>
-  struct hash<ipfs_lite::common::Buffer> {
-    size_t operator()(const ipfs_lite::common::Buffer &x) const {
+  struct hash<sgns::common::Buffer> {
+    size_t operator()(const sgns::common::Buffer &x) const {
       return boost::hash_range(x.begin(), x.end());
     }
   };
