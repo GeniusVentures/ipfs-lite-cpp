@@ -19,7 +19,7 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(ipfs-lite C CXX)
+project(ipfs_lite C CXX)
 
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -158,3 +158,5 @@ foreach(_target
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
 endforeach()
+
+add_subdirectory(leveldb)
