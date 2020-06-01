@@ -21,6 +21,6 @@ namespace ipfs_lite::common {
 
 }  // namespace ipfs_lite::primitives::piece
 
-OUTCOME_HPP_DECLARE_ERROR(ipfs_lite::common, CommCidError);
+OUTCOME_HPP_DECLARE_ERROR_2(ipfs_lite::common, CommCidError);
 
 #endif //CPP_IPFS_LITE_COMM_CID_ERRORS_HPP

@@ -1,7 +1,7 @@
 
 #include "primitives/cid/comm_cid_errors.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY(ipfs_lite::common, CommCidError, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(ipfs_lite::common, CommCidError, e) {
   using ipfs_lite::common::CommCidError;
 
   switch (e) {
