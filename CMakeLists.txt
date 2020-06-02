@@ -221,7 +221,7 @@ add_subdirectory(common)
 add_subdirectory(crypto)
 #add_subdirectory(ipfs_lite)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 message("================================================ipfs_lite CMAKE_CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
 ExternalProject_Add(ipfs_lite
@@ -237,6 +237,6 @@ ExternalProject_Add(ipfs_lite
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
         -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ /std:c++17
   DEPENDS protobuf grpc libp2p leveldb
 )
