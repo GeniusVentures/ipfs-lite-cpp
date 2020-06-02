@@ -158,5 +158,5 @@ foreach(_target
     ${_GRPC_GRPCPP}
     ${_PROTOBUF_LIBPROTOBUF})
 endforeach()
-
+find_package(leveldb CONFIG REQUIRED)
 add_subdirectory(leveldb)
