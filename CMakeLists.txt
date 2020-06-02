@@ -110,6 +110,7 @@ ExternalProject_Add(leveldb
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/leveldb
 )
+set(_FINDPACKAGE_LEVELDB_DIR "${CMAKE_CURRENT_BINARY_DIR}/leveldb/lib/cmake/leveldb")
 # Builds Microsoft.GSL
 ExternalProject_Add(Microsoft.GSL
   PREFIX Microsoft.GSL
@@ -182,6 +183,11 @@ ExternalProject_Add(libp2p
 )
 set(libp2p_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
 
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${_FINDPACKAGE_GSL_INCLUDE_DIR}
+  deps/tinycbor/src
+)
 # Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
 # have already been installed.
 # Even though helloworld is not really an "external project" from perspective of this build,
@@ -201,6 +207,8 @@ ExternalProject_Add(ipfs_lite
         -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
+        -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS protobuf grpc libp2p leveldb
 )
 # find packages for common
@@ -215,11 +223,7 @@ set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
 find_package(tsl_hat_trie CONFIG REQUIRED)
 
 find_package(libp2p CONFIG REQUIRED)
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${_FINDPACKAGE_GSL_INCLUDE_DIR}
-  deps/tinycbor/src
-)
+
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
