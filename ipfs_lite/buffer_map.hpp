@@ -15,7 +15,7 @@
 #include "ipfs_lite/face/persistent_map.hpp"
 #include "ipfs_lite/face/write_batch.hpp"
 
-namespace sgns::storage {
+namespace sgns::ipfs_lite {
 
   using Buffer = common::Buffer;
 
@@ -27,6 +27,6 @@ namespace sgns::storage {
 
   using BufferMapCursor = face::MapCursor<Buffer, Buffer>;
 
-}  // namespace sgns::storage
+}  // namespace sgns::ipfs_lite
 
 #endif  // CPP_IPFS_LITE_BUFFER_MAP_HPP

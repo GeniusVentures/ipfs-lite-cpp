@@ -3,7 +3,7 @@
 #define CPP_IPFS_LITE_READABLE_MAP_HPP
 
 #include "common/outcome.hpp"
-#include "storage/face/map_cursor.hpp"
+#include "ipfs_lite/face/map_cursor.hpp"
 
 namespace sgns::ipfs_lite::face {
 

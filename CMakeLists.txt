@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # Project
 project(ipfs-lite-cpp C CXX)
-
 include(cmake/functions.cmake)
 
 
@@ -182,7 +181,7 @@ ExternalProject_Add(libp2p
   DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
 )
 set(libp2p_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
-
+set(libp2p_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/include")
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
@@ -195,6 +194,36 @@ include_directories(
 # to locate all the dependencies (if we were building helloworld directly in this build we,
 # we would have needed to manually import the libraries as opposed to reusing targets exported by
 # gRPC and protobuf).
+
+# find packages for common
+message("libp2p_DIR=" ${libp2p_DIR})
+
+find_package(OpenSSL REQUIRED)
+
+set(spdlog_DIR "${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
+find_package(spdlog CONFIG REQUIRED)
+
+set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
+find_package(tsl_hat_trie CONFIG REQUIRED)
+
+find_package(libp2p CONFIG REQUIRED)
+# set(Protobuf_DIR "${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
+#set(c-ares_DIR "${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares")
+#set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/zlib")
+#set(absl_DIR "${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl")
+#set(gRPC_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc")
+#set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
+
+add_subdirectory(deps)
+add_subdirectory(primitives)
+add_subdirectory(codec)
+add_subdirectory(common)
+add_subdirectory(crypto)
+#add_subdirectory(ipfs_lite)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
+message("================================================ipfs_lite CMAKE_CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
+
 ExternalProject_Add(ipfs_lite
   PREFIX ipfs_lite
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs_lite"
@@ -208,27 +237,6 @@ ExternalProject_Add(ipfs_lite
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
         -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}
   DEPENDS protobuf grpc libp2p leveldb
 )
-# find packages for common
-message("libp2p_DIR=" ${libp2p_DIR})
-
-find_package(OpenSSL REQUIRED)
-
-set(spdlog_DIR "${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
-find_package(spdlog CONFIG REQUIRED)
-
-set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
-find_package(tsl_hat_trie CONFIG REQUIRED)
-
-find_package(libp2p CONFIG REQUIRED)
-
-
-add_subdirectory(deps)
-add_subdirectory(primitives)
-add_subdirectory(codec)
-add_subdirectory(common)
-add_subdirectory(crypto)
-
-

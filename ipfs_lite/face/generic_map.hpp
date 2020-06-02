@@ -2,9 +2,9 @@
 #ifndef CPP_IPFS_LITE_GENERIC_MAP_HPP
 #define CPP_IPFS_LITE_GENERIC_MAP_HPP
 
-#include "storage/face/iterable_map.hpp"
-#include "storage/face/readable_map.hpp"
-#include "storage/face/writeable_map.hpp"
+#include "ipfs_lite/face/iterable_map.hpp"
+#include "ipfs_lite/face/readable_map.hpp"
+#include "ipfs_lite/face/writeable_map.hpp"
 
 namespace sgns::ipfs_lite::face {
 

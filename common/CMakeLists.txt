@@ -26,4 +26,10 @@ add_library(buffer
 target_link_libraries(buffer
     hexutil
     )
+add_library(logger
+    logger.cpp
+    )
+target_link_libraries(logger
+    spdlog::spdlog
+    )
 add_subdirectory(libp2p)

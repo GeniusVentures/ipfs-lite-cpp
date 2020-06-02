@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <memory>
 
-#include "storage/face/generic_iterator.hpp"
+#include "ipfs_lite/face/generic_iterator.hpp"
 
 namespace sgns::face {
 

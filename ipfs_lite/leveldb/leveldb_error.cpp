@@ -1,7 +1,7 @@
 
 #include "ipfs_lite/leveldb/leveldb_error.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY(sgns::ipfs_lite, LevelDBError, e) {
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::ipfs_lite, LevelDBError, e) {
   using E = sgns::ipfs_lite::LevelDBError;
   switch (e) {
     case E::OK:
