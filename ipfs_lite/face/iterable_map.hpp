@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include "storage/face/map_cursor.hpp"
+#include "ipfs_lite/face/map_cursor.hpp"
 
 namespace sgns::ipfs_lite::face {
 

@@ -2,8 +2,8 @@
 #ifndef CPP_IPFS_LITE_PERSISTENT_MAP_HPP
 #define CPP_IPFS_LITE_PERSISTENT_MAP_HPP
 
-#include "storage/face/generic_map.hpp"
-#include "storage/face/write_batch.hpp"
+#include "ipfs_lite/face/generic_map.hpp"
+#include "ipfs_lite/face/write_batch.hpp"
 
 namespace sgns::ipfs_lite::face {
 

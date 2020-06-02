@@ -23,6 +23,6 @@ namespace sgns::ipfs_lite {
 
 }  // namespace sgns::ipfs_lite
 
-OUTCOME_HPP_DECLARE_ERROR(sgns::ipfs_lite, LevelDBError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns::ipfs_lite, LevelDBError);
 
 #endif  // CPP_IPFS_LITE_LEVELDB_ERROR_HPP
