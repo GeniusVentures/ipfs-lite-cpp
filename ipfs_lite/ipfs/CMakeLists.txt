@@ -1,0 +1,27 @@
+add_library(ipfs_datastore_in_memory
+    impl/in_memory_datastore.cpp
+    impl/ipfs_datastore_error.cpp
+    )
+target_link_libraries(ipfs_datastore_in_memory
+    buffer
+    cbor
+    cid
+    )
+
+add_library(ipfs_datastore_leveldb
+    impl/datastore_leveldb.cpp
+    impl/ipfs_datastore_error.cpp
+    )
+target_link_libraries(ipfs_datastore_leveldb
+    buffer
+    cbor
+    cid
+    leveldb
+    )
+
+add_library(ipfs_blockservice
+    impl/ipfs_block_service.cpp
+    )
+target_link_libraries(ipfs_blockservice
+    buffer
+    )
