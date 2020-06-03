@@ -160,3 +160,4 @@ foreach(_target
 endforeach()
 find_package(leveldb CONFIG REQUIRED)
 add_subdirectory(leveldb)
+add_subdirectory(ipfs)
