@@ -6,4 +6,9 @@ target_link_libraries(ipld_block INTERFACE
     ipfs_lite_hasher
     )
 
-
+add_library(ipld_link
+    impl/ipld_link_impl.cpp
+    )
+target_link_libraries(ipld_link
+    cid
+    )
