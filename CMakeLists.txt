@@ -12,16 +12,6 @@ include(ExternalProject)
 # specify GIT_REPOSITORY and GIT_TAG to have cmake download the dependency directly,
 # without needing to add a submodule to your project.
 
-# Builds absl project from the git submodule.
-ExternalProject_Add(absl
-  PREFIX absl
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../grpc/third_party/abseil-cpp"
-  CMAKE_CACHE_ARGS
-        -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE
-        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/absl
-)
-
-
 
 # Builds protobuf project from the git submodule.
 ExternalProject_Add(protobuf
@@ -162,7 +152,7 @@ set(Protobuf_LIBRARIES "${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
 find_package(Protobuf CONFIG REQUIRED)
 
 #set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/zlib")
-#set(absl_DIR "${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl")
+
 
 
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
