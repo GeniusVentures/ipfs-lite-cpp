@@ -1,17 +1,4 @@
-# Copyright 2018 gRPC authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+
 cmake_minimum_required(VERSION 3.5.1)
 
 # Project
@@ -34,16 +21,7 @@ ExternalProject_Add(absl
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/absl
 )
 
-# Builds c-ares project from the git submodule.
-ExternalProject_Add(c-ares
-  PREFIX c-ares
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../grpc/third_party/cares/cares"
-  CMAKE_CACHE_ARGS
-        -DCARES_SHARED:BOOL=OFF
-        -DCARES_STATIC:BOOL=ON
-        -DCARES_STATIC_PIC:BOOL=ON
-        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/c-ares
-)
+
 
 # Builds protobuf project from the git submodule.
 ExternalProject_Add(protobuf
@@ -78,29 +56,6 @@ set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "")
 if (OPENSSL_ROOT_DIR)
   set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "-DOPENSSL_ROOT_DIR:PATH=${OPENSSL_ROOT_DIR}")
 endif()
-
-# Builds gRPC based on locally checked-out sources and set arguments so that all the dependencies
-# are correctly located.
-ExternalProject_Add(grpc
-  PREFIX grpc
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../grpc"
-  CMAKE_CACHE_ARGS
-        -DgRPC_INSTALL:BOOL=ON
-        -DgRPC_BUILD_TESTS:BOOL=OFF
-        -DgRPC_PROTOBUF_PROVIDER:STRING=package
-        -DgRPC_PROTOBUF_PACKAGE_TYPE:STRING=CONFIG
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
-        -DgRPC_ZLIB_PROVIDER:STRING=package
-        -DZLIB_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/zlib
-        -DgRPC_ABSL_PROVIDER:STRING=package
-        -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
-        -DgRPC_CARES_PROVIDER:STRING=package
-        -Dc-ares_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DgRPC_SSL_PROVIDER:STRING=package
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc
-  DEPENDS c-ares protobuf zlib absl
-)
 
 # Builds leveldb
 ExternalProject_Add(leveldb
@@ -187,13 +142,6 @@ include_directories(
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
   deps/tinycbor/src
 )
-# Build the helloworld projects itself using a CMakeLists.txt that assumes all the dependencies
-# have already been installed.
-# Even though helloworld is not really an "external project" from perspective of this build,
-# we are still importing it using ExternalProject_Add because that allows us to use find_package()
-# to locate all the dependencies (if we were building helloworld directly in this build we,
-# we would have needed to manually import the libraries as opposed to reusing targets exported by
-# gRPC and protobuf).
 
 # find packages for common
 message("libp2p_DIR=" ${libp2p_DIR})
@@ -213,10 +161,9 @@ set(Protobuf_INCLUDE_DIR "${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
 set(Protobuf_LIBRARIES "${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
 find_package(Protobuf CONFIG REQUIRED)
 
-#set(c-ares_DIR "${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares")
 #set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/zlib")
 #set(absl_DIR "${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl")
-#set(gRPC_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc")
+
 
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
 find_package(leveldb CONFIG REQUIRED)
@@ -228,22 +175,3 @@ add_subdirectory(common)
 add_subdirectory(crypto)
 add_subdirectory(ipfs_lite)
 
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
-message("================================================ipfs_lite CMAKE_CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
-
-#ExternalProject_Add(ipfs_lite
-#  PREFIX ipfs_lite
-#  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs_lite"
-#  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs_lite"
-#  INSTALL_COMMAND ""
-#  CMAKE_CACHE_ARGS
-#        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
-#        -Dc-ares_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares
-#        -DZLIB_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/zlib
-#        -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
-#        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-#        -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
-#        -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
-#        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src\ /std:c++17
-#  DEPENDS protobuf grpc libp2p leveldb
-#)
