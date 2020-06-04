@@ -20,7 +20,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 project(ipfs_lite C CXX)
-
+include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/functions.cmake)
 if(NOT MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 else()
@@ -161,3 +161,4 @@ endforeach()
 find_package(leveldb CONFIG REQUIRED)
 add_subdirectory(leveldb)
 add_subdirectory(ipfs)
+add_subdirectory(ipld)
