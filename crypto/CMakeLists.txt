@@ -1,1 +1,2 @@
 add_subdirectory(blake2)
+add_subdirectory(hasher)
