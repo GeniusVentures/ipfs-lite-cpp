@@ -16,7 +16,7 @@ target_link_libraries(ipfs_datastore_leveldb
     buffer
     cbor
     cid
-    leveldb
+    leveldb_wrapper
     )
 
 add_library(ipfs_blockservice

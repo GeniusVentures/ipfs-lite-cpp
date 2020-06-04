@@ -207,36 +207,43 @@ set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
 find_package(tsl_hat_trie CONFIG REQUIRED)
 
 find_package(libp2p CONFIG REQUIRED)
-# set(Protobuf_DIR "${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
+
+set(Protobuf_DIR "${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
+set(Protobuf_INCLUDE_DIR "${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
+set(Protobuf_LIBRARIES "${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
+find_package(Protobuf CONFIG REQUIRED)
+
 #set(c-ares_DIR "${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares")
 #set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/zlib")
 #set(absl_DIR "${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl")
 #set(gRPC_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc")
-#set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
+
+set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
+find_package(leveldb CONFIG REQUIRED)
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
 add_subdirectory(codec)
 add_subdirectory(common)
 add_subdirectory(crypto)
-#add_subdirectory(ipfs_lite)
+add_subdirectory(ipfs_lite)
 
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++17")
 message("================================================ipfs_lite CMAKE_CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
-ExternalProject_Add(ipfs_lite
-  PREFIX ipfs_lite
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs_lite"
-  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs_lite"
-  INSTALL_COMMAND ""
-  CMAKE_CACHE_ARGS
-        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
-        -Dc-ares_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares
-        -DZLIB_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/zlib
-        -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
-        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
-        -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
-        -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src\ /std:c++17
-  DEPENDS protobuf grpc libp2p leveldb
-)
+#ExternalProject_Add(ipfs_lite
+#  PREFIX ipfs_lite
+#  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ipfs_lite"
+#  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs_lite"
+#  INSTALL_COMMAND ""
+#  CMAKE_CACHE_ARGS
+#        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+#        -Dc-ares_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/c-ares/lib/cmake/c-ares
+#        -DZLIB_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/zlib
+#        -Dabsl_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/absl/lib/cmake/absl
+#        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+#        -DgRPC_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/grpc
+#        -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
+#        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${libp2p_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ ${CMAKE_CURRENT_SOURCE_DIR}/deps/tinycbor/src\ /std:c++17
+#  DEPENDS protobuf grpc libp2p leveldb
+#)
