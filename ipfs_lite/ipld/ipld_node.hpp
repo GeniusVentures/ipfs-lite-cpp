@@ -1,5 +1,5 @@
-#ifndef FILECOIN_STORAGE_IPLD_NODE_HPP
-#define FILECOIN_STORAGE_IPLD_NODE_HPP
+#ifndef IPFS_LITE_IPLD_NODE_HPP
+#define IPFS_LITE_IPLD_NODE_HPP
 
 #include <functional>
 #include <memory>
