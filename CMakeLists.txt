@@ -24,13 +24,6 @@ ExternalProject_Add(protobuf
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/protobuf
 )
 
-# Builds zlib project from the git submodule.
-ExternalProject_Add(zlib
-  PREFIX zlib
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../grpc/third_party/zlib"
-  CMAKE_CACHE_ARGS
-        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/zlib
-)
 
 # the location where protobuf-config.cmake will be installed varies by platform
 if (WIN32)
@@ -150,10 +143,6 @@ set(Protobuf_DIR "${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
 set(Protobuf_INCLUDE_DIR "${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
 set(Protobuf_LIBRARIES "${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
 find_package(Protobuf CONFIG REQUIRED)
-
-#set(ZLIB_ROOT "${CMAKE_CURRENT_BINARY_DIR}/zlib")
-
-
 
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
 find_package(leveldb CONFIG REQUIRED)
