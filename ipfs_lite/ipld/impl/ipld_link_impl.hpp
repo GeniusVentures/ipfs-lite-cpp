@@ -1,5 +1,5 @@
-#ifndef FILECOIN_STORAGE_IPLD_LINK_IMPL_HPP
-#define FILECOIN_STORAGE_IPLD_LINK_IMPL_HPP
+#ifndef IPFS_LITE_IPLD_LINK_IMPL_HPP
+#define IPFS_LITE_IPLD_LINK_IMPL_HPP
 
 #include <string>
 #include <utility>

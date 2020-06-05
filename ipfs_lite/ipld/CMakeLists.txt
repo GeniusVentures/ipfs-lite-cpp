@@ -12,3 +12,15 @@ add_library(ipld_link
 target_link_libraries(ipld_link
     cid
     )
+add_library(ipld_node
+    impl/ipld_node_impl.cpp
+    impl/ipld_node_encoder_pb.cpp
+    impl/ipld_node_decoder_pb.cpp
+    )
+target_link_libraries(ipld_node
+    ipld_node_protobuf
+    ipld_link
+    ipld_block
+    Boost::boost
+    cid
+    )
