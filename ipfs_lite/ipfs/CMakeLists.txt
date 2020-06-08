@@ -25,3 +25,5 @@ add_library(ipfs_blockservice
 target_link_libraries(ipfs_blockservice
     buffer
     )
+
+add_subdirectory(merkledag)
