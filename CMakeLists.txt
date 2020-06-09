@@ -12,6 +12,14 @@ include(ExternalProject)
 # specify GIT_REPOSITORY and GIT_TAG to have cmake download the dependency directly,
 # without needing to add a submodule to your project.
 
+# Builds GTest project from the git submodule.
+ExternalProject_Add(GTest
+  PREFIX GTest
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GTest"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_CXX_FLAGS:STRING="-Wno-deprecated-copy"
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
+)
 
 # Builds protobuf project from the git submodule.
 ExternalProject_Add(protobuf
@@ -147,6 +155,8 @@ find_package(Protobuf CONFIG REQUIRED)
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
 find_package(leveldb CONFIG REQUIRED)
 
+option(TESTING "Build tests" ON)
+
 add_subdirectory(deps)
 add_subdirectory(primitives)
 add_subdirectory(codec)
@@ -154,3 +164,7 @@ add_subdirectory(common)
 add_subdirectory(crypto)
 add_subdirectory(ipfs_lite)
 
+if (TESTING)
+  enable_testing()
+  add_subdirectory(test)
+endif ()
