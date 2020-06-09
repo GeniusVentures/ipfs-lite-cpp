@@ -17,9 +17,12 @@ ExternalProject_Add(GTest
   PREFIX GTest
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GTest"
   CMAKE_CACHE_ARGS
-        -DCMAKE_CXX_FLAGS:STRING="-Wno-deprecated-copy"
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
 )
+set(GTest_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/cmake")
+
+# find_package(GTest CONFIG REQUIRED)
+# find_package(GMock CONFIG REQUIRED)
 
 # Builds protobuf project from the git submodule.
 ExternalProject_Add(protobuf
