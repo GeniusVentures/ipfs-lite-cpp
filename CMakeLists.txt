@@ -19,9 +19,9 @@ ExternalProject_Add(GTest
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
 )
-set(GTest_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/cmake")
+set(GTest_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/lib/cmake/GTest")
 
-# find_package(GTest CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 # find_package(GMock CONFIG REQUIRED)
 
 # Builds protobuf project from the git submodule.
@@ -158,7 +158,7 @@ find_package(Protobuf CONFIG REQUIRED)
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
 find_package(leveldb CONFIG REQUIRED)
 
-option(TESTING "Build tests" OFF)
+option(TESTING "Build tests" ON)
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
