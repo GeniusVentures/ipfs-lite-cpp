@@ -9,6 +9,6 @@ namespace sgns {
   };
 }  // namespace sgns
 
-OUTCOME_HPP_DECLARE_ERROR(fc, TodoError);
+OUTCOME_HPP_DECLARE_ERROR_2(sgns, TodoError);
 
 #endif  // CPP_IPFS_LITE_COMMON_TODO_ERROR_HPP
