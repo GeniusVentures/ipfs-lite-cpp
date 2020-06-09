@@ -33,3 +33,11 @@ target_link_libraries(logger
     spdlog::spdlog
     )
 add_subdirectory(libp2p)
+
+add_library(todo_error
+    todo_error.hpp
+    todo_error.cpp
+    )
+target_link_libraries(todo_error
+    outcome
+    )
