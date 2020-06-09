@@ -1,6 +1,7 @@
 addtest(hexutil_test
     hexutil_test.cpp
     )
+
 target_link_libraries(hexutil_test
     hexutil
     )
