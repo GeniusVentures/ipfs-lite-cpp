@@ -158,7 +158,7 @@ find_package(Protobuf CONFIG REQUIRED)
 set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
 find_package(leveldb CONFIG REQUIRED)
 
-option(TESTING "Build tests" ON)
+option(TESTING "Build tests" OFF)
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
