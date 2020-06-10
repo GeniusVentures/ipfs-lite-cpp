@@ -27,3 +27,4 @@ target_link_libraries(ipfs_blockservice
     )
 
 add_subdirectory(merkledag)
+add_subdirectory(graphsync)
