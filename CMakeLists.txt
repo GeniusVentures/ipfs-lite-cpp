@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.5.1)
 
 # Project
 project(ipfs-lite-cpp C CXX)
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+
 include(cmake/functions.cmake)
 
 
