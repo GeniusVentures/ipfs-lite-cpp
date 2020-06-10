@@ -1,8 +1,8 @@
-# Assumed folder structure
-This projects needs grpc, so you have to download grpc repository first.
-
-    git clone -b v1.28.1 https://github.com/grpc/grpc
-    git clone -b develop ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/ipfs-lite-cpp.git
+# Download thirdparty project
+   
+    git clone ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/thirdparty.git --recursive 
+    cd thirdparty
+    git checkout develop
 
 Then folder structure as follows:
 
@@ -17,7 +17,10 @@ Then folder structure as follows:
             └── CMakeList.txt               # CMake file
  
 # Build on Windows
-please refer grpc build requirements.
+I used visual studio 2017 to compile ipfs-lite-cpp project.
+## download Prebuilt-Boost libraries for windows
+## download OpenSSL and install
+## build ipfs_lite using following commands:
 
     cd ipfs-lite-cpp
     md .build
