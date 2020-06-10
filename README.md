@@ -18,9 +18,9 @@ Then folder structure as follows:
  
 # Build on Windows
 I used visual studio 2017 to compile ipfs-lite-cpp project.
-## download Prebuilt-Boost libraries for windows
-## download OpenSSL and install
-## build ipfs_lite using following commands:
+1. download Prebuilt-Boost libraries for windows
+2. download OpenSSL and install
+3. build ipfs_lite using following commands:
 
     cd ipfs-lite-cpp
     md .build
