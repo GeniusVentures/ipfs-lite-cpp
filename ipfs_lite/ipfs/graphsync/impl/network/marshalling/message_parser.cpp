@@ -59,9 +59,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
             dst.selector = fromString(src.selector());
             dst.priority = src.priority();
 
-            for (const auto &[k, v] : src.extensions()) {
-              std::vector<uint8_t> data(v.begin(), v.end());
-              dst.extensions.emplace_back(Extension{k, data});
+            // for (const auto &[k, v] : src.extensions()) {
+            //   std::vector<uint8_t> data(v.begin(), v.end());
+            //   dst.extensions.emplace_back(Extension{k, data});
+            // }
+            for (const auto &kv : src.extensions()) {
+              std::vector<uint8_t> data(kv.second.begin(), kv.second.end());
+              dst.extensions.emplace_back(Extension{kv.first, data});
             }
           }
         }
@@ -81,9 +85,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           OUTCOME_TRY(status, extractStatusCode(src.status()));
           dst.status = status;
 
-          for (const auto &[k, v] : src.extensions()) {
-            std::vector<uint8_t> data(v.begin(), v.end());
-            dst.extensions.emplace_back(Extension{k, data});
+          // for (const auto &[k, v] : src.extensions()) {
+          //   std::vector<uint8_t> data(v.begin(), v.end());
+          //   dst.extensions.emplace_back(Extension{k, data});
+          // }
+          for (const auto &kv : src.extensions()) {
+            std::vector<uint8_t> data(kv.second.begin(), kv.second.end());
+            dst.extensions.emplace_back(Extension{kv.first, data});
           }
         }
       }
