@@ -7,7 +7,7 @@
 #include "marshalling/message_parser.hpp"
 #include "peer_context.hpp"
 
-namespace sgsn::ipfs_liteipfs::graphsync {
+namespace sgsn::ipfs_lite::ipfs::graphsync {
 
   MessageReader::MessageReader(StreamPtr stream,
                                EndpointToPeerFeedback &feedback)
@@ -42,4 +42,4 @@ namespace sgsn::ipfs_liteipfs::graphsync {
     feedback_.onReaderEvent(stream, std::move(msg_res));
   }
 
-}  // namespace sgsn::ipfs_liteipfs::graphsync
+}  // namespace sgsn::ipfs_lite::ipfs::graphsync
