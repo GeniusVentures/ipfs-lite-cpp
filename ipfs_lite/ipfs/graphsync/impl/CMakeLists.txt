@@ -1,6 +1,7 @@
 add_subdirectory(network/marshalling/protobuf)
 add_library(graphsync
     network/peer_context.cpp
+    network/length_delimited_message_reader.cpp
     network/message_reader.cpp
     network/message_queue.cpp
     network/outbound_endpoint.cpp

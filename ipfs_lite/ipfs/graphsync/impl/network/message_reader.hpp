@@ -4,8 +4,8 @@
 
 #include "network_fwd.hpp"
 
-namespace sgsn::ipfs_lite::ipfs::graphsync {
-
+namespace sgns::ipfs_lite::ipfs::graphsync {
+  
   class LengthDelimitedMessageReader;
 
   /// Per-stream message reader, graphsync specific
@@ -32,6 +32,6 @@ namespace sgsn::ipfs_lite::ipfs::graphsync {
     std::shared_ptr<LengthDelimitedMessageReader> stream_reader_;
   };
 
-}  // namespace sgsn::ipfs_lite::ipfs::graphsync
+}  // namespace sgns::ipfs_lite::ipfs::graphsync
 
 #endif  // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP

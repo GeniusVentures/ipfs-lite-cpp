@@ -9,6 +9,8 @@
 namespace libp2p::connection {
   // libp2p stream forward decl
   class Stream;
+  // struct Stream;
+  
 }  // namespace libp2p::connection
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
