@@ -1,6 +1,7 @@
 
 #ifndef CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
 #define CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
+#include <deque>
 
 #include <libp2p/protocol/common/scheduler.hpp>
 #include "marshalling/message.hpp"
