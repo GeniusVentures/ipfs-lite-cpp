@@ -26,10 +26,22 @@ I used visual studio 2017 to compile ipfs-lite-cpp project.
     md .build
     cd .build
     cmake .. -G "Visual Studio 15 2017 Win64" \
-        -DBUILD_TESTING=OFF -DCMAKE_USE_OPENSSL=ON \
+        -DBUILD_TESTING=OFF \
         -DBOOST_ROOT="C:/local/boost_1_70_0" \
         -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
         -DBOOST_LIBRARY_DIR="C:/local/boost_1_70_0/lib64-msvc-14.1" \
         -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64"
     cmake --build . --config Release
 
+if you are going to build and test , then use following commands
+
+    cmake .. -G "Visual Studio 15 2017 Win64" \
+        -DTESTING=ON \
+        -DBOOST_ROOT="C:/local/boost_1_70_0" \
+        -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
+        -DBOOST_LIBRARY_DIR="C:/local/boost_1_70_0/lib64-msvc-14.1" \
+        -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64"
+    cmake --build . --config Release
+    ctest -C Release
+
+    
