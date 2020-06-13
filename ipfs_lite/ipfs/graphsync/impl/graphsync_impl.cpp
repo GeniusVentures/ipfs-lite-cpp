@@ -1,11 +1,11 @@
 
-
+#include "network/network.hpp"
 #include "graphsync_impl.hpp"
 
 #include <cassert>
 
 #include "local_requests.hpp"
-#include "network/network.hpp"
+// #include "network/network.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
   /// Selector that matches current node
