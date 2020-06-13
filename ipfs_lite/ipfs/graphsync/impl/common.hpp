@@ -2,9 +2,9 @@
 #ifndef CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP
 #define CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP
 
-#include "common/logger.hpp"
+// #include "common/logger.hpp"
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
-
+#include "common/logger.hpp"
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
   /// Graphsync internal error codes

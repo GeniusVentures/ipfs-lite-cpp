@@ -1,5 +1,11 @@
 add_subdirectory(network/marshalling/protobuf)
 add_library(graphsync
+    common.cpp
+    extension.cpp
+    graphsync_impl.cpp
+    merkledag_bridge_impl.cpp
+    local_requests.cpp
+    network/network.cpp
     network/peer_context.cpp
     network/length_delimited_message_reader.cpp
     network/message_reader.cpp
