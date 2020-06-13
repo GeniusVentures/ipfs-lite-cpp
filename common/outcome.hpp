@@ -10,7 +10,7 @@
 #define PP_CAT_I(a, b) PP_CAT_II(~, a##b)
 #define PP_CAT_II(p, res) res
 
-#define UNIQUE_NAME(base) PP_CAT(base, __LINE__)
+#define _UNIQUE_NAME(base) PP_CAT(base, __LINE__)
 
 /**
  * OUTCOME_EXCEPT raises exception in case of result has error.
@@ -27,13 +27,13 @@
 #define _OUTCOME_EXCEPT_OVERLOAD(_1, _2, NAME, ...) NAME
 #define OUTCOME_EXCEPT(...)                                                   \
   _OUTCOME_EXCEPT_OVERLOAD(__VA_ARGS__, _OUTCOME_EXCEPT_2, _OUTCOME_EXCEPT_1) \
-  (UNIQUE_NAME(_r), __VA_ARGS__)
+  (_UNIQUE_NAME(_r), __VA_ARGS__)
 
 #define _OUTCOME_TRYA(var, val, expr) \
   auto &&var = expr;                  \
   if (!var) return var.error();       \
   val = std::move(var.value());
-#define OUTCOME_TRYA(val, expr) _OUTCOME_TRYA(UNIQUE_NAME(_r), val, expr)
+#define OUTCOME_TRYA(val, expr) _OUTCOME_TRYA(_UNIQUE_NAME(_r), val, expr)
 
 namespace sgns::outcome {
   using libp2p::outcome::failure;
@@ -64,6 +64,6 @@ namespace sgns::outcome {
   auto &&var = (res) ? (res.value()) : (alternative);
 
 #define OUTCOME_ALTERNATIVE(var, expression, alternative) \
-  _OUTCOME_ALTERNATIVE(UNIQUE_NAME(_r), var, expression, alternative)
+  _OUTCOME_ALTERNATIVE(_UNIQUE_NAME(_r), var, expression, alternative)
 
 #endif  // IPFS_LITE_COMMON_OUTCOME_HPP

@@ -18,7 +18,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     auto *dst = pb_msg_->add_requests();
     dst->set_id(request_id);
 
-    _OUTCOME_EXCEPT_2(UNIQUE_NAME(_r), d, root_cid.toBytes());
+    _OUTCOME_EXCEPT_2(_UNIQUE_NAME(_r), d, root_cid.toBytes());
 
     dst->set_root(d.data(), d.size());
     if (!selector.empty()) {

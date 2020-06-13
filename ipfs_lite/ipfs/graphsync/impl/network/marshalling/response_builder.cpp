@@ -30,9 +30,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                                      const common::Buffer &data) {
     auto *dst = pb_msg_->add_data();
 
-    _OUTCOME_EXCEPT_2(UNIQUE_NAME(_r), d, cid.toBytes());
+    _OUTCOME_EXCEPT_2(_UNIQUE_NAME(_r), d, cid.toBytes());
     auto prefix_reader = gsl::make_span(std::as_const(d));
-    _OUTCOME_EXCEPT_1(UNIQUE_NAME(_r), CID::read(prefix_reader, true));
+    _OUTCOME_EXCEPT_1(_UNIQUE_NAME(_r), CID::read(prefix_reader, true));
     dst->set_prefix(d.data(), d.size() - prefix_reader.size());
     dst->set_data(data.data(), data.size());
     empty_ = false;
