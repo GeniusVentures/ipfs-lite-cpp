@@ -24,7 +24,7 @@ namespace libp2p::multi {
   CBOR_DECODE(Multiaddress, ma) {
     std::vector<uint8_t> bytes;
     s >> bytes;
-    _OUTCOME_EXCEPT_2(UNIQUE_NAME(_r),created, Multiaddress::create(bytes));
+    _OUTCOME_EXCEPT_2(_UNIQUE_NAME(_r),created, Multiaddress::create(bytes));
     ma = std::move(created);
     return s;
   }

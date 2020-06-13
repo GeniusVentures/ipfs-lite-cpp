@@ -10,7 +10,7 @@
 #define PP_CAT_I(a, b) PP_CAT_II(~, a##b)
 #define PP_CAT_II(p, res) res
 
-#define UNIQUE_NAME(base) PP_CAT(base, __LINE__)
+#define _UNIQUE_NAME(base) PP_CAT(base, __LINE__)
 
 #define EXPECT_OUTCOME_TRUE_void(var, expr) \
   auto &&var = expr;                        \
@@ -34,19 +34,19 @@
   EXPECT_OUTCOME_TRUE_name(var, val, expr)
 
 #define EXPECT_OUTCOME_TRUE_2(val, expr) \
-  EXPECT_OUTCOME_TRUE_3(UNIQUE_NAME(_r), val, expr)
+  EXPECT_OUTCOME_TRUE_3(_UNIQUE_NAME(_r), val, expr)
 
 #define EXPECT_OUTCOME_TRUE_1(expr) \
-  EXPECT_OUTCOME_TRUE_void(UNIQUE_NAME(_v), expr)
+  EXPECT_OUTCOME_TRUE_void(_UNIQUE_NAME(_v), expr)
 
 #define EXPECT_OUTCOME_FALSE_3(var, val, expr) \
   EXPECT_OUTCOME_FALSE_name(var, val, expr)
 
 #define EXPECT_OUTCOME_FALSE_2(val, expr) \
-  EXPECT_OUTCOME_FALSE_3(UNIQUE_NAME(_r), val, expr)
+  EXPECT_OUTCOME_FALSE_3(_UNIQUE_NAME(_r), val, expr)
 
 #define EXPECT_OUTCOME_FALSE_1(expr) \
-  EXPECT_OUTCOME_FALSE_void(UNIQUE_NAME(_v), expr)
+  EXPECT_OUTCOME_FALSE_void(_UNIQUE_NAME(_v), expr)
 
 /**
  * Use this macro in GTEST with 2 arguments to assert that getResult()
@@ -54,10 +54,10 @@
  * EXPECT_OUTCOME_TRUE(val, getResult());
  */
 #define EXPECT_OUTCOME_TRUE(val, expr) \
-  EXPECT_OUTCOME_TRUE_name(UNIQUE_NAME(_r), val, expr)
+  EXPECT_OUTCOME_TRUE_name(_UNIQUE_NAME(_r), val, expr)
 
 #define EXPECT_OUTCOME_FALSE(val, expr) \
-  EXPECT_OUTCOME_FALSE_name(UNIQUE_NAME(_f), val, expr)
+  EXPECT_OUTCOME_FALSE_name(_UNIQUE_NAME(_f), val, expr)
 
 #define EXPECT_OUTCOME_TRUE_MSG_void(var, expr, msg)                       \
   auto &&var = expr;                                                       \
@@ -78,7 +78,7 @@
  * and appends custom error message specified in msg.
  */
 #define EXPECT_OUTCOME_TRUE_MSG_1(expr, msg) \
-  EXPECT_OUTCOME_TRUE_MSG_void(UNIQUE_NAME(_v), expr, msg)
+  EXPECT_OUTCOME_TRUE_MSG_void(_UNIQUE_NAME(_v), expr, msg)
 
 /**
  * Use this macro in GTEST with 3 arguments to assert that
@@ -88,25 +88,25 @@
  * and appends custom error message specified in msg.
  */
 #define EXPECT_OUTCOME_TRUE_MSG(val, expr, msg) \
-  EXPECT_OUTCOME_TRUE_MSG_name(UNIQUE_NAME(_r), val, expr, msg)
+  EXPECT_OUTCOME_TRUE_MSG_name(_UNIQUE_NAME(_r), val, expr, msg)
 
 #define EXPECT_OUTCOME_RAISE_3(var, ecode, statement) \
   try { statement; FAIL() << "Line " << __LINE__ << ": " << #ecode << " not raised"; } \
   catch (std::system_error &var) { EXPECT_EQ(var.code(), ecode); }
 
 #define EXPECT_OUTCOME_RAISE(ecode, statement) \
-  EXPECT_OUTCOME_RAISE_3(UNIQUE_NAME(_e), ecode, statement)
+  EXPECT_OUTCOME_RAISE_3(_UNIQUE_NAME(_e), ecode, statement)
 
 #define EXPECT_OUTCOME_ERROR_3(var, ecode, expr) \
   { EXPECT_OUTCOME_FALSE_2(var, expr); EXPECT_EQ(var, ecode); }
 
 #define EXPECT_OUTCOME_ERROR(ecode, expr) \
-  EXPECT_OUTCOME_ERROR_3(UNIQUE_NAME(_e), ecode, expr)
+  EXPECT_OUTCOME_ERROR_3(_UNIQUE_NAME(_e), ecode, expr)
 
 #define EXPECT_OUTCOME_EQ_3(var, expr, value) \
   { EXPECT_OUTCOME_TRUE_2(var, expr); EXPECT_EQ(var, value); }
 
 #define EXPECT_OUTCOME_EQ(expr, value) \
-  EXPECT_OUTCOME_EQ_3(UNIQUE_NAME(_v), expr, value)
+  EXPECT_OUTCOME_EQ_3(_UNIQUE_NAME(_v), expr, value)
 
 #endif  // CPP_IPFS_LITE_GTEST_OUTCOME_UTIL_HPP
