@@ -19,7 +19,7 @@ ExternalProject_Add(GTest
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
 )
 
-set(GTest_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/lib/cmake/GTest")
+set(_FINDPACKAGE_GTEST_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/lib/cmake/GTest")
 
 # find_package(GTest CONFIG REQUIRED)
 ## find_package(GMock CONFIG REQUIRED)
@@ -126,12 +126,22 @@ ExternalProject_Add(libp2p
 
   DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
 )
-set(libp2p_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
-set(libp2p_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/include")
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${_FINDPACKAGE_GSL_INCLUDE_DIR}
-  deps/tinycbor/src
+
+# Builds ipfs-lite-cpp
+
+ExternalProject_Add(ipfs-lite-cpp
+  PREFIX ipfs-lite-cpp
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../.."
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs-lite-cpp"
+  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DGTest_DIR:PATH=${_FINDPACKAGE_GTEST_CONFIG_DIR}
+        -DBOOST_ROOT:PATH="${BOOST_ROOT}"
+        -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
+        -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
+
+  DEPENDS GTest Boost OpenSSL spdlog tsl_hat_trie libp2p Protobuf leveldb
 )
-
-
