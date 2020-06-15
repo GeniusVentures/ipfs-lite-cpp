@@ -1,29 +1,8 @@
 
 cmake_minimum_required(VERSION 3.5.1)
-set(
-    CMAKE_TOOLCHAIN_FILE
-    "${CMAKE_SOURCE_DIR}/cmake/toolchain/cxx17.cmake"
-    CACHE
-    FILEPATH
-    "Default toolchain"
-)
+
 # Project
-project(ipfs-lite-cpp C CXX)
-
-if (NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
-  # https://cgold.readthedocs.io/en/latest/tutorials/toolchain/globals/cxx-standard.html#summary
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-endif ()
-
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-
-include(cmake/functions.cmake)
+project(ipfs-lite-cpp-windows C CXX)
 
 
 include(ExternalProject)
@@ -35,7 +14,7 @@ include(ExternalProject)
 # Builds GTest project from the git submodule.
 ExternalProject_Add(GTest
   PREFIX GTest
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GTest"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../GTest"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
 )
@@ -48,7 +27,7 @@ set(GTest_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/lib/cmake/GTest")
 # Builds protobuf project from the git submodule.
 ExternalProject_Add(protobuf
   PREFIX protobuf
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../grpc/third_party/protobuf/cmake"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../grpc/third_party/protobuf/cmake"
   CMAKE_CACHE_ARGS
         -Dprotobuf_BUILD_TESTS:BOOL=OFF
         -Dprotobuf_WITH_ZLIB:BOOL=OFF
@@ -58,11 +37,7 @@ ExternalProject_Add(protobuf
 
 
 # the location where protobuf-config.cmake will be installed varies by platform
-if (WIN32)
-  set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/cmake")
-else()
-  set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/lib/cmake/protobuf")
-endif()
+set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/cmake")
 set(_FINDPACKAGE_PROTOBUF_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/include")
 set(_FINDPACKAGE_PROTOBUF_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/lib")
 
@@ -75,7 +50,7 @@ endif()
 # Builds leveldb
 ExternalProject_Add(leveldb
   PREFIX leveldb
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../leveldb"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../leveldb"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/leveldb
 )
@@ -83,7 +58,7 @@ set(_FINDPACKAGE_LEVELDB_DIR "${CMAKE_CURRENT_BINARY_DIR}/leveldb/lib/cmake/leve
 # Builds Microsoft.GSL
 ExternalProject_Add(Microsoft.GSL
   PREFIX Microsoft.GSL
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../GSL"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../GSL"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GSL
         -DGSL_TEST:BOOL=OFF
@@ -92,7 +67,7 @@ set(_FINDPACKAGE_GSL_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/GSL/include")
 # Builds spdlog v1.4.2
 ExternalProject_Add(spdlog
   PREFIX spdlog
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../spdlog"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../spdlog"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
 )
@@ -103,7 +78,7 @@ set(_FINDPACKAGE_SPDLOG_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/include"
 # Builds tsl_hat_trie 343e0dac54fc8491065e8a059a02db9a2b1248ab
 ExternalProject_Add(tsl_hat_trie
   PREFIX tsl_hat_trie
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../hat-trie"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../hat-trie"
   CMAKE_CACHE_ARGS
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/hat-trie
 )
@@ -111,7 +86,7 @@ set(_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/hat-trie/l
 # Builds Boost.DI c5287ee710ad90f5286d0cc2b9e49b72d89267a6
 ExternalProject_Add(Boost.DI
   PREFIX Boost.DI
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../Boost.DI"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../Boost.DI"
   CMAKE_CACHE_ARGS
         -DBOOST_DI_OPT_BUILD_TESTS:BOOL=OFF
         -DBOOST_DI_OPT_BUILD_EXAMPLES:BOOL=OFF
@@ -130,7 +105,7 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header onl
 
 ExternalProject_Add(libp2p
   PREFIX libp2p
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../libp2p"
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../libp2p"
   CMAKE_CACHE_ARGS
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
         -DCMAKE_USE_OPENSSL:BOOL=ON
@@ -159,37 +134,4 @@ include_directories(
   deps/tinycbor/src
 )
 
-# find packages for common
-message("libp2p_DIR=" ${libp2p_DIR})
 
-find_package(OpenSSL REQUIRED)
-
-set(spdlog_DIR "${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
-find_package(spdlog CONFIG REQUIRED)
-
-set(tsl_hat_trie_DIR "${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}")
-find_package(tsl_hat_trie CONFIG REQUIRED)
-
-find_package(libp2p CONFIG REQUIRED)
-
-set(Protobuf_DIR "${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
-set(Protobuf_INCLUDE_DIR "${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
-set(Protobuf_LIBRARIES "${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
-find_package(Protobuf CONFIG REQUIRED)
-
-set(leveldb_DIR "${_FINDPACKAGE_LEVELDB_DIR}")
-find_package(leveldb CONFIG REQUIRED)
-
-option(TESTING "Build tests" ON)
-
-add_subdirectory(deps)
-add_subdirectory(primitives)
-add_subdirectory(codec)
-add_subdirectory(common)
-add_subdirectory(crypto)
-add_subdirectory(ipfs_lite)
-
-if (TESTING)
-  enable_testing()
-  add_subdirectory(test)
-endif ()
