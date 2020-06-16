@@ -38,7 +38,7 @@ include_directories(
 
 # # find packages for common
 # message("libp2p_DIR=" ${libp2p_DIR})
-
+find_package(GTest CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
