@@ -17,24 +17,31 @@ if (NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
   set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 endif ()
 
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+# set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+# set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 
-set(CompilerFlags
-        CMAKE_CXX_FLAGS
-        CMAKE_CXX_FLAGS_DEBUG
-        CMAKE_CXX_FLAGS_RELEASE
-        CMAKE_C_FLAGS
-        CMAKE_C_FLAGS_DEBUG
-        CMAKE_C_FLAGS_RELEASE
-        )
-foreach(CompilerFlag ${CompilerFlags})
-  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-endforeach()
+# set(CompilerFlags
+#         CMAKE_CXX_FLAGS
+#         CMAKE_CXX_FLAGS_DEBUG
+#         CMAKE_CXX_FLAGS_RELEASE
+#         CMAKE_C_FLAGS
+#         CMAKE_C_FLAGS_DEBUG
+#         CMAKE_C_FLAGS_RELEASE
+#         )
+# foreach(CompilerFlag ${CompilerFlags})
+#   string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+# endforeach()
 
 include(cmake/functions.cmake)
+include(cmake/print.cmake)
+print("C flags: ${CMAKE_C_FLAGS}")
+print("CXX flags: ${CMAKE_CXX_FLAGS}")
+print("C Debug flags: ${CMAKE_C_FLAGS_DEBUG}")
+print("CXX Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
+print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 # BOOST library 
 set(Boost_USE_STATIC_LIBS OFF) 
