@@ -1,9 +1,46 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
+function(print)
+  message(STATUS "[${CMAKE_PROJECT_NAME}] ${ARGV}")
+endfunction()
+
 # Project
 project(ipfs-lite-cpp-windows C CXX)
 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MT")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd")
+
+if (CMAKE_BUILD_TYPE EQUAL Debug)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MTd")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MTd")
+endif (CMAKE_BUILD_TYPE EQUAL Debug) 
+
+if (CMAKE_BUILD_TYPE EQUAL Release)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MT")
+endif (CMAKE_BUILD_TYPE EQUAL Release) 
+print("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+set(CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+foreach(CompilerFlag ${CompilerFlags})
+  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+endforeach()
+
+print("C flags: ${CMAKE_C_FLAGS}")
+print("CXX flags: ${CMAKE_CXX_FLAGS}")
+print("C Debug flags: ${CMAKE_C_FLAGS_DEBUG}")
+print("CXX Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
+print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 include(ExternalProject)
 
@@ -103,11 +140,13 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header onl
 
 # Builds libp2p
 
+
 ExternalProject_Add(libp2p
   PREFIX libp2p
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../libp2p"
   CMAKE_CACHE_ARGS
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DGTest_DIR:PATH=${_FINDPACKAGE_GTEST_CONFIG_DIR}
         -DCMAKE_USE_OPENSSL:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
         -DTESTING:BOOL=OFF 
@@ -122,9 +161,11 @@ ExternalProject_Add(libp2p
         -DBOOST_ROOT:PATH="${BOOST_ROOT}"
         -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
         -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        # -DTESTING:BOOL=${TESTING}
+        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
 
-  DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
+  DEPENDS GTest protobuf spdlog tsl_hat_trie Boost.DI 
 )
 set(_FINDPACKAGE_libp2p_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
 # Builds ipfs-lite-cpp
@@ -150,5 +191,11 @@ ExternalProject_Add(ipfs-lite-cpp
         -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
         -DTESTING:BOOL=${TESTING}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DCMAKE_CXX_FLAGS_RELEASE:STRING=${DCMAKE_CXX_FLAGS_RELEASE}
+        -DCMAKE_C_FLAGS_RELEASE:STRING=${DCMAKE_C_FLAGS_RELEASE}
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${DCMAKE_CXX_FLAGS_DEBUG}
+        -DCMAKE_C_FLAGS_DEBUG:STRING=${DCMAKE_C_FLAGS_DEBUG}
+        -DCMAKE_BUILD_TYPE:STRING=${DCMAKE_BUILD_TYPE}
   DEPENDS GTest Microsoft.GSL spdlog tsl_hat_trie libp2p protobuf leveldb
 )
