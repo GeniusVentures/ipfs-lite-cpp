@@ -25,7 +25,7 @@ I used visual studio 2017 to compile ipfs-lite-cpp project.
     cd ipfs-lite-cpp
     md .build
     cd .build
-    cmake .. -G "Visual Studio 15 2017 Win64" \
+    cmake ../build/Windows -G "Visual Studio 15 2017 Win64" \
         -DBUILD_TESTING=OFF \
         -DBOOST_ROOT="C:/local/boost_1_70_0" \
         -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
@@ -35,7 +35,7 @@ I used visual studio 2017 to compile ipfs-lite-cpp project.
 
 if you are going to build and test , then use following commands
 
-    cmake .. -G "Visual Studio 15 2017 Win64" \
+    cmake ../build/Windows -G "Visual Studio 15 2017 Win64" \
         -DTESTING=ON \
         -DBOOST_ROOT="C:/local/boost_1_70_0" \
         -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
