@@ -126,12 +126,12 @@ ExternalProject_Add(libp2p
 
   DEPENDS protobuf spdlog tsl_hat_trie Boost.DI 
 )
-
+set(_FINDPACKAGE_libp2p_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
 # Builds ipfs-lite-cpp
 
 ExternalProject_Add(ipfs-lite-cpp
   PREFIX ipfs-lite-cpp
-  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../.."
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../ipfs-lite-cpp"
   BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs-lite-cpp"
   INSTALL_COMMAND ""
   CMAKE_CACHE_ARGS
@@ -142,6 +142,13 @@ ExternalProject_Add(ipfs-lite-cpp
         -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
         -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
         -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
-
-  DEPENDS GTest Boost OpenSSL spdlog tsl_hat_trie libp2p Protobuf leveldb
+        -Dtsl_hat_trie_DIR:PATH=${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}
+        -Dlibp2p_DIR:PATH=${_FINDPACKAGE_libp2p_CONFIG_DIR}
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DProtobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}
+        -Dleveldb_DIR:PATH=${_FINDPACKAGE_LEVELDB_DIR}
+        -DTESTING:BOOL=${TESTING}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+  DEPENDS GTest Microsoft.GSL spdlog tsl_hat_trie libp2p protobuf leveldb
 )
