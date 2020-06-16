@@ -27,9 +27,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     assert(feedback_);
 
     // clang-format off
+    // host_->setProtocolHandler(
+    //     protocol_id_,
+    //     [wptr = weak_from_this()] (outcome::result<StreamPtr> rstream) {
+    //       auto self = wptr.lock();
+    //       if (self) { self->onStreamAccepted(std::move(rstream)); }
+    //     }
+    // );
     host_->setProtocolHandler(
         protocol_id_,
-        [wptr = weak_from_this()] (outcome::result<StreamPtr> rstream) {
+        [wptr = weak_from_this()] (std::shared_ptr<libp2p::connection::Stream> rstream) {
           auto self = wptr.lock();
           if (self) { self->onStreamAccepted(std::move(rstream)); }
         }
