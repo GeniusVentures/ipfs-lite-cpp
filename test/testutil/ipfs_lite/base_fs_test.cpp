@@ -7,8 +7,8 @@ namespace test {
     clear();
     mkdir();
 
-    logger = sgns::common::createLogger(getPathString());
-    logger->set_level(spdlog::level::debug);
+    logger_ = sgns::common::createLogger(getPathString());
+    logger_->set_level(spdlog::level::debug);
   }
 
   BaseFS_Test::~BaseFS_Test() {

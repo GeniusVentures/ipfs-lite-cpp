@@ -2,6 +2,8 @@
 #ifndef CPP_IPFS_LITE_LOGGER_HPP
 #define CPP_IPFS_LITE_LOGGER_HPP
 
+
+
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
 
