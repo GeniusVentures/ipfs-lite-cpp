@@ -72,7 +72,7 @@ namespace test {
 
    protected:
     fs::path base_path;
-    sgns::common::Logger logger;
+    sgns::common::Logger logger_;
   };
 
 }  // namespace test

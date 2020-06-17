@@ -94,14 +94,14 @@ TEST_F(LevelDB_Integration_Test, Iterator) {
 
   std::array<size_t, size> counter{};
 
-  logger->warn("forward iteration");
+  // logger_->warn("forward iteration");
   auto it = db_->cursor();
   for (it->seekToFirst(); it->isValid(); it->next()) {
     auto k = it->key();
     auto v = it->value();
     EXPECT_EQ(k, v);
 
-    logger->info("key: {}, value: {}", k.toHex(), v.toHex());
+    // logger_->info("key: {}, value: {}", k.toHex(), v.toHex());
 
     EXPECT_GE(k[0], 0);
     EXPECT_LT(k[0], size);
@@ -114,7 +114,7 @@ TEST_F(LevelDB_Integration_Test, Iterator) {
     EXPECT_EQ(counter[i], 1);
   }
 
-  logger->warn("backward iteration");
+  // logger_->warn("backward iteration");
   size_t c = 0;
   uint8_t index = 0xf;
   Buffer seekTo{index};
@@ -124,7 +124,7 @@ TEST_F(LevelDB_Integration_Test, Iterator) {
     auto v = it->value();
     EXPECT_EQ(k, v);
 
-    logger->info("key: {}, value: {}", k.toHex(), v.toHex());
+    // logger_->info("key: {}, value: {}", k.toHex(), v.toHex());
 
     c++;
   }
