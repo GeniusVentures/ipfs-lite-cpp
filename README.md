@@ -30,7 +30,7 @@ I used visual studio 2017 to compile ipfs-lite-cpp project.
         -DBOOST_ROOT="C:/local/boost_1_70_0" \
         -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
         -DBOOST_LIBRARY_DIR="C:/local/boost_1_70_0/lib64-msvc-14.1" \
-        -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64"
+        -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64" -DCMAKE_BUILD_TYPE=Release
     cmake --build . --config Release
 
 if you are going to build and test , then use following commands
@@ -40,8 +40,9 @@ if you are going to build and test , then use following commands
         -DBOOST_ROOT="C:/local/boost_1_70_0" \
         -DBOOST_INCLUDE_DIR="C:/local/boost_1_70_0" \
         -DBOOST_LIBRARY_DIR="C:/local/boost_1_70_0/lib64-msvc-14.1" \
-        -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64"
+        -DOPENSSL_ROOT_DIR="C:/Program Files/OpenSSL-Win64" -DCMAKE_BUILD_TYPE=Release
     cmake --build . --config Release
+    cd ipfs-lite-cpp
     ctest -C Release
 
     
