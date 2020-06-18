@@ -73,12 +73,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
       std::vector<CID> cids;
       Extension do_not_send_cids_extension = encodeDontSendCids(cids);
       extensions.push_back(do_not_send_cids_extension);
-      requests_.push_back(graphsync_->makeRequest(peer,
-                                                  std::move(address),
-                                                  root_cid,
-                                                  {},
-                                                  extensions,
-                                                  requestProgressCallback()));
+      
+      // requests_.push_back(graphsync_->makeRequest(peer,
+      //                                             std::move(address),
+      //                                             root_cid,
+      //                                             {},
+      //                                             extensions,
+      //                                             requestProgressCallback()));
+//-------------------------------------------------------------------------------------
+      gsl::span<const uint8_t> selector = {};
+      Subscription subscription = graphsync_->makeRequest(peer,
+                                            std::move(address),
+                                            root_cid,
+                                            selector,
+                                            extensions,
+                                            requestProgressCallback());
+      requests_.push_back(subscription);
+//-----------------------------------------------------------------------------
       ++requests_sent;
     }
 
