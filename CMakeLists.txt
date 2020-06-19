@@ -47,7 +47,7 @@ print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 set(Boost_USE_STATIC_LIBS ON) 
 set(Boost_USE_MULTITHREADED ON)  
 set(Boost_USE_STATIC_RUNTIME ON) 
-find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
+find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}

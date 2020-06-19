@@ -6,7 +6,6 @@
 
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
-
 namespace sgns {
     namespace common {
         using Logger = std::shared_ptr<spdlog::logger>;
