@@ -10,6 +10,7 @@ target_link_libraries(graphsync_acceptance_test
     Boost::date_time
     Boost::regex
     )
+set_target_properties(graphsync_acceptance_test PROPERTIES LINK_FLAGS "/FORCE:MULTIPLE")
 
 addtest(graphsync_extension_test
     extensions_test.cpp
@@ -17,3 +18,4 @@ addtest(graphsync_extension_test
 target_link_libraries(graphsync_extension_test
     graphsync
     )
+set_target_properties(graphsync_extension_test PROPERTIES LINK_FLAGS "/FORCE:MULTIPLE")
