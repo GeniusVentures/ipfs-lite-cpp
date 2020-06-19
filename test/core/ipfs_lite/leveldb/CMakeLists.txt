@@ -14,3 +14,4 @@ target_link_libraries(leveldb_integration_test
     base_leveldb_test
     Boost::filesystem
     )
+set_target_properties(leveldb_integration_test PROPERTIES LINK_FLAGS "/FORCE:MULTIPLE")

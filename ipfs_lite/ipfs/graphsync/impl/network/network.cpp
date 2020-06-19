@@ -193,11 +193,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         protocol_id_,
         [wptr{ctx->weak_from_this()}]
         (outcome::result<StreamPtr> rstream) {
-          auto ctx = wptr.lock();
-          if (ctx) {
-            // ctx->onStreamConnected(std::move(rstream));
-            //-----------------------------------------
-            ctx->onStreamConnected(std::move(rstream.value()));
+          auto ctx_ = wptr.lock();
+          if (ctx_) {
+            ctx_->onStreamConnected(std::move(rstream));
           }
         }
     );
