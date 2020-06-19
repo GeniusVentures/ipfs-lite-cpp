@@ -7,6 +7,8 @@ target_link_libraries(graphsync_acceptance_test
     graphsync
     ipfs_merkledag_service
     p2p::asio_scheduler
+    Boost::date_time
+    Boost::regex
     )
 
 addtest(graphsync_extension_test

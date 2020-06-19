@@ -28,6 +28,6 @@ target_link_libraries(graphsync
     buffer
     cbor
     ipfs_lite_hasher
-    logger
     graphsync_proto
+    logger
     )
