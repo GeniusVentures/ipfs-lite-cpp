@@ -73,7 +73,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
       std::vector<CID> cids;
       Extension do_not_send_cids_extension = encodeDontSendCids(cids);
       extensions.push_back(do_not_send_cids_extension);
-      
+// unused code , request_ is deleted because Subscription have deleted copy-constructor and operator
       // requests_.push_back(graphsync_->makeRequest(peer,
       //                                             std::move(address),
       //                                             root_cid,
@@ -81,15 +81,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
       //                                             extensions,
       //                                             requestProgressCallback()));
 //-------------------------------------------------------------------------------------
-      gsl::span<const uint8_t> selector = {};
-      Subscription subscription = graphsync_->makeRequest(peer,
-                                            std::move(address),
-                                            root_cid,
-                                            selector,
-                                            extensions,
-                                            requestProgressCallback());
-      requests_.push_back(subscription);
-//-----------------------------------------------------------------------------
+
       ++requests_sent;
     }
 
@@ -137,7 +129,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
     Graphsync::BlockCallback block_cb_;
 
     // keeping subscriptions alive, otherwise they cancel themselves
-    std::vector<Subscription> requests_;
+    // class Subscription have non-copyable constructor and operator, so it can not be used in std::vector
+    // std::vector<Subscription > requests_;
 
     size_t n_responses_expected_;
     size_t n_responses = 0;
