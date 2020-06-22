@@ -137,12 +137,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     streams_.emplace(std::move(stream), std::move(stream_ctx));
   }
 
-  // void PeerContext::onStreamConnected(outcome::result<StreamPtr> rstream) {
-  void PeerContext::onStreamConnected(StreamPtr stream) {
+  void PeerContext::onStreamConnected(outcome::result<StreamPtr> rstream) {
     if (closed_) {
       return;
     }
-    /*if (rstream) {
+    if (rstream) {
       logger()->debug("connected to peer={}", str);
       onNewStream(std::move(rstream.value()));
     } else {
@@ -152,19 +151,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         closeLocalRequests(RS_CANNOT_CONNECT);
       }
     }
-    */
-/*
-    if (stream) {
-      logger()->debug("connected to peer={}", str);
-      onNewStream(std::move(stream));
-    } else {
-      logger()->error(
-          "cannot connect, peer={}, msg='{}'", str);
-      if (getState() == is_connecting) {
-        closeLocalRequests(RS_CANNOT_CONNECT);
-      }
-    }
-    */
+   
   }
 
   void PeerContext::onStreamAccepted(StreamPtr stream) {
