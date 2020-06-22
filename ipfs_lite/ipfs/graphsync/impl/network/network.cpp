@@ -36,9 +36,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // );
     host_->setProtocolHandler(
         protocol_id_,
-        [wptr = weak_from_this()] (std::shared_ptr<libp2p::connection::Stream> rstream) {
+        [wptr = weak_from_this()] (StreamPtr rstream) {
           auto self = wptr.lock();
-          if (self) { self->onStreamAccepted(std::move(rstream)); }
+          auto param = std::move(rstream);
+          if (self) { self->onStreamAccepted(rstream); }
         }
     );
     // clang-format on
@@ -195,7 +196,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         (outcome::result<StreamPtr> rstream) {
           auto ctx_ = wptr.lock();
           if (ctx_) {
-            ctx_->onStreamConnected(std::move(rstream));
+            // ctx_->onStreamConnected(std::move(rstream));
+            StreamPtr stream = rstream.value();
+            ctx_->onStreamConnected(std::move(stream));
           }
         }
     );

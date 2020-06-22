@@ -64,7 +64,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Called on new outbound stream, connected to this peer
     /// \param rstream libp2p stream or error
-    void onStreamConnected(outcome::result<StreamPtr> rstream);
+    // void onStreamConnected(outcome::result<StreamPtr> rstream);
+    void onStreamConnected(StreamPtr stream);
 
     /// Called on new accepted stream from the peer
     /// \param stream libp2p stream
