@@ -198,7 +198,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           if (ctx_) {
             // ctx_->onStreamConnected(std::move(rstream));
             StreamPtr stream = rstream.value();
-            ctx_->onStreamConnected(std::move(stream));
+            ctx_->onStreamConnected(null);
           }
         }
     );
