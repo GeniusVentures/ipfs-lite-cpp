@@ -8,8 +8,8 @@
 
 namespace libp2p::connection {
   // libp2p stream forward decl
-  class Stream;
-  // struct Stream;
+  // class Stream;
+  struct Stream;
   
 }  // namespace libp2p::connection
 

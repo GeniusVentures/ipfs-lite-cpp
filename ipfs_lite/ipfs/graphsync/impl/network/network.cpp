@@ -196,9 +196,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         (outcome::result<StreamPtr> rstream) {
           auto ctx_ = wptr.lock();
           if (ctx_) {
-            // ctx_->onStreamConnected(std::move(rstream));
-            StreamPtr stream = rstream.value();
-            ctx_->onStreamConnected(null);
+            ctx_->onStreamConnected(std::move(rstream));
           }
         }
     );
