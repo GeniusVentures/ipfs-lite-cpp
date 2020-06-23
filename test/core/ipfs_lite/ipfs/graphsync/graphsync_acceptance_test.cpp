@@ -80,6 +80,18 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
       //                                             {},
       //                                             extensions,
       //                                             requestProgressCallback()));
+      // Subscription subscription = graphsync_->makeRequest(peer,
+      //                                             std::move(address),
+      //                                             root_cid,
+      //                                             {},
+      //                                             extensions,
+      //                                             requestProgressCallback());
+      requests_.push_back(std::shared_ptr<Subscription>(new Subscription(std::move(graphsync_->makeRequest(peer,
+                                                  std::move(address),
+                                                  root_cid,
+                                                  {},
+                                                  extensions,
+                                                  requestProgressCallback())))));
 //-------------------------------------------------------------------------------------
 
       ++requests_sent;
@@ -130,7 +142,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
 
     // keeping subscriptions alive, otherwise they cancel themselves
     // class Subscription have non-copyable constructor and operator, so it can not be used in std::vector
-    // std::vector<Subscription > requests_;
+    // std::vector<Subscription> requests_;
+
+    std::vector<std::shared_ptr<Subscription >> requests_;
 
     size_t n_responses_expected_;
     size_t n_responses = 0;
