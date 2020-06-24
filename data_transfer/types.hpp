@@ -111,7 +111,7 @@ namespace sgns::data_transfer {
     PROGRESS,
 
     /** Error is an event that emits when an error occurs in a data transfer */
-    ERROR,
+    _ERROR,
 
     /** Complete is emitted when a data transfer is complete */
     COMPLETE
