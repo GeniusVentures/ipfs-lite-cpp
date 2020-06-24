@@ -69,6 +69,7 @@ option(TESTING "Build tests" ON)
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
+add_subdirectory(clock)
 add_subdirectory(codec)
 add_subdirectory(common)
 add_subdirectory(crypto)
