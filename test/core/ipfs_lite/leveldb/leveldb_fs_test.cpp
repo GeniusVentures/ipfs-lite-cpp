@@ -12,7 +12,7 @@ using namespace sgns::ipfs_lite;
 namespace fs = boost::filesystem;
 
 struct LevelDB_Open : public test::BaseFS_Test {
-  LevelDB_Open() : test::BaseFS_Test("fc_leveldb_open") {}
+  LevelDB_Open() : test::BaseFS_Test("sgns_leveldb_open") {}
 };
 
 /**

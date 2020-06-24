@@ -9,6 +9,7 @@ namespace test {
 
     logger_ = sgns::common::createLogger(getPathString());
     logger_->set_level(spdlog::level::debug);
+    logger_->info("base_path = {}", base_path);
   }
 
   BaseFS_Test::~BaseFS_Test() {
