@@ -156,11 +156,11 @@ set(_FINDPACKAGE_BOOST_DI_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Boost.DI/incl
 
 
 
-# BOOST library 
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
-find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
+## BOOST library 
+# set(Boost_USE_STATIC_LIBS OFF) 
+# set(Boost_USE_MULTITHREADED ON)  
+# set(Boost_USE_STATIC_RUNTIME OFF) 
+# find_package(Boost REQUIRED COMPONENTS date_time filesystem random) # header only libraries must not be added here
 
 # Builds libp2p
 
