@@ -72,6 +72,7 @@ add_subdirectory(primitives)
 add_subdirectory(codec)
 add_subdirectory(common)
 add_subdirectory(crypto)
+add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
 if (TESTING)
