@@ -24,6 +24,6 @@ namespace test {
   }
 
   void BaseLevelDB_Test::TearDown() {
-    clear();
+     clear();
   }
 }  // namespace test

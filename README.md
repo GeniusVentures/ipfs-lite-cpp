@@ -45,4 +45,14 @@ if you are going to build and test , then use following commands
     cd ipfs-lite-cpp
     ctest -C Release
 
+To run sepecifi test with detailed log, you can use following commands.
+
+    ctest -C Release -R <test_name> --verbose
+
+To run all tests and display log for failed tests, you can use following commands.
+
+    ctest -C Release --output-on-failure
+
+
+
     
