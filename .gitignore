@@ -7,3 +7,4 @@ ipfs_lite_server
 .vscode/
 .vs/
 *.code-workspace
+CMakeSettings.json

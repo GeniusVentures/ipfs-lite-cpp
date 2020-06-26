@@ -47,20 +47,20 @@ TEST_F(LevelDB_Integration_Test, Put_Get) {
  * @when read {key}
  * @then get "not found"
  */
-/*TEST_F(LevelDB_Integration_Test, Get_NonExistent) {
+TEST_F(LevelDB_Integration_Test, Get_NonExistent) {
   EXPECT_FALSE(db_->contains(key_));
   EXPECT_OUTCOME_TRUE_1(db_->remove(key_));
   auto r = db_->get(key_);
   EXPECT_FALSE(r);
   EXPECT_EQ(r.error().value(), (int)LevelDBError::NOT_FOUND);
-}*/
+}
 
 /**
  * @given database with [(i,i) for i in range(6)]
  * @when create batch and write KVs
  * @then data is written only after commit
  */
-/*
+
 TEST_F(LevelDB_Integration_Test, WriteBatch) {
   std::list<Buffer> keys{{0}, {1}, {2}, {3}, {4}, {5}};
   Buffer toBeRemoved = {3};
@@ -84,13 +84,13 @@ TEST_F(LevelDB_Integration_Test, WriteBatch) {
 
   EXPECT_FALSE(db_->contains(toBeRemoved));
 }
-*/
+
 /**
  * @given database with [(i,i) for i in range(100)]
  * @when iterate over kv pairs forward and backward
  * @then we iterate over all items
  */
-/*
+
 TEST_F(LevelDB_Integration_Test, Iterator) {
   const size_t size = 100;
   // 100 buffers of size 1 each; 0..99
@@ -143,4 +143,3 @@ TEST_F(LevelDB_Integration_Test, Iterator) {
   EXPECT_FALSE(it->isValid());
   EXPECT_EQ(c, index + 1);
 }
-*/

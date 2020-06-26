@@ -20,7 +20,7 @@ Then folder structure as follows:
 I used visual studio 2017 to compile ipfs-lite-cpp project.
 1. download Prebuilt-Boost libraries for windows
 2. download OpenSSL and install
-3. build ipfs_lite using following commands:
+3. build ipfs_lite using following commands in Release configuration:
 
     cd ipfs-lite-cpp
     md .build
@@ -53,6 +53,7 @@ To run all tests and display log for failed tests, you can use following command
 
     ctest -C Release --output-on-failure
 
+You can use Debug configuration to debug in Visual Studio.
 
 
     

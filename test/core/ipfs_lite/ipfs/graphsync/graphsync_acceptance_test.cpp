@@ -86,15 +86,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
       //                                             {},
       //                                             extensions,
       //                                             requestProgressCallback());
-      requests_.push_back(std::shared_ptr<Subscription>(new Subscription(std::move(graphsync_->makeRequest(peer,
+      /* requests_.push_back(std::shared_ptr<Subscription>(new Subscription(std::move(graphsync_->makeRequest(peer,
                                                   std::move(address),
                                                   root_cid,
                                                   {},
                                                   extensions,
                                                   requestProgressCallback())))));
+                                                  */
 //-------------------------------------------------------------------------------------
 
-      ++requests_sent;
+      // ++requests_sent;
     }
 
    private:
