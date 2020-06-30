@@ -38,8 +38,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         protocol_id_,
         [wptr = weak_from_this()] (StreamPtr rstream) {
           auto self = wptr.lock();
-          auto param = std::move(rstream);
-          if (self) { self->onStreamAccepted(rstream); }
+          // auto param = std::move(rstream);
+          if (self) { self->onStreamAccepted(std::move(rstream)); }
         }
     );
     // clang-format on
