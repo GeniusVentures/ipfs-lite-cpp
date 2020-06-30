@@ -64,8 +64,9 @@ namespace sgns::common {
      */
     std::string toHex() const noexcept {
       //modified by jin
-      gsl::span<const uint8_t> bytes={&*(this->begin()), &*(this->end())};
-      return hex_upper(bytes);
+      // gsl::span<const uint8_t> bytes={&*(this->begin()), &*(this->end())};
+      return hex_upper(gsl::make_span(*this));
+
     }
 
     /**
