@@ -4,6 +4,7 @@
 #include "codec/cbor/streams_annotation.hpp"
 #include "data_transfer/types.hpp"
 
+
 namespace sgns::data_transfer {
 
   /**
@@ -46,6 +47,7 @@ namespace sgns::data_transfer {
    * DataTransferMessage is a message for the data transfer protocol (either
    * request or response) that can serialize to a protobuf
    */
+  
   struct DataTransferMessage {
     bool is_request;
     boost::optional<DataTransferRequest> request;
@@ -96,6 +98,7 @@ namespace sgns::data_transfer {
   CBOR_TUPLE(DataTransferResponse, is_accepted, transfer_id)
 
   CBOR_TUPLE(DataTransferMessage, is_request, request, response)
+
 
 }  // namespace sgns::data_transfer
 

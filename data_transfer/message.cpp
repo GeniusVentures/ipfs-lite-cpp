@@ -20,13 +20,16 @@ namespace sgns::data_transfer {
                                        /*.voucher = */std::move(voucher),
                                        /*.voucher_type = */std::move(voucher_type),
                                        /*.transfer_id = */transfer_id},
-        /*.response = */boost::none};
+        /*.response = boost::none};*/
+        DataTransferResponse{}};
+        
   }
 
   DataTransferMessage createResponse(bool is_accepted, TransferId transfer_id) {
     return DataTransferMessage{
         /*.is_request = */false,
-        /*.request = */boost::none,
+        /*.request = boost::none,*/
+        DataTransferRequest{},
         /*.response = */DataTransferResponse{/*.is_accepted = */is_accepted,
                                          /*.transfer_id = */transfer_id}};
   }
