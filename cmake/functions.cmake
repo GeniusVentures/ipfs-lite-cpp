@@ -92,8 +92,9 @@ function(add_proto_library NAME)
       protobuf::libprotobuf
       )
   target_include_directories(${NAME} PUBLIC
-      ${CMAKE_BINARY_DIR}/generated/
-      )
+    $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated>
+    $<INSTALL_INTERFACE:include/protobuf> 
+    )
   disable_clang_tidy(${NAME})
 
   add_dependencies(generated ${NAME})

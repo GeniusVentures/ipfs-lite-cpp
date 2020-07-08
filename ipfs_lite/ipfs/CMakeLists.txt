@@ -2,11 +2,14 @@ add_library(ipfs_datastore_in_memory
     impl/in_memory_datastore.cpp
     impl/ipfs_datastore_error.cpp
     )
+
 target_link_libraries(ipfs_datastore_in_memory
     buffer
     cbor
     cid
     )
+
+#set_target_properties(ipfs_datastore_in_memory PROPERTIES PUBLIC_HEADER "some.h;another.h")
 
 add_library(ipfs_datastore_leveldb
     impl/datastore_leveldb.cpp
