@@ -91,11 +91,15 @@ function(add_proto_library NAME)
   target_link_libraries(${NAME}
       protobuf::libprotobuf
       )
+  #set_target_properties(${NAME} PROPERTIES PUBLIC_HEADER ${H})
+  set_target_properties(${NAME} PROPERTIES PUBLIC_PROTO_HEADER ${H})
+  message("---proto h--- ${H}")
+  #set(proto_h_files "${proto_h_files} ${H}")
   target_include_directories(${NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated>
     $<INSTALL_INTERFACE:include/protobuf> 
     )
-  disable_clang_tidy(${NAME})
+  disable_clang_tidy(${NAME}) 
 
   add_dependencies(generated ${NAME})
 endfunction()
