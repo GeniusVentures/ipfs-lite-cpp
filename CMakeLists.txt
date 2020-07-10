@@ -94,3 +94,59 @@ if (TESTING)
   add_subdirectory(test)
   add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS leveldb_integration_test)
 endif ()
+
+set(CONFIG_NAME "ipfs-lite-cppConfig")
+set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
+#make_directory(${CMAKE_INSTALL_PREFIX}/include/protobuf)
+
+install(TARGETS ipfs_blockservice 
+              ipfs_datastore_leveldb
+              ipfs_datastore_in_memory
+              ipfs_merkledag_service
+              graphsync
+              buffer  leveldb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger  
+              hexutil
+              blake2              
+              ipld_link
+              outcome
+              tinycbor
+              ipld_block
+              blob
+              graphsync_proto
+              ipld_node_protobuf
+      EXPORT ${CONFIG_NAME}
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
+      FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+      )
+message("--install --- ${CMAKE_INSTALL_PREFIX}/include/protobuf")
+### install header files ###
+install_hfile(codec)
+install_hfile(common)
+install_hfile(crypto)
+install_hfile(data_transfer)
+install_hfile(deps)
+install_hfile(platform)
+install_hfile(primitives)
+install_hfile(ipfs_lite)
+### install protobuf header files ###
+message("-gen---${CMAKE_BINARY_DIR}/generated")
+install(
+        DIRECTORY ${CMAKE_BINARY_DIR}/generated/ipfs_lite
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING # install only matched files
+        PATTERN "*.pb.h" # select header files hpp or h file
+    )
+#message("---proto-----${proto_h_files}")
+
+#INSTALL(FILES ${proto_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/protobuf)
+
+install(
+  EXPORT ${CONFIG_NAME}
+  NAMESPACE ipfs-lite-cpp::
+  DESTINATION ${CONFIG_DESTINATION_DIR}
+)
