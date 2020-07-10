@@ -76,6 +76,19 @@ add_subdirectory(crypto)
 add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
+install(TARGETS graphsync ipfs_blockservice ipfs_datastore_leveldb ipfs_datastore_in_memory ipfs_merkledag_service
+      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+      )
+
+      #message("${CMAKE_CURRENT_LIST_DIR}")
+      #message("${CMAKE_INSTALL_INCLUDEDIR}")
+    install_hfile(ipfs-lite)
+
 if (TESTING)
   enable_testing()
   add_subdirectory(test)

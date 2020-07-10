@@ -98,3 +98,12 @@ function(add_proto_library NAME)
 
   add_dependencies(generated ${NAME})
 endfunction()
+
+function(install_hfile dir_name)    
+    install(
+        DIRECTORY ${CMAKE_SOURCE_DIR}/${dir_name}
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        FILES_MATCHING # install only matched files
+        PATTERN "*.h*" # select header files hpp or h file
+    )
+endfunction()
