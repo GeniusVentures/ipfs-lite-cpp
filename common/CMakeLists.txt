@@ -41,3 +41,11 @@ add_library(todo_error
 target_link_libraries(todo_error
     outcome
     )
+add_library(mp_utils
+    mp_utils.cpp
+    mp_utils.hpp
+    )
+target_link_libraries(mp_utils
+    Boost::boost
+    )
+    
