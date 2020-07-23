@@ -44,9 +44,9 @@ print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
 print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 # BOOST library 
-set(Boost_USE_STATIC_LIBS ON) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME ON) 
+# set(Boost_USE_STATIC_LIBS ON) 
+# set(Boost_USE_MULTITHREADED ON)  
+# set(Boost_USE_STATIC_RUNTIME ON) 
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
 
 include_directories(
@@ -120,7 +120,7 @@ install(TARGETS ipfs_blockservice
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
       #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
+      #PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
       FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
       )
 message("--install --- ${CMAKE_INSTALL_PREFIX}/include/protobuf")
