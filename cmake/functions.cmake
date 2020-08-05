@@ -71,7 +71,7 @@ function(compile_proto_to_cpp PB_H PB_CC PROTO)
       COMMAND ${GEN_COMMAND}
       ARGS -I${PROJECT_SOURCE_DIR} -I${GEN_ARGS} --cpp_out=${SCHEMA_OUT_DIR} ${PROTO_ABS}
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      DEPENDS protobuf::protoc
+      DEPENDS ${PROTOBUF_DEPENDS}  # protobuf::protoc
       VERBATIM
   )
 
