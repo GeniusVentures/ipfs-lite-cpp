@@ -76,7 +76,7 @@ add_subdirectory(crypto)
 add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
-install(TARGETS graphsync ipfs_blockservice ipfs_datastore_leveldb ipfs_datastore_in_memory ipfs_merkledag_service
+install(TARGETS ipfs_blockservice ipfs_datastore_leveldb ipfs_datastore_in_memory ipfs_merkledag_service graphsync
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -102,8 +102,8 @@ set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
 install(TARGETS ipfs_blockservice 
               ipfs_datastore_leveldb
               ipfs_datastore_in_memory
-              ipfs_merkledag_service
-              graphsync
+##              ipfs_merkledag_service
+##              graphsync
               buffer  leveldb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger  
               hexutil
               blake2              
@@ -112,7 +112,7 @@ install(TARGETS ipfs_blockservice
               tinycbor
               ipld_block
               blob
-              graphsync_proto
+##              graphsync_proto
               ipld_node_protobuf
       EXPORT ${CONFIG_NAME}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
