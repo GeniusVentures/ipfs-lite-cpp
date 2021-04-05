@@ -53,6 +53,14 @@ To run all tests and display log for failed tests, you can use following command
 
     ctest -C Release --output-on-failure
 
+# build on OSX
+
+# build on Linux
+
+# Build on iOS
+
+# Build on Android
+
 You can use Debug configuration to debug in Visual Studio.
 
 
