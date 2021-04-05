@@ -102,7 +102,6 @@ function(add_proto_library NAME)
   #set(proto_h_files "${proto_h_files} ${H}")
   target_include_directories(${NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/generated>
-    $<INSTALL_INTERFACE:include/protobuf> 
     )
   disable_clang_tidy(${NAME}) 
 
