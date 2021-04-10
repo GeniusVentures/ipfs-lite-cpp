@@ -1,20 +1,15 @@
-# Download thirdparty project
-   
-    git clone ssh://git@gitlab.geniusventures.io:8487/GeniusVentures/thirdparty.git --recursive 
-    cd thirdparty
-    git checkout develop
+# git clone grpc, rocksdb, libp2p
 
 Then folder structure as follows:
 
     .
-    └── thirdparty                          # geniustokens thirdparty
-       ├── grpc                             # grpc latest version (current v1.28.1)
-       ├── rocksdb                          # rocksdb latest version
-       ├── libp2p                           # libp2p cross-compile branch
-       └── ipfs-lite-cpp                    # current repo
-            ├── ipfs-lite                   # sub folder
-            ├── readme.md                   # readme
-            └── CMakeList.txt               # CMake file
+    ├── grpc                             # grpc latest version (current v1.28.1)
+    ├── rocksdb                          # rocksdb latest version
+    ├── libp2p                           # libp2p cross-compile branch
+    └── ipfs-lite-cpp                    # current repo
+         ├── ipfs-lite                   # sub folder
+         ├── readme.md                   # readme
+         └── CMakeList.txt               # CMake file
  
 # Build on Windows
 I used visual studio 2017 to compile ipfs-lite-cpp project.
