@@ -1,9 +1,9 @@
 
-#ifndef CPP_IPFS_LITE_LEVELDB_CURSOR_HPP
-#define CPP_IPFS_LITE_LEVELDB_CURSOR_HPP
+#ifndef CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP
+#define CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP
 
-#include <leveldb/iterator.h>
-#include "ipfs_lite/leveldb/leveldb.hpp"
+#include <rocksdb/iterator.h>
+#include "ipfs_lite/rocksdb/rocksdb.hpp"
 
 namespace sgns::ipfs_lite {
 
@@ -11,11 +11,13 @@ namespace sgns::ipfs_lite {
    * @brief Instance of cursor can be used as bidirectional iterator over
    * key-value bindings of the Map.
    */
-  class LevelDB::Cursor : public BufferMapCursor {
+  class rocksdb::Cursor : public BufferMapCursor {
    public:
+     using Iterator = ::ROCKSDB_NAMESPACE::Iterator;
+
     ~Cursor() override = default;
 
-    explicit Cursor(std::shared_ptr<leveldb::Iterator> it);
+    explicit Cursor(std::shared_ptr<Iterator> it);
 
     void seekToFirst() override;
 
@@ -34,9 +36,9 @@ namespace sgns::ipfs_lite {
     Buffer value() const override;
 
    private:
-    std::shared_ptr<leveldb::Iterator> i_;
+    std::shared_ptr<Iterator> i_;
   };
 
 }  // namespace sgns::ipfs_lite
 
-#endif  // CPP_IPFS_LITE_LEVELDB_CURSOR_HPP
+#endif  // CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP

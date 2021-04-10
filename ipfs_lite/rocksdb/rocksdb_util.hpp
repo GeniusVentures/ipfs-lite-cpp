@@ -1,61 +1,61 @@
-#ifndef CPP_IPFS_LITE_LEVELDB_UTIL_HPP
-#define CPP_IPFS_LITE_LEVELDB_UTIL_HPP
+#ifndef CPP_IPFS_LITE_ROCKSDB_UTIL_HPP
+#define CPP_IPFS_LITE_ROCKSDB_UTIL_HPP
 
-#include <leveldb/status.h>
+#include <rocksdb/status.h>
 #include <gsl/span>
 #include "common/outcome.hpp"
 #include "common/buffer.hpp"
 #include "common/logger.hpp"
-#include "ipfs_lite/leveldb/leveldb_error.hpp"
+#include "ipfs_lite/rocksdb/rocksdb_error.hpp"
 
 namespace sgns::ipfs_lite {
 
   template <typename T>
-  inline outcome::result<T> error_as_result(const leveldb::Status &s) {
+  inline outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s) {
     if (s.IsNotFound()) {
-      return LevelDBError::NOT_FOUND;
+      return rocksdbError::NOT_FOUND;
     }
 
     if (s.IsIOError()) {
-      return LevelDBError::IO_ERROR;
+      return rocksdbError::IO_ERROR;
     }
 
     if (s.IsInvalidArgument()) {
-      return LevelDBError::INVALID_ARGUMENT;
+      return rocksdbError::INVALID_ARGUMENT;
     }
 
     if (s.IsCorruption()) {
-      return LevelDBError::CORRUPTION;
+      return rocksdbError::CORRUPTION;
     }
 
-    if (s.IsNotSupportedError()) {
-      return LevelDBError::NOT_SUPPORTED;
+    if (s.IsNotSupported()) {
+      return rocksdbError::NOT_SUPPORTED;
     }
 
-    return LevelDBError::UNKNOWN;
+    return rocksdbError::UNKNOWN;
   }
 
   template <typename T>
-  inline outcome::result<T> error_as_result(const leveldb::Status &s,
+  inline outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
                                             const common::Logger &logger) {
     logger->error(s.ToString());
     return error_as_result<T>(s);
   }
 
-  inline leveldb::Slice make_slice(const common::Buffer &buf) {
+  inline ::ROCKSDB_NAMESPACE::Slice make_slice(const common::Buffer &buf) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     const auto *ptr = reinterpret_cast<const char *>(buf.data());
     size_t n = buf.size();
-    return leveldb::Slice{ptr, n};
+    return ::ROCKSDB_NAMESPACE::Slice{ptr, n};
   }
 
-  inline gsl::span<const uint8_t> make_span(const leveldb::Slice &s) {
+  inline gsl::span<const uint8_t> make_span(const ::ROCKSDB_NAMESPACE::Slice &s) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     const auto *ptr = reinterpret_cast<const uint8_t *>(s.data());
     return gsl::make_span(ptr, s.size());
   }
 
-  inline common::Buffer make_buffer(const leveldb::Slice &s) {
+  inline common::Buffer make_buffer(const ::ROCKSDB_NAMESPACE::Slice &s) {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     const auto *ptr = reinterpret_cast<const uint8_t *>(s.data());
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -64,4 +64,4 @@ namespace sgns::ipfs_lite {
 
 }  // namespace sgns::ipfs_lite
 
-#endif  // CPP_IPFS_LITE_LEVELDB_UTIL_HPP
+#endif  // CPP_IPFS_LITE_rocksdb_UTIL_HPP

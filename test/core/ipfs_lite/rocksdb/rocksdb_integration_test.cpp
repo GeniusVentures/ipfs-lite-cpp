@@ -5,17 +5,17 @@
 #include <boost/filesystem.hpp>
 #include <exception>
 
-#include "ipfs_lite/leveldb/leveldb.hpp"
-#include "ipfs_lite/leveldb/leveldb_error.hpp"
+#include "ipfs_lite/rocksdb/rocksdb.hpp"
+#include "ipfs_lite/rocksdb/rocksdb_error.hpp"
 #include "testutil/outcome.hpp"
-#include "testutil/ipfs_lite/base_leveldb_test.hpp"
+#include "testutil/ipfs_lite/base_rocksdb_test.hpp"
 
 using namespace sgns::ipfs_lite;
 namespace fs = boost::filesystem;
 
-struct LevelDB_Integration_Test : public test::BaseLevelDB_Test {
-  LevelDB_Integration_Test()
-      : test::BaseLevelDB_Test("sgns_leveldb_integration_test") {}
+struct rocksdb_Integration_Test : public test::Baserocksdb_Test {
+  rocksdb_Integration_Test()
+      : test::Baserocksdb_Test("sgns_rocksdb_integration_test") {}
   
   //Added for error fix when finished testing.
   void TearDown() override {}
@@ -30,7 +30,7 @@ struct LevelDB_Integration_Test : public test::BaseLevelDB_Test {
  * @when read {key}
  * @then {value} is correct
  */
-TEST_F(LevelDB_Integration_Test, Put_Get) {
+TEST_F(rocksdb_Integration_Test, Put_Get) {
   logger_->warn("1. start testing....{}", db_);
   EXPECT_OUTCOME_TRUE_1(db_->put(key_, value_));
   logger_->warn("2. start testing....key_ {}, value_ = {}", key_, value_);
@@ -47,12 +47,12 @@ TEST_F(LevelDB_Integration_Test, Put_Get) {
  * @when read {key}
  * @then get "not found"
  */
-TEST_F(LevelDB_Integration_Test, Get_NonExistent) {
+TEST_F(rocksdb_Integration_Test, Get_NonExistent) {
   EXPECT_FALSE(db_->contains(key_));
   EXPECT_OUTCOME_TRUE_1(db_->remove(key_));
   auto r = db_->get(key_);
   EXPECT_FALSE(r);
-  EXPECT_EQ(r.error().value(), (int)LevelDBError::NOT_FOUND);
+  EXPECT_EQ(r.error().value(), (int)rocksdbError::NOT_FOUND);
 }
 
 /**
@@ -61,7 +61,7 @@ TEST_F(LevelDB_Integration_Test, Get_NonExistent) {
  * @then data is written only after commit
  */
 
-TEST_F(LevelDB_Integration_Test, WriteBatch) {
+TEST_F(rocksdb_Integration_Test, WriteBatch) {
   std::list<Buffer> keys{{0}, {1}, {2}, {3}, {4}, {5}};
   Buffer toBeRemoved = {3};
   std::list<Buffer> expected{{0}, {1}, {2}, {4}, {5}};
@@ -91,7 +91,7 @@ TEST_F(LevelDB_Integration_Test, WriteBatch) {
  * @then we iterate over all items
  */
 
-TEST_F(LevelDB_Integration_Test, Iterator) {
+TEST_F(rocksdb_Integration_Test, Iterator) {
   const size_t size = 100;
   // 100 buffers of size 1 each; 0..99
   std::list<Buffer> keys;

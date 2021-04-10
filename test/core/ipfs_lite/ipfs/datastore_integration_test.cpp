@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/uuid/uuid.hpp>
 
-#include "ipfs_lite/ipfs/impl/datastore_leveldb.hpp"
+#include "ipfs_lite/ipfs/impl/datastore_rocksdb.hpp"
 #include "testutil/literals.hpp"
 #include "testutil/outcome.hpp"
 
@@ -13,13 +13,13 @@ using sgns::CID;
 using sgns::common::Buffer;
 using sgns::ipfs_lite::ipfs::IpfsDatastore;
 using sgns::ipfs_lite::ipfs::IpfsDatastoreError;
-using sgns::ipfs_lite::ipfs::LeveldbDatastore;
+using sgns::ipfs_lite::ipfs::rocksdbDatastore;
 using libp2p::multi::HashType;
 using libp2p::multi::MulticodecType;
 using libp2p::multi::Multihash;
 
 struct DatastoreIntegrationTest : public ::testing::Test {
-  using Options = leveldb::Options;
+  using Options = rocksdb::Options;
 
   Options options{};
 
@@ -46,22 +46,22 @@ struct DatastoreIntegrationTest : public ::testing::Test {
   }
 
   void SetUp() override {
-    leveldb_path = makeTempPath();
+    rocksdb_path = makeTempPath();
     options.create_if_missing = true;
-    auto result = LeveldbDatastore::create(leveldb_path.string(), options);
+    auto result = rocksdbDatastore::create(rocksdb_path.string(), options);
     if (!result) boost::throw_exception(std::system_error(result.error()));
     datastore = result.value();
   }
 
   void TearDown() override {
     datastore.reset();
-    if (boost::filesystem::exists(leveldb_path)) {
-      boost::filesystem::remove_all(leveldb_path);
+    if (boost::filesystem::exists(rocksdb_path)) {
+      boost::filesystem::remove_all(rocksdb_path);
     }
   }
 
-  boost::filesystem::path leveldb_path;
-  std::shared_ptr<LeveldbDatastore> datastore;
+  boost::filesystem::path rocksdb_path;
+  std::shared_ptr<rocksdbDatastore> datastore;
 };
 
 /**
@@ -143,6 +143,6 @@ TEST_F(DatastoreIntegrationTest, PersistentStorage) {
   datastore.reset();
 
   EXPECT_OUTCOME_TRUE(open_again,
-                      LeveldbDatastore::create(leveldb_path.string(), options));
+                      rocksdbDatastore::create(rocksdb_path.string(), options));
   EXPECT_OUTCOME_EQ(open_again->contains(cid1), true);
 }

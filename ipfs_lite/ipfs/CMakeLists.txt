@@ -11,15 +11,15 @@ target_link_libraries(ipfs_datastore_in_memory
 
 #set_target_properties(ipfs_datastore_in_memory PROPERTIES PUBLIC_HEADER "some.h;another.h")
 
-add_library(ipfs_datastore_leveldb
-    impl/datastore_leveldb.cpp
+add_library(ipfs_datastore_rocksdb
+    impl/datastore_rocksdb.cpp
     impl/ipfs_datastore_error.cpp
     )
-target_link_libraries(ipfs_datastore_leveldb
+target_link_libraries(ipfs_datastore_rocksdb
     buffer
     cbor
     cid
-    leveldb_wrapper
+    rocksdb_wrapper
     )
 
 add_library(ipfs_blockservice

@@ -1,8 +1,8 @@
 
-#include "ipfs_lite/leveldb/leveldb_error.hpp"
+#include "ipfs_lite/rocksdb/rocksdb_error.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::ipfs_lite, LevelDBError, e) {
-  using E = sgns::ipfs_lite::LevelDBError;
+OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::ipfs_lite, rocksdbError, e) {
+  using E = sgns::ipfs_lite::rocksdbError;
   switch (e) {
     case E::OK:
       return "success";
