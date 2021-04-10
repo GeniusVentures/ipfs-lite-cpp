@@ -63,7 +63,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
 find_package(libp2p CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
-find_package(leveldb CONFIG REQUIRED)
+find_package(rocksdb CONFIG REQUIRED)
 
 option(TESTING "Build tests" ON)
 
@@ -76,7 +76,7 @@ add_subdirectory(crypto)
 add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
-install(TARGETS ipfs_blockservice ipfs_datastore_leveldb ipfs_datastore_in_memory ipfs_merkledag_service graphsync
+install(TARGETS ipfs_blockservice ipfs_datastore_rocksdb ipfs_datastore_in_memory ipfs_merkledag_service graphsync
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -92,7 +92,7 @@ install(TARGETS ipfs_blockservice ipfs_datastore_leveldb ipfs_datastore_in_memor
 if (TESTING)
   enable_testing()
   add_subdirectory(test)
-  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS leveldb_integration_test)
+  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS rocksdb_integration_test)
 endif ()
 
 set(CONFIG_NAME "ipfs-lite-cppConfig")
@@ -100,11 +100,11 @@ set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
 #make_directory(${CMAKE_INSTALL_PREFIX}/include/protobuf)
 
 install(TARGETS ipfs_blockservice 
-              ipfs_datastore_leveldb
+              ipfs_datastore_rocksdb
               ipfs_datastore_in_memory
 ##              ipfs_merkledag_service
 ##              graphsync
-              buffer  leveldb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger  
+              buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger  
               hexutil
               blake2              
               ipld_link

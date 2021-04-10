@@ -4,7 +4,7 @@ addtest(datastore_integration_test
     )
 target_link_libraries(datastore_integration_test
     p2p::p2p_random_generator
-    ipfs_datastore_leveldb
+    ipfs_datastore_rocksdb
     Boost::filesystem
     )
 

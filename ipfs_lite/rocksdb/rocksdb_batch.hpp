@@ -1,9 +1,9 @@
 
-#ifndef CPP_IPFS_LITE_LEVELDB_BATCH_HPP
-#define CPP_IPFS_LITE_LEVELDB_BATCH_HPP
+#ifndef CPP_IPFS_LITE_ROCKSDB_BATCH_HPP
+#define CPP_IPFS_LITE_ROCKSDB_BATCH_HPP
 
-#include <leveldb/write_batch.h>
-#include "ipfs_lite/leveldb/leveldb.hpp"
+#include <rocksdb/write_batch.h>
+#include "ipfs_lite/rocksdb/rocksdb.hpp"
 
 namespace sgns::ipfs_lite {
 
@@ -11,9 +11,11 @@ namespace sgns::ipfs_lite {
    * @brief Class that is used to implement efficient bulk (batch) modifications
    * of the Map.
    */
-  class LevelDB::Batch : public BufferBatch {
+  class rocksdb::Batch : public BufferBatch {
    public:
-    explicit Batch(LevelDB &db);
+    using WriteBatch = ::ROCKSDB_NAMESPACE::WriteBatch;
+
+    explicit Batch(rocksdb &db);
 
     outcome::result<void> put(const Buffer &key, const Buffer &value) override;
     outcome::result<void> put(const Buffer &key, Buffer &&value) override;
@@ -25,10 +27,10 @@ namespace sgns::ipfs_lite {
     void clear() override;
 
    private:
-    LevelDB &db_;
-    leveldb::WriteBatch batch_;
+    rocksdb &db_;
+    WriteBatch batch_;
   };
 
 }  // namespace sgns::ipfs_lite
 
-#endif  // CPP_IPFS_LITE_LEVELDB_BATCH_HPP
+#endif  // CPP_IPFS_LITE_rocksdb_BATCH_HPP
