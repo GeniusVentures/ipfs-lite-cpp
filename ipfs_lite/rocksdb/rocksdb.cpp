@@ -15,11 +15,23 @@ namespace sgns::ipfs_lite {
     auto status = rocksdb::DB::Open(options, path.data(), &db);
     if (status.ok()) {
       auto l = std::make_shared<rocksdb>();
-      l->db_ = std::unique_ptr<rocksdb::DB>(db);
+      l->db_ = std::shared_ptr<rocksdb::DB>(db);
       return std::move(l); // clang 6.0.1 issue
     }
 
     return error_as_result<std::shared_ptr<rocksdb>>(status);
+  }
+
+  outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(const std::shared_ptr<DB>& db)
+  {
+    if (db == nullptr)
+    {
+      return error_as_result<std::shared_ptr<rocksdb>>(rocksdb::Status(rocksdb::Status::PathNotFound()));
+    }
+
+    auto l = std::make_unique<rocksdb>();
+    l->db_ = db;
+    return std::move(l); // clang 6.0.1 issue
   }
 
   std::unique_ptr<BufferMapCursor> rocksdb::cursor() {

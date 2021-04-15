@@ -23,6 +23,7 @@ namespace sgns::ipfs_lite {
     using WriteOptions = ::ROCKSDB_NAMESPACE::WriteOptions;
     using Iterator = ::ROCKSDB_NAMESPACE::Iterator;
     using DB = ::ROCKSDB_NAMESPACE::DB;
+    using Status = ::ROCKSDB_NAMESPACE::Status;
 
     ~rocksdb() override = default;
 
@@ -34,6 +35,12 @@ namespace sgns::ipfs_lite {
      */
     static outcome::result<std::shared_ptr<rocksdb>> create(
         std::string_view path, Options options = Options());
+
+    /**
+    * @brief Factory method to create an instance of rocksdb class.
+    * @param db pointer to rocksdb database instance
+    */
+    static outcome::result<std::shared_ptr<rocksdb>> create(const std::shared_ptr<DB>& db);
 
     /**
      * @brief Set read options, which are used in @see rocksdb#get
@@ -62,8 +69,10 @@ namespace sgns::ipfs_lite {
 
     outcome::result<void> remove(const Buffer &key) override;
 
+    inline std::shared_ptr<DB> getDB() const { return db_; }
+
    private:
-    std::unique_ptr<DB> db_;
+    std::shared_ptr<DB> db_;
     ReadOptions ro_;
     WriteOptions wo_;
     common::Logger logger_ = common::createLogger("rocksdb");
