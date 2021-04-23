@@ -43,10 +43,10 @@ print("CXX Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
 print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
 print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
-# BOOST library 
-# set(Boost_USE_STATIC_LIBS ON) 
-# set(Boost_USE_MULTITHREADED ON)  
-# set(Boost_USE_STATIC_RUNTIME ON) 
+# BOOST library
+# set(Boost_USE_STATIC_LIBS ON)
+# set(Boost_USE_MULTITHREADED ON)
+# set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
 
 include_directories(
@@ -63,7 +63,7 @@ find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
 find_package(libp2p CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
-find_package(rocksdb CONFIG REQUIRED)
+find_package(RocksDB CONFIG REQUIRED)
 
 option(TESTING "Build tests" ON)
 
@@ -99,14 +99,14 @@ set(CONFIG_NAME "ipfs-lite-cppConfig")
 set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
 #make_directory(${CMAKE_INSTALL_PREFIX}/include/protobuf)
 
-install(TARGETS ipfs_blockservice 
+install(TARGETS ipfs_blockservice
               ipfs_datastore_rocksdb
               ipfs_datastore_in_memory
 ##              ipfs_merkledag_service
 ##              graphsync
-              buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger  
+              buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger
               hexutil
-              blake2              
+              blake2
               ipld_link
               outcome
               tinycbor
