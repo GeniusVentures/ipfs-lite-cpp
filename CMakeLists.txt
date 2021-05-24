@@ -76,15 +76,6 @@ add_subdirectory(crypto)
 add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
-install(TARGETS ipfs_blockservice ipfs_datastore_rocksdb ipfs_datastore_in_memory ipfs_merkledag_service graphsync
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
-      )
-
       #message("${CMAKE_CURRENT_LIST_DIR}")
       #message("${CMAKE_INSTALL_INCLUDEDIR}")
     install_hfile(ipfs-lite)
@@ -102,8 +93,8 @@ set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
 install(TARGETS ipfs_blockservice
               ipfs_datastore_rocksdb
               ipfs_datastore_in_memory
-##              ipfs_merkledag_service
-##              graphsync
+              ipfs_merkledag_service
+              graphsync
               buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger
               hexutil
               blake2
@@ -112,15 +103,15 @@ install(TARGETS ipfs_blockservice
               tinycbor
               ipld_block
               blob
-##              graphsync_proto
+              graphsync_proto
               ipld_node_protobuf
       EXPORT ${CONFIG_NAME}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
       INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      #PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
+      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
       FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
       )
 message("--install --- ${CMAKE_INSTALL_PREFIX}/include/protobuf")
