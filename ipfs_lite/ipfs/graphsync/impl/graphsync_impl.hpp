@@ -10,7 +10,7 @@
 
 namespace libp2p {
   // libp2p host interface forward declaration
-  class Host;
+  struct Host;
 }  // namespace libp2p
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
