@@ -13,7 +13,7 @@ using sgns::CID;
 using sgns::common::Buffer;
 using sgns::ipfs_lite::ipfs::IpfsDatastore;
 using sgns::ipfs_lite::ipfs::IpfsDatastoreError;
-using sgns::ipfs_lite::ipfs::rocksdbDatastore;
+using sgns::ipfs_lite::ipfs::RocksdbDatastore;
 using libp2p::multi::HashType;
 using libp2p::multi::MulticodecType;
 using libp2p::multi::Multihash;
@@ -48,7 +48,7 @@ struct DatastoreIntegrationTest : public ::testing::Test {
   void SetUp() override {
     rocksdb_path = makeTempPath();
     options.create_if_missing = true;
-    auto result = rocksdbDatastore::create(rocksdb_path.string(), options);
+    auto result = RocksdbDatastore::create(rocksdb_path.string(), options);
     if (!result) boost::throw_exception(std::system_error(result.error()));
     datastore = result.value();
   }
@@ -61,7 +61,7 @@ struct DatastoreIntegrationTest : public ::testing::Test {
   }
 
   boost::filesystem::path rocksdb_path;
-  std::shared_ptr<rocksdbDatastore> datastore;
+  std::shared_ptr<RocksdbDatastore> datastore;
 };
 
 /**
@@ -143,6 +143,6 @@ TEST_F(DatastoreIntegrationTest, PersistentStorage) {
   datastore.reset();
 
   EXPECT_OUTCOME_TRUE(open_again,
-                      rocksdbDatastore::create(rocksdb_path.string(), options));
+                      RocksdbDatastore::create(rocksdb_path.string(), options));
   EXPECT_OUTCOME_EQ(open_again->contains(cid1), true);
 }

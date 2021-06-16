@@ -8,7 +8,7 @@
 #include "testutil/outcome.hpp"
 #include "testutil/ipfs_lite/base_fs_test.hpp"
 
-using namespace sgns::ipfs_lite;
+namespace ipfs = sgns::ipfs_lite;
 namespace fs = boost::filesystem;
 
 struct rocksdb_Open : public test::BaseFS_Test {
@@ -21,12 +21,12 @@ struct rocksdb_Open : public test::BaseFS_Test {
  * @then database can not be opened (since there is no db already)
  */
 TEST_F(rocksdb_Open, OpenNonExistingDB) {
-  rocksdb::Options options;
+  ipfs::rocksdb::Options options;
   options.create_if_missing = false;  // intentionally
 
-  auto r = rocksdb::create(getPathString(), options);
+  auto r = ipfs::rocksdb::create(getPathString(), options);
   EXPECT_FALSE(r);
-  EXPECT_EQ(r.error(), rocksdbError::INVALID_ARGUMENT);
+  EXPECT_EQ(r.error(), ipfs::rocksdbError::INVALID_ARGUMENT);
 }
 
 /**
@@ -38,7 +38,7 @@ TEST_F(rocksdb_Open, OpenExistingDB) {
   rocksdb::Options options;
   options.create_if_missing = true;  // intentionally
 
-  EXPECT_OUTCOME_TRUE_2(db, rocksdb::create(getPathString(), options));
+  EXPECT_OUTCOME_TRUE_2(db, ipfs::rocksdb::create(getPathString(), options));
   EXPECT_TRUE(db) << "db is nullptr";
 
   boost::filesystem::path p(getPathString());

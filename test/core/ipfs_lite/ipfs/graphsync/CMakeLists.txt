@@ -9,6 +9,7 @@ target_link_libraries(graphsync_acceptance_test
     p2p::asio_scheduler
     Boost::date_time
     Boost::regex
+    ${WIN_CRYPT_LIBRARY}
     )
 set_target_properties(graphsync_acceptance_test PROPERTIES LINK_FLAGS "/FORCE:MULTIPLE")
 
