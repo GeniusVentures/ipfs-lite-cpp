@@ -55,40 +55,43 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
 
   outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraph(
       const CID &cid) const {
-    OUTCOME_TRY(node, getNode(cid));
-    auto root_leaf = std::make_shared<LeafImpl>(node->content());
-    auto result = buildGraph(root_leaf, node->getLinks(), false, 0, 0);
-    if (result.has_error()) return result.error();
-    return root_leaf;
+      return fetchGraphOnDepth(std::bind(&MerkleDagService::getNode, this, std::placeholders::_1), cid, {});
   }
 
   outcome::result<std::shared_ptr<Leaf>>
   MerkleDagServiceImpl::fetchGraphOnDepth(const CID &cid,
                                           uint64_t depth) const {
-    OUTCOME_TRY(node, getNode(cid));
-    auto leaf = std::make_shared<LeafImpl>(node->content());
-    auto result = buildGraph(leaf, node->getLinks(), true, depth, 0);
-    if (result.has_error()) return result.error();
-    return leaf;
+    return fetchGraphOnDepth(std::bind(&MerkleDagService::getNode, this, std::placeholders::_1), cid, depth);
+  }
+
+  outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraphOnDepth(
+      std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+      const CID& cid, std::optional<uint64_t> depth)
+  {
+      OUTCOME_TRY(node, nodeGetter(cid));
+      auto leaf = std::make_shared<LeafImpl>(node->content());
+      auto result = buildGraph(nodeGetter, leaf, node->getLinks(), depth, 0);
+      if (result.has_error()) return result.error();
+      return leaf;
   }
 
   outcome::result<void> MerkleDagServiceImpl::buildGraph(
+      std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
       const std::shared_ptr<LeafImpl> &root,
       const std::vector<std::reference_wrapper<const IPLDLink>> &links,
-      bool depth_limit,
-      const size_t max_depth,
-      size_t current_depth) const {
-    if (depth_limit && current_depth == max_depth) {
+      std::optional<size_t> max_depth,
+      size_t current_depth) {
+    if (max_depth && current_depth == *max_depth) {
       return outcome::success();
     }
     for (const auto &link : links) {
-      auto request = getNode(link.get().getCID());
+      auto request = nodeGetter(link.get().getCID());
       if (request.has_error()) return ServiceError::UNRESOLVED_LINK;
       std::shared_ptr<IPLDNode> node = request.value();
       auto child_leaf = std::make_shared<LeafImpl>(node->content());
-      auto build_result = buildGraph(child_leaf,
+      auto build_result = buildGraph(nodeGetter,
+                                     child_leaf,
                                      node->getLinks(),
-                                     depth_limit,
                                      max_depth,
                                      ++current_depth);
       if (build_result.has_error()) {

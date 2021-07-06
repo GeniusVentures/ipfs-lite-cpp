@@ -39,25 +39,36 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
         const CID &cid, uint64_t depth) const override;
 
+    /**
+     * @brief Fetches graph starting from specified node
+     * @param cid - root node id, for which we should extract child nodes
+     * @param max_depth - e.g. "1" means "Fetch only root node with all
+     * children, but without children of their children"
+     * @return operation result
+     */
+    static outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
+        std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+        const CID& cid, std::optional<uint64_t> depth);
+
    private:
     std::shared_ptr<IpfsDatastore> block_service_;
 
     /**
      * @brief Fetch graph internal recursive implementation
+     * @param nodeGetter a function that returns a node with specific id
      * @param root - leaf, for which we should extract child nodes
      * @param links - links to the child nodes of this leaf
-     * @param depth_limit - status of the depth control
      * @param max_depth - e.g. "1" means "Fetch only root node with all
      * children, but without children of their children"
      * @param current_depth - value of the depth during current operation
      * @return operation result
      */
-    outcome::result<void> buildGraph(
+    static outcome::result<void> buildGraph(
+        std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
         const std::shared_ptr<LeafImpl> &root,
         const std::vector<std::reference_wrapper<const IPLDLink>> &links,
-        bool depth_limit,
-        size_t max_depth,
-        size_t current_depth = 0) const;
+        std::optional<size_t> max_depth,
+        size_t current_depth = 0);
   };
 }  // namespace sgns::ipfs_lite::ipfs::merkledag
 
