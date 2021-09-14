@@ -62,14 +62,14 @@ namespace sgns::ipfs_lite::ipld::walker {
       cids.push_back(cid);
       OUTCOME_TRY(bytes, store.get(cid));
       // TODO(turuslan): what about other types?
-      if (cid.content_type == libp2p::multi::MulticodecType::DAG_CBOR) {
+      if (cid.content_type == libp2p::multi::MulticodecType::Code::DAG_CBOR) {
         try {
           CborDecodeStream s{bytes};
           recursiveAll(s);
         } catch (std::system_error &e) {
           return outcome::failure(e.code());
         }
-      } else if (cid.content_type == libp2p::multi::MulticodecType::DAG_PB) {
+      } else if (cid.content_type == libp2p::multi::MulticodecType::Code::DAG_PB) {
         OUTCOME_TRY(cids, PbNodeDecoder::links(bytes));
         for (auto &cid : cids) {
           OUTCOME_TRY(recursiveAll(cid));
