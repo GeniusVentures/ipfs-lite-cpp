@@ -9,6 +9,9 @@ target_link_libraries(cid
     blake2
     cbor
     p2p::p2p_cid
+    c-ares::cares
+    soralog::soralog
+    fmt::fmt
     )
 
 add_library(comm_cid

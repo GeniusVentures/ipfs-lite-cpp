@@ -39,7 +39,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
         objects;
     objects.second = injector.template create<std::shared_ptr<libp2p::Host>>();
     auto scheduler = std::make_shared<libp2p::protocol::AsioScheduler>(
-        *io, libp2p::protocol::SchedulerConfig{});
+        io, libp2p::protocol::SchedulerConfig{});
     objects.first =
         std::make_shared<GraphsyncImpl>(objects.second, std::move(scheduler));
     return objects;

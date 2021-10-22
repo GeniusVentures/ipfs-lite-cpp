@@ -55,6 +55,8 @@ include_directories(
   deps/tinycbor/src
 )
 
+add_compile_definitions(SPDLOG_FMT_EXTERNAL)
+
 # # find packages for common
 # message("libp2p_DIR=" ${libp2p_DIR})
 find_package(GTest CONFIG REQUIRED)
@@ -62,6 +64,10 @@ find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
 find_package(libp2p CONFIG REQUIRED)
+find_package(c-ares CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+find_package(soralog CONFIG REQUIRED)
+find_package(yaml-cpp CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
 
