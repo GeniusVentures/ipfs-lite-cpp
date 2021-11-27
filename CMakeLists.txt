@@ -55,8 +55,6 @@ include_directories(
   deps/tinycbor/src
 )
 
-add_compile_definitions(SPDLOG_FMT_EXTERNAL)
-
 # # find packages for common
 # message("libp2p_DIR=" ${libp2p_DIR})
 find_package(GTest CONFIG REQUIRED)

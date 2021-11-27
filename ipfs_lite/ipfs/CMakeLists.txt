@@ -7,6 +7,7 @@ target_link_libraries(ipfs_datastore_in_memory
     buffer
     cbor
     cid
+    logger
     )
 
 #set_target_properties(ipfs_datastore_in_memory PROPERTIES PUBLIC_HEADER "some.h;another.h")
@@ -27,6 +28,7 @@ add_library(ipfs_blockservice
     )
 target_link_libraries(ipfs_blockservice
     buffer
+    logger
     )
 
 add_subdirectory(merkledag)

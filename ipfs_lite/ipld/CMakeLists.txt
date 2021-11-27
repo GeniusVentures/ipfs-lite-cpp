@@ -36,4 +36,5 @@ add_library(ipld_walker
 target_link_libraries(ipld_walker
     ipld_node_protobuf
     cbor
+    logger
     )
