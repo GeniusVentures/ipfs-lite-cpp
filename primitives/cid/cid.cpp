@@ -55,12 +55,12 @@ namespace sgns {
   }
 
   outcome::result<CID> CID::fromString(const std::string &str) {
-    OUTCOME_TRY(cid, libp2p::multi::ContentIdentifierCodec::fromString(str));
+    OUTCOME_TRY((auto &&, cid), libp2p::multi::ContentIdentifierCodec::fromString(str));
     return CID{std::move(cid)};
   }
 
   outcome::result<CID> CID::fromBytes(gsl::span<const uint8_t> input) {
-    OUTCOME_TRY(cid, libp2p::multi::ContentIdentifierCodec::decode(input));
+    OUTCOME_TRY((auto &&, cid), libp2p::multi::ContentIdentifierCodec::decode(input));
     return CID{std::move(cid)};
   }
 
@@ -75,23 +75,23 @@ namespace sgns {
         return Multihash::Error::INCONSISTENT_LENGTH;
       }
     } else {
-      OUTCOME_TRY(version,
+      OUTCOME_TRY((auto &&, version),
                   codec::uvarint::read<Error::EMPTY_VERSION, Version>(input));
       if (version != Version::V0 && version != Version::V1) {
         return Error::RESERVED_VERSION;
       }
       cid.version = version;
-      OUTCOME_TRY(
-          codec,
+      OUTCOME_TRY((auto &&,
+          codec),
           codec::uvarint::read<Error::EMPTY_MULTICODEC, Multicodec>(input));
       cid.content_type = codec;
     }
 
     OUTCOME_TRY(
-        hash_type,
+            (auto &&, hash_type),
         codec::uvarint::read<Multihash::Error::ZERO_INPUT_LENGTH, HashType>(
             input));
-    OUTCOME_TRY(hash_size,
+    OUTCOME_TRY((auto &&, hash_size),
                 codec::uvarint::read<Multihash::Error::INPUT_TOO_SHORT>(input));
     gsl::span<const uint8_t> hash_span;
     if (prefix) {
@@ -104,7 +104,7 @@ namespace sgns {
       hash_span = input.subspan(0, hash_size);
       input = input.subspan(hash_size);
     }
-    OUTCOME_TRY(hash, Multihash::create(hash_type, hash_span));
+    OUTCOME_TRY((auto &&, hash), Multihash::create(hash_type, hash_span));
     cid.content_address = std::move(hash);
     return cid;
   }
@@ -113,7 +113,7 @@ namespace sgns {
 namespace sgns::common {
   outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes) {
     auto hash_raw = crypto::blake2b::blake2b_256(bytes);
-    OUTCOME_TRY(hash, Multihash::create(HashType::blake2b_256, hash_raw));
+    OUTCOME_TRY((auto &&, hash), Multihash::create(HashType::blake2b_256, hash_raw));
     return CID(CID::Version::V1, CID::Multicodec::DAG_CBOR, hash);
   }
 }  // namespace sgns::common

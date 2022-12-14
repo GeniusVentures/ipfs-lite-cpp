@@ -10,7 +10,7 @@ namespace sgns::data_transfer {
 
   outcome::result<void> StreamMessageSender::sendMessage(
       const DataTransferMessage &message) {
-    OUTCOME_TRY(encoded_message, codec::cbor::encode(message));
+    OUTCOME_TRY((auto &&, encoded_message), codec::cbor::encode(message));
     stream_->write(encoded_message,
                    encoded_message.size(),
                    [](outcome::result<size_t> rwrite) {

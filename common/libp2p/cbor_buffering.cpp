@@ -85,7 +85,7 @@ namespace sgns::common::libp2p {
     }
     while (consumed < size && !more_nested.empty()) {
       if (!partial_head) {
-        OUTCOME_TRY(head, Head::first(more_bytes, input[consumed]));
+        OUTCOME_TRY((auto &&, head), Head::first(more_bytes, input[consumed]));
         ++consumed;
         partial_head = head;
       }

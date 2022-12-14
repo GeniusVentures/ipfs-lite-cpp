@@ -18,13 +18,13 @@ namespace sgns::data_transfer {
     if (validator == voucher_validators_.end()) {
       return MessageReceiverError::VOUCHER_VALIDATOR_NOT_FOUND;
     }
-    OUTCOME_TRY(base_cid, CID::fromString(request.base_cid));
-    OUTCOME_TRY(selector, IPLDNodeImpl::createFromRawBytes(request.selector));
+    OUTCOME_TRY((auto &&, base_cid), CID::fromString(request.base_cid));
+    OUTCOME_TRY((auto &&, selector), IPLDNodeImpl::createFromRawBytes(request.selector));
     if (request.is_pull) {
-      OUTCOME_TRY(validator->second->validatePull(
+      BOOST_OUTCOME_TRYV2(auto &&, validator->second->validatePull(
           sender, request.voucher, base_cid, selector));
     } else {
-      OUTCOME_TRY(validator->second->validatePush(
+      BOOST_OUTCOME_TRYV2(auto &&, validator->second->validatePush(
           sender, request.voucher, base_cid, selector));
     }
 

@@ -19,7 +19,7 @@ namespace sgns::ipfs_lite::ipfs {
 
   outcome::result<IpfsBlockService::Value> IpfsBlockService::get(
       const CID &key) const {
-    OUTCOME_TRY(data, local_storage_->get(key));
+    OUTCOME_TRY((auto &&, data), local_storage_->get(key));
     return std::move(data);
   }
 

@@ -40,7 +40,7 @@ namespace sgns::codec::cbor {
                                 const std::string &part) {
     try {
       if (stream.isList()) {
-        OUTCOME_TRY(index, parseIndex(part));
+        OUTCOME_TRY((auto &&, index), parseIndex(part));
         if (index >= stream.listLength()) {
           return CborResolveError::KEY_NOT_FOUND;
         }

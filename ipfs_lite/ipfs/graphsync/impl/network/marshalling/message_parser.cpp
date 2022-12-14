@@ -54,7 +54,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           if (src.cancel()) {
             dst.cancel = true;
           } else {
-            OUTCOME_TRY(cid, CID::fromBytes(common::span::cbytes(src.root())));
+            OUTCOME_TRY((auto &&, cid), CID::fromBytes(common::span::cbytes(src.root())));
             dst.root_cid = std::move(cid);
             dst.selector = fromString(src.selector());
             dst.priority = src.priority();
@@ -82,7 +82,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         for (auto &src : pb_msg.responses()) {
           auto &dst = msg.responses.emplace_back(Message::Response());
           dst.id = src.id();
-          OUTCOME_TRY(status, extractStatusCode(src.status()));
+          OUTCOME_TRY((auto &&, status), extractStatusCode(src.status()));
           dst.status = status;
 
           // for (const auto &[k, v] : src.extensions()) {
@@ -107,7 +107,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         for (auto &src : pb_msg.data()) {
           auto data = fromString(src.data());
           auto prefix_reader = common::span::cbytes(src.prefix());
-          OUTCOME_TRY(cid, CID::read(prefix_reader, true));
+          OUTCOME_TRY((auto &&, cid), CID::read(prefix_reader, true));
           if (!prefix_reader.empty()) {
             return Error::MESSAGE_PARSE_ERROR;
           }

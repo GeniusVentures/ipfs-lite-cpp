@@ -44,7 +44,7 @@ namespace sgns::ipfs_lite::ipld::walker {
           break;
         }
         auto cid_bytes = link._str(1);
-        OUTCOME_TRY(cid, CID::fromBytes(cid_bytes));
+        OUTCOME_TRY((auto &&, cid), CID::fromBytes(cid_bytes));
         cids.push_back(std::move(cid));
       }
       return std::move(cids);
@@ -60,7 +60,7 @@ namespace sgns::ipfs_lite::ipld::walker {
   outcome::result<void> Walker::recursiveAll(const CID &cid) {
     if (visited.insert(cid).second) {
       cids.push_back(cid);
-      OUTCOME_TRY(bytes, store.get(cid));
+      OUTCOME_TRY((auto &&, bytes), store.get(cid));
       // TODO(turuslan): what about other types?
       if (cid.content_type == libp2p::multi::MulticodecType::Code::DAG_CBOR) {
         try {
@@ -70,9 +70,9 @@ namespace sgns::ipfs_lite::ipld::walker {
           return outcome::failure(e.code());
         }
       } else if (cid.content_type == libp2p::multi::MulticodecType::Code::DAG_PB) {
-        OUTCOME_TRY(cids, PbNodeDecoder::links(bytes));
+        OUTCOME_TRY((auto &&, cids), PbNodeDecoder::links(bytes));
         for (auto &cid : cids) {
-          OUTCOME_TRY(recursiveAll(cid));
+          BOOST_OUTCOME_TRYV2(auto &&, recursiveAll(cid));
         }
       }
     }

@@ -33,7 +33,7 @@ namespace sgns::common {
       return CommCidError::INVALID_HASH;
     }
 
-    OUTCOME_TRY(mh, Multihash::create(static_cast<HashType>(code), commitment));
+    OUTCOME_TRY((auto &&, mh), Multihash::create(static_cast<HashType>(code), commitment));
 
     return CID(
         libp2p::multi::ContentIdentifier::Version::V1, kFilecoinCodecType, mh);
@@ -44,7 +44,7 @@ namespace sgns::common {
   }
 
   outcome::result<Comm> CIDToDataCommitmentV1(const CID &cid) {
-    OUTCOME_TRY(result, CIDToCommitment(cid));
+    OUTCOME_TRY((auto &&, result), CIDToCommitment(cid));
     if (static_cast<FilecoinHashType>(result.getType()) != FC_UNSEALED_V1) {
       return CommCidError::INVALID_HASH;
     }
@@ -59,7 +59,7 @@ namespace sgns::common {
   }
 
   outcome::result<Comm> CIDToReplicaCommitmentV1(const CID &cid) {
-    OUTCOME_TRY(result, CIDToCommitment(cid));
+    OUTCOME_TRY((auto &&, result), CIDToCommitment(cid));
     if (static_cast<FilecoinHashType>(result.getType()) != FC_SEALED_V1) {
       return CommCidError::INVALID_HASH;
     }

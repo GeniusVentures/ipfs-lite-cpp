@@ -28,13 +28,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     };
 
     if (selector.empty()) {
-      OUTCOME_TRY(node, service_->getNode(root_cid));
+      OUTCOME_TRY((auto &&, node), service_->getNode(root_cid));
       internal_handler(node);
       return 1;
     }
 
     // TODO(???): change MerkleDAG service to accept CID instead of bytes
-    OUTCOME_TRY(cid_encoded, root_cid.toBytes());
+    OUTCOME_TRY((auto &&, cid_encoded), root_cid.toBytes());
     return service_->select(cid_encoded, selector, internal_handler);
   }
 

@@ -22,7 +22,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
 
   outcome::result<std::shared_ptr<IPLDNode>> MerkleDagServiceImpl::getNode(
       const CID &cid) const {
-    OUTCOME_TRY(content, block_service_->get(cid));
+    OUTCOME_TRY((auto &&, content), block_service_->get(cid));
     return IPLDNodeImpl::createFromRawBytes(content);
   }
 
@@ -35,8 +35,8 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
       gsl::span<const uint8_t> selector,
       std::function<bool(std::shared_ptr<const IPLDNode>)> handler) const {
     std::ignore = selector;
-    OUTCOME_TRY(cid, CID::fromBytes(root_cid));
-    OUTCOME_TRY(root_node, getNode(cid));
+    OUTCOME_TRY((auto &&, cid), CID::fromBytes(root_cid));
+    OUTCOME_TRY((auto &&, root_node), getNode(cid));
     std::vector<std::shared_ptr<const IPLDNode>> node_set{};
     node_set.emplace_back(std::move(root_node));
     const auto &links = node_set.front()->getLinks();
@@ -68,7 +68,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
       std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
       const CID& cid, std::optional<uint64_t> depth)
   {
-      OUTCOME_TRY(node, nodeGetter(cid));
+      OUTCOME_TRY((auto &&, node), nodeGetter(cid));
       auto leaf = std::make_shared<LeafImpl>(node->content());
       auto result = buildGraph(nodeGetter, leaf, node->getLinks(), depth, 0);
       if (result.has_error()) return result.error();

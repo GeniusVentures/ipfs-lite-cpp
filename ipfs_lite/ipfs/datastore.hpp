@@ -55,16 +55,16 @@ namespace sgns::ipfs_lite::ipfs {
      */
     template <typename T>
     outcome::result<CID> setCbor(const T &value) {
-      OUTCOME_TRY(bytes, codec::cbor::encode(value));
-      OUTCOME_TRY(key, common::getCidOf(bytes));
-      OUTCOME_TRY(set(key, Value(bytes)));
+      OUTCOME_TRY((auto &&, bytes), codec::cbor::encode(value));
+      OUTCOME_TRY((auto &&, key), common::getCidOf(bytes));
+      BOOST_OUTCOME_TRYV2(auto &&, set(key, Value(bytes)));
       return std::move(key);
     }
 
     /// Get CBOR decoded value by CID
     template <typename T>
     outcome::result<T> getCbor(const CID &key) const {
-      OUTCOME_TRY(bytes, get(key));
+      OUTCOME_TRY((auto &&, bytes), get(key));
       return codec::cbor::decode<T>(bytes);
     }
   };

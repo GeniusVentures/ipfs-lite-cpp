@@ -15,7 +15,7 @@ namespace sgns::primitives::cid {
    */
   template <class T>
   outcome::result<CID> getCidOfCbor(const T &value) {
-    OUTCOME_TRY(bytes, sgns::codec::cbor::encode(value));
+    OUTCOME_TRY((auto &&, bytes), sgns::codec::cbor::encode(value));
     return common::getCidOf(bytes);
   }
 }  // namespace sgns::primitives::cid

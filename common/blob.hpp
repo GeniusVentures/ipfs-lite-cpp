@@ -85,7 +85,7 @@ namespace sgns::common {
      * is in hex format
      */
     static outcome::result<Blob<size_>> fromHex(std::string_view hex) {
-      OUTCOME_TRY(res, unhex(hex));
+      OUTCOME_TRY((auto &&, res), unhex(hex));
       return fromSpan(res);
     }
 

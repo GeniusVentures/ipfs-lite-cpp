@@ -14,7 +14,7 @@ using Value = sgns::ipfs_lite::ipfs::IpfsDatastore::Value;
     }
 
     sgns::outcome::result<Value> InMemoryDatastore::get(const CID &key) const {
-    OUTCOME_TRY(found, contains(key));
+    OUTCOME_TRY((auto &&, found), contains(key));
     if (!found) return IpfsDatastoreError::NOT_FOUND;
     return storage_.at(key);
     }
