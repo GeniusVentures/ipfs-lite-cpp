@@ -1,0 +1,296 @@
+
+cmake_minimum_required(VERSION 3.5.1)
+# set(CMAKE_VERBOSE_MAKEFILE ON) # Un-comment this line if one run to show more details during compilation
+function(print)
+  message(STATUS "[${CMAKE_PROJECT_NAME}] ${ARGV}")
+endfunction()
+
+# Project
+project(ipfs-lite-cpp-linux)
+
+# --------------------------------------------------------
+# Set OS threading settings
+set(CMAKE_THREAD_LIBS_INIT "-lpthread")
+set(CMAKE_HAVE_THREADS_LIBRARY ON)
+set(CMAKE_USE_WIN32_THREADS_INIT OFF)
+set(CMAKE_USE_PTHREADS_INIT ON)
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+# --------------------------------------------------------
+# Set extra compiler flags
+set(EXTRA_CXX_FLAGS "-pthread")
+
+# ------------------------------------------
+# Set Linux specific runtime options
+if("${LINUX_TARGET_ARCHITECTURES}" STREQUAL "")
+    set(LINUX_TARGET_ARCHITECTURES "${CMAKE_HOST_SYSTEM_PROCESSOR}")
+endif("${LINUX_TARGET_ARCHITECTURES}" STREQUAL "")
+
+print("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+set(CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+print("C flags: ${CMAKE_C_FLAGS}")
+print("CXX flags: ${CMAKE_CXX_FLAGS}")
+print("C Debug flags: ${CMAKE_C_FLAGS_DEBUG}")
+print("CXX Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
+print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
+
+include(ExternalProject)
+
+# Note: For all external projects, instead of using checked-out code, one could
+# specify GIT_REPOSITORY and GIT_TAG to have cmake download the dependency directly,
+# without needing to add a submodule to your project.
+
+# Builds GTest project from the git submodule.
+ExternalProject_Add(GTest
+  PREFIX GTest
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../GTest"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GTest
+)
+
+set(_FINDPACKAGE_GTEST_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/GTest/lib/cmake/GTest")
+
+
+INCLUDE(FindProtobuf)
+FIND_PACKAGE(Protobuf REQUIRED)
+INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
+
+# check if protobuf was found
+if(PROTOBUF_FOUND)
+    message ("protobuf found")
+else()
+    message (FATAL_ERROR "Cannot find Protobuf - Need install protobuf in your build server")
+endif()
+# TODO: Need to link to protobuf at third_part repo
+
+## the location where protobuf-config.cmake will be installed varies by platform
+#set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/cmake")
+#set(_FINDPACKAGE_PROTOBUF_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/include")
+#set(_FINDPACKAGE_PROTOBUF_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/protobuf/lib")
+
+# if OPENSSL_ROOT_DIR is set, propagate that hint path to the external projects with OpenSSL dependency.
+set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "")
+if (OPENSSL_ROOT_DIR)
+  set(_CMAKE_ARGS_OPENSSL_ROOT_DIR "-DOPENSSL_ROOT_DIR:PATH=${OPENSSL_ROOT_DIR}")
+endif()
+
+# Builds rocksdb
+ExternalProject_Add(rocksdb
+  PREFIX rocksdb
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../rocksdb"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/rocksdb
+        -DROCKSDB_BUILD_SHARED:BOOL=OFF
+        -DWITH_ALL_TESTS:BOOL=OFF
+        -DWITH_TESTS:BOOL=OFF
+        -DWITH_TOOLS:BOOL=OFF
+        -DWITH_CORE_TOOLS:BOOL=OFF
+        -DWITH_BENCHMARK_TOOLS:BOOL=OFF
+        -DWITH_RUNTIME_DEBUG:BOOL=ON
+        -DWITH_MD_LIBRARY:BOOL=OFF  
+        -DROCKSDB_INSTALL_ON_WINDOWS:BOOL=ON
+        -DPORTABLE:BOOL=ON
+        -DWITH_GFLAGS:BOOL=OFF
+        ${CMAKE_CACHE_ARGS_CFLAGES_ADD}
+)
+set(_FINDPACKAGE_ROCKSDB_DIR "${CMAKE_CURRENT_BINARY_DIR}/rocksdb/lib/cmake/rocksdb")
+
+# Builds Microsoft.GSL
+ExternalProject_Add(Microsoft.GSL
+  PREFIX Microsoft.GSL
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../GSL"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/GSL
+        -DGSL_TEST:BOOL=OFF
+)
+set(_FINDPACKAGE_GSL_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/GSL/include")
+
+ExternalProject_Add(fmt
+  PREFIX fmt
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../fmt"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/fmt
+        ${_CMAKE_COMMON_BUILD_PARAMS}
+        -DFORCE_MULTILE:BOOL=${_FORCE_MULTILE}
+        -DBUILD_SHARED_LIBS:BOOL=OFF
+        -DFMT_TEST:BOOL=OFF
+)
+
+set(_FINDPACKAGE_FMT_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/fmt/lib/cmake/fmt")
+set(_FINDPACKAGE_FMT_LIBRARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/fmt/lib")
+set(_FINDPACKAGE_FMT_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/fmt/include")
+print("_FINDPACKAGE_FMT_CONFIG_DIR: ${_FINDPACKAGE_FMT_CONFIG_DIR}")
+print("CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
+
+
+# Builds spdlog
+ExternalProject_Add(spdlog
+  PREFIX spdlog
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../spdlog"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/spdlog
+        -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF
+        -DSPDLOG_FMT_EXTERNAL:BOOL=ON
+        -Dfmt_DIR:PATH=${_FINDPACKAGE_FMT_CONFIG_DIR}
+  DEPENDS fmt
+)
+set(_FINDPACKAGE_SPDLOG_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/lib/spdlog/cmake")
+set(_FINDPACKAGE_SPDLOG_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/spdlog/include")
+print("_FINDPACKAGE_SPDLOG_CONFIG_DIR: ${_FINDPACKAGE_SPDLOG_CONFIG_DIR}")
+print("_FINDPACKAGE_SPDLOG_INCLUDE_DIR: ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}")
+
+# Builds tsl_hat_trie 343e0dac54fc8491065e8a059a02db9a2b1248ab
+ExternalProject_Add(tsl_hat_trie
+  PREFIX tsl_hat_trie
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../hat-trie"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/hat-trie
+)
+set(_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/hat-trie/lib/cmake/tsl_hat_trie")
+# Builds Boost.DI c5287ee710ad90f5286d0cc2b9e49b72d89267a6
+ExternalProject_Add(Boost.DI
+  PREFIX Boost.DI
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../Boost.DI"
+  CMAKE_CACHE_ARGS
+        -DBOOST_DI_OPT_BUILD_TESTS:BOOL=OFF
+        -DBOOST_DI_OPT_BUILD_EXAMPLES:BOOL=OFF
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/Boost.DI
+)
+set(_FINDPACKAGE_BOOST_DI_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/Boost.DI/lib/cmake/Boost.DI")
+set(_FINDPACKAGE_BOOST_DI_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Boost.DI/include")
+
+
+
+## BOOST library
+set(_BOOST_BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}/boost/build/${CMAKE_SYSTEM_NAME}")
+set(Boost_NO_SYSTEM_PATHS  ON)
+set(Boost_USE_STATIC_LIBS  ON)
+set(Boost_USE_STATIC_RUNTIME ON)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(BOOST_VARIANT "debug")
+else()
+    set(BOOST_VARIANT "release")
+endif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+ExternalProject_Add(Boost
+    PREFIX boost
+    SOURCE_DIR    "${CMAKE_CURRENT_SOURCE_DIR}/../../../boost"
+    LOG_OUTPUT_ON_FAILURE TRUE
+    LOG_CONFIGURE ON
+    LOG_BUILD OFF
+    LOG_INSTALL ON
+    CONFIGURE_COMMAND  ""
+    PATCH_COMMAND <SOURCE_DIR>/bootstrap.sh
+    BUILD_COMMAND <SOURCE_DIR>/b2 headers
+    BUILD_IN_SOURCE  TRUE
+    INSTALL_COMMAND <SOURCE_DIR>/b2 "cxxflags=-fPIC -std=c++17" visibility=global runtime-link=static link=static toolset=clang threading=multi --build-type=minimal --with-thread --with-program_options --with-system --with-date_time --with-regex --with-chrono --with-atomic --with-random --with-filesystem --with-log  address-model=64 architecture=x86  variant=${BOOST_VARIANT}   --stagedir=stage/x64  --build-dir=${_BOOST_BUILD_ROOT}  --prefix=${_BOOST_BUILD_ROOT}   --libdir=${_BOOST_BUILD_ROOT}/lib install
+    UPDATE_COMMAND ""
+)
+
+set(boost_DIR "${_BOOST_BUILD_ROOT}/lib/cmake/Boost-${BOOST_VERSION}")
+set(_Boost_INCLUDE_DIR "${_BOOST_BUILD_ROOT}/include")
+set(_BOOST_CACHE_ARGS
+    -DBoost_DIR:PATH=${boost_DIR}
+    -DBoost_USE_MULTITHREADED:BOOL=ON
+    -DBoost_USE_STATIC_LIBS:BOOL=ON
+    -DBoost_USE_STATIC_RUNTIME:BOOL=ON
+    -DBoost_NO_SYSTEM_PATHS:BOOL=ON
+    -DBoost_INCLUDE_DIR:PATH=${_Boost_INCLUDE_DIR}
+)
+
+# Builds libp2p
+
+
+ExternalProject_Add(libp2p
+  PREFIX libp2p
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../libp2p"
+  CMAKE_CACHE_ARGS
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DGTest_DIR:PATH=${_FINDPACKAGE_GTEST_CONFIG_DIR}
+        -DCMAKE_USE_OPENSSL:BOOL=ON
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
+        -DTESTING:BOOL=OFF 
+        -DEXPOSE_MOCKS:BOOL=ON
+        -DHUNTER_ENABLED:BOOL=OFF
+        -DBUILD_EXAMPLES:BOOL=OFF
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DProtobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}
+        -Dtsl_hat_trie_DIR:PATH=${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}
+        -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
+        -DBoost.DI_DIR:PATH=${_FINDPACKAGE_BOOST_DI_CONFIG_DIR}
+        -DBOOST_ROOT:PATH="${BOOST_ROOT}"
+        -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
+        -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        # -DTESTING:BOOL=${TESTING}
+        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
+        -DCMAKE_C_FLAGS_RELEASE:STRING=${CMAKE_C_FLAGS_RELEASE}
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
+        -DCMAKE_C_FLAGS_DEBUG:STRING=${CMAKE_C_FLAGS_DEBUG}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+
+  DEPENDS GTest ${_PROTOBUF_TARGET} spdlog tsl_hat_trie Boost.DI Boost
+)
+set(_FINDPACKAGE_libp2p_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
+
+
+# Builds MNN
+ExternalProject_Add(MNN
+  PREFIX MNN
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../MNN"
+  CMAKE_CACHE_ARGS
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/MNN
+        -DMNN_BUILD_CONVERTER:BOOL=ON
+        -DMNN_BUILD_SHARED_LIBS:BOOL=ON
+        -DMNN_SEP_BUILD:BOOL=ON
+        ${_CMAKE_COMMON_BUILD_PARAMS}
+)
+add_library( libMNN SHARED IMPORTED )
+set(_FINDPACKAGE_MNN_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/MNN/lib/cmake/mnn")
+set(_FINDPACKAGE_MNN_LIBRARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/MNN/lib")
+set(_FINDPACKAGE_MNN_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/MNN/include")
+
+# Builds ipfs-lite-cpp
+
+ExternalProject_Add(ipfs-lite-cpp
+  PREFIX ipfs-lite-cpp
+  SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../ipfs-lite-cpp"
+  BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/ipfs-lite-cpp"
+#  INSTALL_COMMAND ""
+  CMAKE_CACHE_ARGS
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        -DGTest_DIR:PATH=${_FINDPACKAGE_GTEST_CONFIG_DIR}
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/ipfs-lite-cpp
+        -DBOOST_ROOT:PATH="${BOOST_ROOT}"
+        -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
+        -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
+        -Dtsl_hat_trie_DIR:PATH=${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}
+        -Dlibp2p_DIR:PATH=${_FINDPACKAGE_libp2p_CONFIG_DIR}
+        -DProtobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}
+        -DProtobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
+        -DProtobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}
+        -Drocksdb_DIR:PATH=${_FINDPACKAGE_ROCKSDB_DIR}
+        -DTESTING:BOOL=${TESTING}
+        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_BOOST_DI_INCLUDE_DIR}
+        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DCMAKE_CXX_FLAGS_RELEASE:STRING=${CMAKE_CXX_FLAGS_RELEASE}
+        -DCMAKE_C_FLAGS_RELEASE:STRING=${CMAKE_C_FLAGS_RELEASE}
+        -DCMAKE_CXX_FLAGS_DEBUG:STRING=${CMAKE_CXX_FLAGS_DEBUG}
+        -DCMAKE_C_FLAGS_DEBUG:STRING=${CMAKE_C_FLAGS_DEBUG}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+  DEPENDS GTest Microsoft.GSL spdlog tsl_hat_trie libp2p ${_PROTOBUF_TARGET} rocksdb Boost.DI MNN Boost
+)
+# TARGET_LINK_LIBRARIES(GLBall libMNN)
+
