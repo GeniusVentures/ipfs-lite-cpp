@@ -20,6 +20,16 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 # Set extra compiler flags
 set(EXTRA_CXX_FLAGS "-pthread")
 
+
+# somehow this doesn't work on github CI/CD probably permission error - get_BOOST_version(BOOST_VERSION "${THIRDPARTY_DIR}/boost/boost/version.hpp")
+set(BOOST_MAJOR_VERSION "1" CACHE STRING "Boost Major Version")
+set(BOOST_MINOR_VERSION "80" CACHE STRING "Boost Minor Version")
+set(BOOST_PATCH_VERSION "0" CACHE STRING "Boost Patch Version")
+# convenience settings
+set(BOOST_VERSION "${BOOST_MAJOR_VERSION}.${BOOST_MINOR_VERSION}.${BOOST_PATCH_VERSION}")
+set(BOOST_VERSION_3U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}_${BOOST_PATCH_VERSION}")
+set(BOOST_VERSION_2U "${BOOST_MAJOR_VERSION}_${BOOST_MINOR_VERSION}")
+
 # ------------------------------------------
 # Set Linux specific runtime options
 if("${LINUX_TARGET_ARCHITECTURES}" STREQUAL "")
@@ -63,9 +73,38 @@ INCLUDE(FindProtobuf)
 FIND_PACKAGE(Protobuf REQUIRED)
 INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
 
+# Set Protobuf library path
+# if (NOT DEFINED _PROTOBUF_CONFIG_DIR)
+#     set(_PROTOBUF_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/lib/cmake/protobuf")
+# endif()
+set(_FINDPACKAGE_PROTOBUF_CONFIG_DIR "${_PROTOBUF_CONFIG_DIR}")
+# print("PROTOBUF_CONFIG_DIR: ${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
+
+# if (NOT DEFINED _PROTOBUF_INCLUDE_DIR)
+#     set(_PROTOBUF_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/include")
+# endif()
+set(_FINDPACKAGE_PROTOBUF_INCLUDE_DIR "${Protobuf_INCLUDE_DIR}")
+# print("PROTOBUF_INCLUDE_DIR: ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
+
+# if (NOT DEFINED _PROTOBUF_LIB_DIR)
+#     set(_PROTOBUF_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/grpc/lib")
+# endif()
+set(_FINDPACKAGE_PROTOBUF_LIB_DIR "${Protobuf_LIBRARY}")
+# print("PROTOBUF_LIB_DIR: ${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
+
+# if (NOT DEFINED PROTOC_EXECUTABLE)
+#     set(PROTOC_EXECUTABLE "${CMAKE_CURRENT_BINARY_DIR}/grpc/bin/protoc${CMAKE_EXECUTABLE_SUFFIX}")
+# endif()
+set(_PROTOBUF_PROTOC_EXEC "${Protobuf_PROTOC_EXECUTABLE}")
+# print("PROTOBUF_PROTOC_EXECUTABLE: ${_PROTOBUF_PROTOC_EXEC}")
+# print("CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
+
 # check if protobuf was found
 if(PROTOBUF_FOUND)
-    message ("protobuf found")
+    print("Protobuf found")
+    print("Protobuf_DIR:PATH=${_FINDPACKAGE_PROTOBUF_CONFIG_DIR}")
+    print("Protobuf_INCLUDE_DIR:PATH=${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}")
+    print("Protobuf_LIBRARIES:PATH=${_FINDPACKAGE_PROTOBUF_LIB_DIR}")
 else()
     message (FATAL_ERROR "Cannot find Protobuf - Need install protobuf in your build server")
 endif()
@@ -170,7 +209,7 @@ set(_FINDPACKAGE_BOOST_DI_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/Boost.DI/incl
 
 
 ## BOOST library
-set(_BOOST_BUILD_ROOT "${CMAKE_CURRENT_BINARY_DIR}/boost/build/${CMAKE_SYSTEM_NAME}")
+set(_BOOST_BUILD_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../boost/build/${CMAKE_SYSTEM_NAME}")
 set(Boost_NO_SYSTEM_PATHS  ON)
 set(Boost_USE_STATIC_LIBS  ON)
 set(Boost_USE_STATIC_RUNTIME ON)
@@ -194,8 +233,11 @@ ExternalProject_Add(Boost
     UPDATE_COMMAND ""
 )
 
+print("_BOOST_BUILD_ROOT: ${_BOOST_BUILD_ROOT}")
 set(boost_DIR "${_BOOST_BUILD_ROOT}/lib/cmake/Boost-${BOOST_VERSION}")
+print("boost_DIR : ${boost_DIR}")
 set(_Boost_INCLUDE_DIR "${_BOOST_BUILD_ROOT}/include")
+print("_Boost_INCLUDE_DIR : ${_Boost_INCLUDE_DIR}")
 set(_BOOST_CACHE_ARGS
     -DBoost_DIR:PATH=${boost_DIR}
     -DBoost_USE_MULTITHREADED:BOOL=ON
@@ -206,13 +248,12 @@ set(_BOOST_CACHE_ARGS
 )
 
 # Builds libp2p
-
-
 ExternalProject_Add(libp2p
   PREFIX libp2p
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../libp2p"
   CMAKE_CACHE_ARGS
         ${_CMAKE_ARGS_OPENSSL_ROOT_DIR}
+        ${_BOOST_CACHE_ARGS}
         -DGTest_DIR:PATH=${_FINDPACKAGE_GTEST_CONFIG_DIR}
         -DCMAKE_USE_OPENSSL:BOOL=ON
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/libp2p
@@ -226,9 +267,9 @@ ExternalProject_Add(libp2p
         -Dtsl_hat_trie_DIR:PATH=${_FINDPACKAGE_TSL_HAT_TRIE_CONFIG_DIR}
         -Dspdlog_DIR:PATH=${_FINDPACKAGE_SPDLOG_CONFIG_DIR}
         -DBoost.DI_DIR:PATH=${_FINDPACKAGE_BOOST_DI_CONFIG_DIR}
-        -DBOOST_ROOT:PATH="${BOOST_ROOT}"
-        -DBOOST_INCLUDE_DIR:PATH="${BOOST_INCLUDE_DIR}"
-        -DBOOST_LIBRARY_DIR:PATH="${BOOST_LIBRARY_DIR}"
+        -DBOOST_DIR:PATH=${boost_DIR}
+        -DBOOST_INCLUDE_DIR:PATH=${_Boost_INCLUDE_DIR}
+        -DBOOST_LIBRARY_DIR:PATH=${BOOST_LIBRARY_DIR}
         # -DTESTING:BOOL=${TESTING}
         -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
         -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}\ -I\ ${BOOST_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_GSL_INCLUDE_DIR}\ -I\ ${_FINDPACKAGE_SPDLOG_INCLUDE_DIR}\ -I\ \\\"${OPENSSL_ROOT_DIR}/include\\\"\ -I\ ${_FINDPACKAGE_PROTOBUF_INCLUDE_DIR}
@@ -239,9 +280,11 @@ ExternalProject_Add(libp2p
         -DCMAKE_C_FLAGS_DEBUG:STRING=${CMAKE_C_FLAGS_DEBUG}
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 
-  DEPENDS GTest ${_PROTOBUF_TARGET} spdlog tsl_hat_trie Boost.DI Boost
+  DEPENDS GTest spdlog tsl_hat_trie Boost.DI
 )
 set(_FINDPACKAGE_libp2p_CONFIG_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib/cmake/libp2p")
+set(_FINDPACKAGE_libp2p_LIBRARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/lib")
+set(_FINDPACKAGE_LIBP2P_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}/libp2p/include")
 
 
 # Builds MNN
