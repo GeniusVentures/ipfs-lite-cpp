@@ -15,7 +15,7 @@ namespace sgns::ipfs_lite {
   template <typename T>
   inline outcome::result<T> error_as_result(const MNNError &s,
                                             const common::Logger &logger) {
-    logger->error(s.ToString());
+    logger->error(ToString(s));
     return error_as_result<T>(s);
   }
 }// End namespace

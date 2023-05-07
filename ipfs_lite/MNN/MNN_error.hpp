@@ -24,5 +24,6 @@ namespace sgns::ipfs_lite
         UNKNOWN = 22,
     };
 } // End namespace
+constexpr const char* ToString(sgns::ipfs_lite::MNNError e);
 OUTCOME_HPP_DECLARE_ERROR_2(sgns::ipfs_lite, MNNError);
 #endif /* IPFS_LITE_MNN_MNN_ERROR_HPP_ */

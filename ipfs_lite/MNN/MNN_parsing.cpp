@@ -3,7 +3,7 @@
 
 namespace sgns::ipfs_lite
 {
-    MNNParsing::MNNParsing(const std::string &mnn_file_name, unsigned int num_thread = 1) : log_id_(mnn_file_name.data()), mnn_file_path_(
+    MNNParsing::MNNParsing(const std::string &mnn_file_name, unsigned int num_thread) : log_id_(mnn_file_name.data()), mnn_file_path_(
             mnn_file_name.data()), num_threads_(num_thread)
     {
         initialize();
@@ -83,10 +83,10 @@ namespace sgns::ipfs_lite
                 logger_->debug("Dimension Type: (TENSORFLOW) uses NHWC as data format");
                 break;
             case MNN::Tensor::CAFFE_C4:
-                logger->debug("Dimension Type: (CAFE_C4) uses NC4HW4 as data format");
+                logger_->debug("Dimension Type: (CAFE_C4) uses NC4HW4 as data format");
                 break;
             default:
-                logger->debug("Dimension Type: UNKNOWN");
+                logger_->debug("Dimension Type: UNKNOWN");
                 break;
         }
         logger_->debug("============OUTPUT-DIMS=============");
@@ -94,7 +94,7 @@ namespace sgns::ipfs_lite
         logger_->debug("getSessionOutputAll() done!");
         for (auto it = output_map.cbegin(); it != output_map.cend(); it++)
         {
-            logger->debug("Output: {}", it->first);
+            logger_->debug("Output: {}", it->first);
             it->second->printShape();
         }
         logger_->debug("====================================");
