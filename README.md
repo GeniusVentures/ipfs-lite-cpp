@@ -51,43 +51,6 @@ To run all tests and display log for failed tests, you can use following command
 # build on OSX
 
 # build on Linux
-I used gcc 11.3.0 version to compile ipfs-lite-cpp project
-1. Download prebuild-boost libraries for Linux
-2. Download OpenSSL
-2. Build ipfs_lite following commands in Release configuration
-
-### Build with Release
-```bash
-cd ipfs-lite-cp
-mkdir .build
-cd .build
-cmake ../build/Linux \
-     -DBUILD_TESTING=OFF \
-     -DBOOST_ROOT="/home/tannguyen/workspace/GNUS/thirdparty/boost" \
-     -DBOOST_INCLUDE_DIR="/home/tannguyen/workspace/GNUS/thirdparty/boost" \
-     -DBOOST_LIBRARY_DIR="/home/tannguyen/workspace/GNUS/thirdparty/boost/libs" \
-     -DOPENSSL_ROOT_DIR="/home/tannguyen/workspace/GNUS/thirdparty/openssl" -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
-```
-
-### Build with Release and Test mode
-
-```bash
-cd ipfs-lite-cp
-mkdir .build
-cd .build
-cmake ../build/Linux \
-     -DBUILD_TESTING=ON \
-     -DBOOST_ROOT="/home/tannguyen/workspace/GNUS/thirdparty/boost" \
-     -DBOOST_INCLUDE_DIR="/home/tannguyen/workspace/GNUS/thirdparty/boost" \
-     -DBOOST_LIBRARY_DIR="/home/tannguyen/workspace/GNUS/thirdparty/boost/libs" \
-     -DOPENSSL_ROOT_DIR="/home/tannguyen/workspace/GNUS/thirdparty/openssl" -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release
-
-cd ipfs-lite-cpp
-ctest -C Release
-
-```
 
 # Build on iOS
 
