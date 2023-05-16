@@ -52,7 +52,6 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # head
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${_FINDPACKAGE_GSL_INCLUDE_DIR}
-  ${MNN_LIBRARIES}
   deps/tinycbor/src
 )
 
@@ -69,14 +68,6 @@ find_package(soralog CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
-#find_package(MNN CONFIG REQUIRED)
-
-if (MNN_FOUND)
-  print("MNN_LIBS: ${MNN_LIBS}")
-  print("MNN_INCLUDE_DIRS: ${MNN_INCLUDE_DIRS}")
-else ()
-  print("mnn Not Found!")
-endif (MNN_FOUND)
 
 option(TESTING "Build tests" ON)
 
