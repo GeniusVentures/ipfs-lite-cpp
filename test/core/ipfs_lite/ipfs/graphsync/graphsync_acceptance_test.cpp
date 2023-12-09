@@ -5,6 +5,7 @@
 #include "codec/cbor/cbor.hpp"
 #include "common/logger.hpp"
 #include "graphsync_acceptance_common.hpp"
+#include <boost/optional/optional_io.hpp>
 
 // logger used by these tests
 static std::shared_ptr<spdlog::logger> logger;

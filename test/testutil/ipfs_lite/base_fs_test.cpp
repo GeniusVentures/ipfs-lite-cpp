@@ -1,4 +1,5 @@
 #include "testutil/ipfs_lite/base_fs_test.hpp"
+#include <fstream>
 
 namespace test {
 
@@ -40,7 +41,7 @@ namespace test {
   fs::path BaseFS_Test::createFile(const fs::path &filename) const {
     auto pathname = base_path;
     pathname /= filename;
-    boost::filesystem::ofstream ofs(pathname);
+    std::ofstream ofs(pathname.string());
     ofs.close();
     return pathname;
   }

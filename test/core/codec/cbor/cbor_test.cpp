@@ -6,6 +6,7 @@
 #include "primitives/cid/cid.hpp"
 #include "testutil/literals.hpp"
 #include "testutil/outcome.hpp"
+#include <boost/optional/optional_io.hpp>
 
 using sgns::CID;
 using sgns::codec::cbor::CborDecodeError;
