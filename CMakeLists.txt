@@ -132,6 +132,7 @@ install_hfile(deps)
 install_hfile(platform)
 install_hfile(primitives)
 install_hfile(ipfs_lite)
+install_hfile(clock)
 ### install protobuf header files ###
 message("-gen---${CMAKE_BINARY_DIR}/generated")
 install(
