@@ -137,7 +137,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     streams_.emplace(std::move(stream), std::move(stream_ctx));
   }
 
-  void PeerContext::onStreamConnected(outcome::result<StreamPtr> rstream) {
+  void PeerContext::onStreamConnected(IPFS::outcome::result<StreamPtr> rstream) {
     if (closed_) {
       return;
     }
@@ -295,7 +295,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     stream->close(
-        [stream](outcome::result<void>) { logger()->trace("stream closed"); });
+        [stream](IPFS::outcome::result<void>) { logger()->trace("stream closed"); });
   }
 
   void PeerContext::closeLocalRequests(ResponseStatusCode status) {
@@ -355,7 +355,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                                        PeerContext::StreamCtx &ctx) {
     if (!ctx.queue) {
       ctx.queue = std::make_shared<MessageQueue>(
-          stream, [this](const StreamPtr &stream, outcome::result<void> res) {
+          stream, [this](const StreamPtr &stream, IPFS::outcome::result<void> res) {
             onWriterEvent(stream, res);
           });
     }
@@ -370,7 +370,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void PeerContext::onReaderEvent(const StreamPtr &stream,
-                                  outcome::result<Message> msg_res) {
+                                  IPFS::outcome::result<Message> msg_res) {
     if (closed_) {
       return;
     }
@@ -421,7 +421,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void PeerContext::onWriterEvent(const StreamPtr &stream,
-                                  outcome::result<void> result) {
+                                  IPFS::outcome::result<void> result) {
     if (closed_) {
       return;
     }

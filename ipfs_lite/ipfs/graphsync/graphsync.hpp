@@ -38,7 +38,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param handler Data handler, returns false if further search is no
     /// longer required
     /// \return Count of data blocks passed through handler or error
-    virtual outcome::result<size_t> select(
+    virtual IPFS::outcome::result<size_t> select(
         const CID &cid,
         gsl::span<const uint8_t> selector,
         std::function<bool(const CID &cid, const common::Buffer &data)> handler)

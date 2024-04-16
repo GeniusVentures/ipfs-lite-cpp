@@ -69,14 +69,14 @@ namespace sgns::common {
 
   const auto kFilecoinCodecType = MulticodecType::Code::RAW;
 
-  outcome::result<CID> commitmentToCID(gsl::span<const uint8_t> commitment,
+  IPFS::outcome::result<CID> commitmentToCID(gsl::span<const uint8_t> commitment,
                                        FilecoinMultihashCode code);
 
-  outcome::result<Comm> CIDToPieceCommitmentV1(const CID &cid);
-  outcome::result<Comm> CIDToReplicaCommitmentV1(const CID &cid);
+  IPFS::outcome::result<Comm> CIDToPieceCommitmentV1(const CID &cid);
+  IPFS::outcome::result<Comm> CIDToReplicaCommitmentV1(const CID &cid);
 
-  outcome::result<Comm> CIDToDataCommitmentV1(const CID &cid);
-  outcome::result<Multihash> CIDToCommitment(const CID &cid);
+  IPFS::outcome::result<Comm> CIDToDataCommitmentV1(const CID &cid);
+  IPFS::outcome::result<Multihash> CIDToCommitment(const CID &cid);
 
 };  // namespace sgns::common
 

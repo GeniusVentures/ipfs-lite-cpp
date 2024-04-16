@@ -8,19 +8,19 @@ namespace sgns {
 
   const int ret = 42;
 
-  outcome::result<void> funcSuccess() {
-    return outcome::success();
+  IPFS::outcome::result<void> funcSuccess() {
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> funcFailure() {
+  IPFS::outcome::result<void> funcFailure() {
     return TodoError::ERROR;
   }
 
-  outcome::result<int> funcSuccessReturn() {
+  IPFS::outcome::result<int> funcSuccessReturn() {
     return ret;
   }
 
-  outcome::result<int> funcFailureReturn() {
+  IPFS::outcome::result<int> funcFailureReturn() {
     return TodoError::ERROR;
   }
 

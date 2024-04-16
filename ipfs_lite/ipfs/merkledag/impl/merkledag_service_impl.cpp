@@ -14,23 +14,23 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
                      "MerkleDAG service: Block service not connected");
   }
 
-  outcome::result<void> MerkleDagServiceImpl::addNode(
+  IPFS::outcome::result<void> MerkleDagServiceImpl::addNode(
       std::shared_ptr<const IPLDNode> node) {
     const common::Buffer &raw_bytes = node->getRawBytes();
     return block_service_->set(node->getCID(), raw_bytes);
   }
 
-  outcome::result<std::shared_ptr<IPLDNode>> MerkleDagServiceImpl::getNode(
+  IPFS::outcome::result<std::shared_ptr<IPLDNode>> MerkleDagServiceImpl::getNode(
       const CID &cid) const {
     OUTCOME_TRY((auto &&, content), block_service_->get(cid));
     return IPLDNodeImpl::createFromRawBytes(content);
   }
 
-  outcome::result<void> MerkleDagServiceImpl::removeNode(const CID &cid) {
+  IPFS::outcome::result<void> MerkleDagServiceImpl::removeNode(const CID &cid) {
     return block_service_->remove(cid);
   }
 
-  outcome::result<size_t> MerkleDagServiceImpl::select(
+  IPFS::outcome::result<size_t> MerkleDagServiceImpl::select(
       gsl::span<const uint8_t> root_cid,
       gsl::span<const uint8_t> selector,
       std::function<bool(std::shared_ptr<const IPLDNode>)> handler) const {
@@ -53,19 +53,19 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     return sent_count;
   }
 
-  outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraph(
+  IPFS::outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraph(
       const CID &cid) const {
       return fetchGraphOnDepth(std::bind(&MerkleDagService::getNode, this, std::placeholders::_1), cid, {});
   }
 
-  outcome::result<std::shared_ptr<Leaf>>
+  IPFS::outcome::result<std::shared_ptr<Leaf>>
   MerkleDagServiceImpl::fetchGraphOnDepth(const CID &cid,
                                           uint64_t depth) const {
     return fetchGraphOnDepth(std::bind(&MerkleDagService::getNode, this, std::placeholders::_1), cid, depth);
   }
 
-  outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraphOnDepth(
-      std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+  IPFS::outcome::result<std::shared_ptr<Leaf>> MerkleDagServiceImpl::fetchGraphOnDepth(
+      std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
       const CID& cid, std::optional<uint64_t> depth)
   {
       OUTCOME_TRY((auto &&, node), nodeGetter(cid));
@@ -75,14 +75,14 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
       return leaf;
   }
 
-  outcome::result<void> MerkleDagServiceImpl::buildGraph(
-      std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+  IPFS::outcome::result<void> MerkleDagServiceImpl::buildGraph(
+      std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
       const std::shared_ptr<LeafImpl> &root,
       const std::vector<std::reference_wrapper<const IPLDLink>> &links,
       std::optional<size_t> max_depth,
       size_t current_depth) {
     if (max_depth && current_depth == *max_depth) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
     for (const auto &link : links) {
       auto request = nodeGetter(link.get().getCID());
@@ -103,7 +103,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
         return insert_result;
       }
     }
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 }  // namespace sgns::ipfs_lite::ipfs::merkledag
 

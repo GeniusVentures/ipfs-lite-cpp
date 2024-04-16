@@ -62,7 +62,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test {
     dst[node->getCID()] = node->getRawBytes();
   }
 
-  outcome::result<size_t> TestDataService::select(
+  IPFS::outcome::result<size_t> TestDataService::select(
       const CID &cid,
       gsl::span<const uint8_t> selector,
       std::function<bool(const CID &cid, const common::Buffer &data)> handler)

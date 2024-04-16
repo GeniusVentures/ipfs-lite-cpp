@@ -42,7 +42,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     libp2p::basic::VarintReader::readVarint(
         stream_,
         [wptr{weak_from_this()}]
-            (outcome::result<libp2p::multi::UVarint> varint_opt) {
+            (IPFS::outcome::result<libp2p::multi::UVarint> varint_opt) {
           auto self = wptr.lock();
           if (self && self->reading_) {
             size_t length = varint_opt ? varint_opt.value().toUInt64() : 0;
@@ -76,7 +76,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     stream_->read(
         gsl::span(buffer_->data(), length),
         length,
-        [wptr{weak_from_this()}, buffer{buffer_}](outcome::result<size_t> res) {
+        [wptr{weak_from_this()}, buffer{buffer_}](IPFS::outcome::result<size_t> res) {
           auto self = wptr.lock();
           if (self && self->reading_) {
             self->onMessageRead(res);
@@ -87,7 +87,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void LengthDelimitedMessageReader::onMessageRead(
-      outcome::result<size_t> res) {
+      IPFS::outcome::result<size_t> res) {
     if (!reading_) {
       return;
     }
@@ -117,7 +117,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     reading_ = false;
     if (!stream_->isClosedForRead() && stream_.use_count() == 1) {
-      stream_->close([stream{stream_}](outcome::result<void>) {});
+      stream_->close([stream{stream_}](IPFS::outcome::result<void>) {});
     }
     stream_.reset();
   }

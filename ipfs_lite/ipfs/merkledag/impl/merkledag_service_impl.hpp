@@ -19,24 +19,24 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      */
     explicit MerkleDagServiceImpl(std::shared_ptr<IpfsDatastore> service);
 
-    outcome::result<void> addNode(
+    IPFS::outcome::result<void> addNode(
         std::shared_ptr<const IPLDNode> node) override;
 
-    outcome::result<std::shared_ptr<IPLDNode>> getNode(
+    IPFS::outcome::result<std::shared_ptr<IPLDNode>> getNode(
         const CID &cid) const override;
 
-    outcome::result<void> removeNode(const CID &cid) override;
+    IPFS::outcome::result<void> removeNode(const CID &cid) override;
 
-    outcome::result<size_t> select(
+    IPFS::outcome::result<size_t> select(
         gsl::span<const uint8_t> root_cid,
         gsl::span<const uint8_t> selector,
         std::function<bool(std::shared_ptr<const IPLDNode> node)> handler)
         const override;
 
-    outcome::result<std::shared_ptr<Leaf>> fetchGraph(
+    IPFS::outcome::result<std::shared_ptr<Leaf>> fetchGraph(
         const CID &cid) const override;
 
-    outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
+    IPFS::outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
         const CID &cid, uint64_t depth) const override;
 
     /**
@@ -46,8 +46,8 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * children, but without children of their children"
      * @return operation result
      */
-    static outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
-        std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+    static IPFS::outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
+        std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
         const CID& cid, std::optional<uint64_t> depth);
 
    private:
@@ -63,8 +63,8 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param current_depth - value of the depth during current operation
      * @return operation result
      */
-    static outcome::result<void> buildGraph(
-        std::function<outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
+    static IPFS::outcome::result<void> buildGraph(
+        std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
         const std::shared_ptr<LeafImpl> &root,
         const std::vector<std::reference_wrapper<const IPLDLink>> &links,
         std::optional<size_t> max_depth,

@@ -71,7 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         *buffer,
         buffer->size(),
         [wptr{weak_from_this()}, buffer]
-            (outcome::result<size_t> result)
+            (IPFS::outcome::result<size_t> result)
         {
           auto self = wptr.lock();
           if (self) {
@@ -82,7 +82,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // clang-format on
   }
 
-  void MessageQueue::onMessageWritten(outcome::result<size_t> res) {
+  void MessageQueue::onMessageWritten(IPFS::outcome::result<size_t> res) {
     if (!state_.active) {
       // dont need the result anymore
       return;
@@ -105,7 +105,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     dequeue();
 
-    feedback_(state_.stream, outcome::success());
+    feedback_(state_.stream, IPFS::outcome::success());
   }
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

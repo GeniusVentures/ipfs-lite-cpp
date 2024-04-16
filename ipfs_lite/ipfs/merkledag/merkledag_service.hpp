@@ -22,14 +22,14 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param node - entity to add
      * @return operation result
      */
-    virtual outcome::result<void> addNode(std::shared_ptr<const IPLDNode> node) = 0;
+    virtual IPFS::outcome::result<void> addNode(std::shared_ptr<const IPLDNode> node) = 0;
 
     /**
      * @brief Get node by id
      * @param cid - node id
      * @return operation result
      */
-    virtual outcome::result<std::shared_ptr<IPLDNode>> getNode(
+    virtual IPFS::outcome::result<std::shared_ptr<IPLDNode>> getNode(
         const CID &cid) const = 0;
 
     /**
@@ -37,7 +37,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param cid - node id
      * @return operation result
      */
-    virtual outcome::result<void> removeNode(const CID &cid) = 0;
+    virtual IPFS::outcome::result<void> removeNode(const CID &cid) = 0;
 
     /**
      * @brief Get nodes with IPLD-selector
@@ -47,7 +47,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * break receiving process
      * @return count of the received by handler Nodes
      */
-    virtual outcome::result<size_t> select(
+    virtual IPFS::outcome::result<size_t> select(
         gsl::span<const uint8_t> root_cid,
         gsl::span<const uint8_t> selector,
         std::function<bool(std::shared_ptr<const IPLDNode> node)> handler)
@@ -58,7 +58,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param cid - identifier of the root node
      * @return operation result
      */
-    virtual outcome::result<std::shared_ptr<Leaf>> fetchGraph(
+    virtual IPFS::outcome::result<std::shared_ptr<Leaf>> fetchGraph(
         const CID &cid) const = 0;
 
     /**
@@ -68,7 +68,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param depth - limit of the depth to fetch
      * @return operation result
      */
-    virtual outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
+    virtual IPFS::outcome::result<std::shared_ptr<Leaf>> fetchGraphOnDepth(
         const CID &cid, uint64_t depth) const = 0;
   };
 

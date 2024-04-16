@@ -11,7 +11,7 @@
 namespace sgns::ipfs_lite {
 
   template <typename T>
-  inline outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s) {
+  inline IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s) {
     if (s.IsNotFound()) {
       return rocksdbError::NOT_FOUND;
     }
@@ -36,7 +36,7 @@ namespace sgns::ipfs_lite {
   }
 
   template <typename T>
-  inline outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
+  inline IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
                                             const common::Logger &logger) {
     logger->error(s.ToString());
     return error_as_result<T>(s);

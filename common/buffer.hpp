@@ -204,7 +204,7 @@ namespace sgns::common {
      * @return result containing constructed buffer if input string is
      * hex-encoded string.
      */
-    static outcome::result<Buffer> fromHex(std::string_view hex);
+    static IPFS::outcome::result<Buffer> fromHex(std::string_view hex);
 
    private:
     std::vector<uint8_t> data_;

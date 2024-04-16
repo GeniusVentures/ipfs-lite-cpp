@@ -7,7 +7,7 @@ namespace sgns::codec::cbor {
     if (CborNoError
         != cbor_parser_init(
             data_->data(), data_->size(), 0, parser_.get(), &value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     value_.remaining = UINT32_MAX;
   }
@@ -15,13 +15,13 @@ namespace sgns::codec::cbor {
   CborDecodeStream &CborDecodeStream::operator>>(gsl::span<uint8_t> bytes) {
     auto size = bytesLength();
     if (static_cast<size_t>(bytes.size()) != size) {
-      outcome::raise(CborDecodeError::WRONG_SIZE);
+      IPFS::outcome::raise(CborDecodeError::WRONG_SIZE);
     }
     auto value = value_;
     value.remaining = 1;
     if (CborNoError
         != cbor_value_copy_byte_string(&value, bytes.data(), &size, nullptr)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     next();
     return *this;
@@ -34,18 +34,18 @@ namespace sgns::codec::cbor {
 
   CborDecodeStream &CborDecodeStream::operator>>(std::string &str) {
     if (!cbor_value_is_text_string(&value_)) {
-      outcome::raise(CborDecodeError::WRONG_TYPE);
+      IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
     }
     size_t size;
     if (CborNoError != cbor_value_get_string_length(&value_, &size)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     str.resize(size);
     auto value = value_;
     value.remaining = 1;
     if (CborNoError
         != cbor_value_copy_text_string(&value, str.data(), &size, nullptr)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     next();
     return *this;
@@ -53,28 +53,28 @@ namespace sgns::codec::cbor {
 
   CborDecodeStream &CborDecodeStream::operator>>(CID &cid) {
     if (!cbor_value_is_tag(&value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR_CID);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR_CID);
     }
     CborTag tag;
     cbor_value_get_tag(&value_, &tag);
     if (tag != kCidTag) {
-      outcome::raise(CborDecodeError::INVALID_CBOR_CID);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR_CID);
     }
     if (CborNoError != cbor_value_advance(&value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     if (!cbor_value_is_byte_string(&value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR_CID);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR_CID);
     }
     std::vector<uint8_t> bytes;
     *this >> bytes;
     if (bytes[0] != 0) {
-      outcome::raise(CborDecodeError::INVALID_CBOR_CID);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR_CID);
     }
     bytes.erase(bytes.begin());
     auto maybe_cid = CID::fromBytes(bytes);
     if (maybe_cid.has_error()) {
-      outcome::raise(CborDecodeError::INVALID_CID);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CID);
     }
     cid = std::move(maybe_cid.value());
     return *this;
@@ -82,7 +82,7 @@ namespace sgns::codec::cbor {
 
   CborDecodeStream CborDecodeStream::list() {
     if (!cbor_value_is_array(&value_)) {
-      outcome::raise(CborDecodeError::WRONG_TYPE);
+      IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
     }
     auto stream = container();
     next();
@@ -92,13 +92,13 @@ namespace sgns::codec::cbor {
   void CborDecodeStream::next() {
     if (isCid()) {
       if (CborNoError != cbor_value_skip_tag(&value_)) {
-        outcome::raise(CborDecodeError::INVALID_CBOR);
+        IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
       }
     }
     auto remaining = value_.remaining;
     value_.remaining = 1;
     if (CborNoError != cbor_value_advance(&value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     if (value_.ptr != parser_->end) {
       remaining += value_.remaining - 1;
@@ -108,7 +108,7 @@ namespace sgns::codec::cbor {
                               0,
                               parser_.get(),
                               &value_)) {
-        outcome::raise(CborDecodeError::INVALID_CBOR);
+        IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
       }
       value_.remaining = remaining;
     }
@@ -154,7 +154,7 @@ namespace sgns::codec::cbor {
   size_t CborDecodeStream::listLength() const {
     size_t length;
     if (CborNoError != cbor_value_get_array_length(&value_, &length)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     return length;
   }
@@ -167,7 +167,7 @@ namespace sgns::codec::cbor {
 
   std::map<std::string, CborDecodeStream> CborDecodeStream::map() {
     if (!cbor_value_is_map(&value_)) {
-      outcome::raise(CborDecodeError::WRONG_TYPE);
+      IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
     }
     auto stream = container();
     next();
@@ -180,10 +180,10 @@ namespace sgns::codec::cbor {
       auto stream2 = stream;
       stream2.parser_ = std::make_shared<CborParser>();
       if (CborNoError != cbor_value_skip_tag(&stream.value_)) {
-        outcome::raise(CborDecodeError::INVALID_CBOR);
+        IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
       }
       if (CborNoError != cbor_value_advance(&stream.value_)) {
-        outcome::raise(CborDecodeError::INVALID_CBOR);
+        IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
       }
       if (CborNoError
           != cbor_parser_init(begin,
@@ -191,7 +191,7 @@ namespace sgns::codec::cbor {
                               0,
                               stream2.parser_.get(),
                               &stream2.value_)) {
-        outcome::raise(CborDecodeError::INVALID_CBOR);
+        IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
       }
       map.insert(std::make_pair(key, stream2));
     }
@@ -200,11 +200,11 @@ namespace sgns::codec::cbor {
 
   size_t CborDecodeStream::bytesLength() const {
     if (!cbor_value_is_byte_string(&value_)) {
-      outcome::raise(CborDecodeError::WRONG_TYPE);
+      IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
     }
     size_t size;
     if (CborNoError != cbor_value_get_string_length(&value_, &size)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     return size;
   }
@@ -212,7 +212,7 @@ namespace sgns::codec::cbor {
   CborDecodeStream CborDecodeStream::container() const {
     auto stream = *this;
     if (CborNoError != cbor_value_enter_container(&value_, &stream.value_)) {
-      outcome::raise(CborDecodeError::INVALID_CBOR);
+      IPFS::outcome::raise(CborDecodeError::INVALID_CBOR);
     }
     return stream;
   }

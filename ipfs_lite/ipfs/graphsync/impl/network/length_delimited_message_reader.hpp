@@ -23,7 +23,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Feedback interface from reader to its owning object
     using Feedback = std::function<void(const StreamPtr &stream,
-                                        outcome::result<ByteArray>)>;
+                                        IPFS::outcome::result<ByteArray>)>;
 
     /// Ctor.
     /// \param feedback Owner's callback
@@ -49,7 +49,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Called when protocol raw message is read
     /// \param res read result
-    void onMessageRead(outcome::result<size_t> res);
+    void onMessageRead(IPFS::outcome::result<size_t> res);
 
     /// libp2p stream
     StreamPtr stream_;

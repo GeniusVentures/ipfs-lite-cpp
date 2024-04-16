@@ -14,12 +14,12 @@ namespace sgns::data_transfer {
    public:
     explicit Libp2pDataTransferNetwork(std::shared_ptr<Host> host);
 
-    outcome::result<void> setDelegate(
+    IPFS::outcome::result<void> setDelegate(
         std::shared_ptr<MessageReceiver> receiver) override;
 
-    outcome::result<void> connectTo(const PeerId &peer) override;
+    IPFS::outcome::result<void> connectTo(const PeerId &peer) override;
 
-    outcome::result<std::shared_ptr<MessageSender>> newMessageSender(
+    IPFS::outcome::result<std::shared_ptr<MessageSender>> newMessageSender(
         const PeerId &peer) override;
 
    private:

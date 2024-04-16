@@ -15,13 +15,13 @@ namespace sgns::ipfs_lite::ipfs {
      */
     explicit IpfsBlockService(std::shared_ptr<IpfsDatastore> data_store);
 
-    outcome::result<bool> contains(const CID &key) const override;
+    IPFS::outcome::result<bool> contains(const CID &key) const override;
 
-    outcome::result<void> set(const CID &key, Value value) override;
+    IPFS::outcome::result<void> set(const CID &key, Value value) override;
 
-    outcome::result<Value> get(const CID &key) const override;
+    IPFS::outcome::result<Value> get(const CID &key) const override;
 
-    outcome::result<void> remove(const CID &key) override;
+    IPFS::outcome::result<void> remove(const CID &key) override;
 
    private:
     std::shared_ptr<IpfsDatastore> local_storage_; /**< Local data storage */

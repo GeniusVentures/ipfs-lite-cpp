@@ -17,7 +17,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     if (!stream_reader_) {
       stream_reader_ = std::make_shared<LengthDelimitedMessageReader>(
-          [this](const StreamPtr &stream, outcome::result<ByteArray> res) {
+          [this](const StreamPtr &stream, IPFS::outcome::result<ByteArray> res) {
             onMessageRead(stream, std::move(res));
           },
           kMaxMessageSize);
@@ -32,7 +32,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void MessageReader::onMessageRead(const StreamPtr &stream,
-                                    outcome::result<ByteArray> res) {
+                                    IPFS::outcome::result<ByteArray> res) {
     if (!res) {
       return feedback_.onReaderEvent(stream, res.error());
     }

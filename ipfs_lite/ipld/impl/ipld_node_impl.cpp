@@ -31,17 +31,17 @@ namespace sgns::ipfs_lite::ipld {
     return content_;
   }
 
-  outcome::result<void> IPLDNodeImpl::addChild(
+  IPFS::outcome::result<void> IPLDNodeImpl::addChild(
       const std::string &name, std::shared_ptr<const IPLDNode> node) {
     IPLDLinkImpl link{node->getCID(), name, node->size()};
     links_.emplace(name, std::move(link));
     ipld_block_ =
         boost::none;  // Need to recalculate CID after adding link to child node
     child_nodes_size_ += node->size();
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLink(
+  IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLink(
       const std::string &name) const {
     if (auto index = links_.find(name); index != links_.end()) {
       return index->second;
@@ -82,7 +82,7 @@ namespace sgns::ipfs_lite::ipld {
     return node;
   }
 
-  outcome::result<std::shared_ptr<IPLDNode>> IPLDNodeImpl::createFromRawBytes(
+  IPFS::outcome::result<std::shared_ptr<IPLDNode>> IPLDNodeImpl::createFromRawBytes(
       gsl::span<const uint8_t> input) {
     IPLDNodeDecoderPB decoder;
     if (auto result = decoder.decode(input); result.has_error()) {

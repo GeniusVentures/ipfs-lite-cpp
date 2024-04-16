@@ -18,7 +18,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     assert(service_);
   }
 
-  outcome::result<size_t> MerkleDagBridgeImpl::select(
+  IPFS::outcome::result<size_t> MerkleDagBridgeImpl::select(
       const CID &root_cid,
       gsl::span<const uint8_t> selector,
       std::function<bool(const CID &, const common::Buffer &)> handler) const {

@@ -34,7 +34,7 @@ namespace sgns::ipfs_lite::ipld::walker {
   };
 
   struct PbNodeDecoder {
-    static outcome::result<std::vector<CID>> links(
+    static IPFS::outcome::result<std::vector<CID>> links(
         gsl::span<const uint8_t> input) {
       std::vector<CID> cids;
       PbDecoder s{input};
@@ -51,13 +51,13 @@ namespace sgns::ipfs_lite::ipld::walker {
     }
   };
 
-  outcome::result<void> Walker::select(const CID &root,
+  IPFS::outcome::result<void> Walker::select(const CID &root,
                                        const Selector &selector) {
     // TODO(turuslan): implement selectors
     return recursiveAll(root);
   }
 
-  outcome::result<void> Walker::recursiveAll(const CID &cid) {
+  IPFS::outcome::result<void> Walker::recursiveAll(const CID &cid) {
     if (visited.insert(cid).second) {
       cids.push_back(cid);
       OUTCOME_TRY((auto &&, bytes), store.get(cid));
@@ -67,7 +67,7 @@ namespace sgns::ipfs_lite::ipld::walker {
           CborDecodeStream s{bytes};
           recursiveAll(s);
         } catch (std::system_error &e) {
-          return outcome::failure(e.code());
+          return IPFS::outcome::failure(e.code());
         }
       } else if (cid.content_type == libp2p::multi::MulticodecType::Code::DAG_PB) {
         OUTCOME_TRY((auto &&, cids), PbNodeDecoder::links(bytes));
@@ -76,7 +76,7 @@ namespace sgns::ipfs_lite::ipld::walker {
         }
       }
     }
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
   void Walker::recursiveAll(CborDecodeStream &s) {
@@ -85,7 +85,7 @@ namespace sgns::ipfs_lite::ipld::walker {
       s >> cid;
       auto result = recursiveAll(cid);
       if (!result) {
-        outcome::raise(result.error());
+        IPFS::outcome::raise(result.error());
       }
     } else if (s.isList()) {
       auto n = s.listLength();

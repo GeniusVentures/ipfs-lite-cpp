@@ -442,7 +442,7 @@ TEST(CborDecoder, Misc) {
 }
 
 struct CborResolve : testing::Test {
-  sgns::outcome::result<std::vector<uint8_t>> resolve(
+  sgns::IPFS::outcome::result<std::vector<uint8_t>> resolve(
       gsl::span<const uint8_t> node, const std::string &part) {
     CborDecodeStream s{node};
     BOOST_OUTCOME_TRYV2(auto &&, sgns::codec::cbor::resolve(s, part));

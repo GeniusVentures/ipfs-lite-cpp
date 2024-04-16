@@ -11,7 +11,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     assert(queue_);
   }
 
-  outcome::result<void> InboundEndpoint::addBlockToResponse(
+  IPFS::outcome::result<void> InboundEndpoint::addBlockToResponse(
       int request_id, const CID &cid, const common::Buffer &data) {
     auto serialized_size = response_builder_.getSerializedSize();
 
@@ -28,10 +28,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     response_builder_.addDataBlock(cid, data);
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> InboundEndpoint::sendResponse(
+  IPFS::outcome::result<void> InboundEndpoint::sendResponse(
       int request_id,
       ResponseStatusCode status,
       const std::vector<Extension> &extensions) {
@@ -47,10 +47,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     queue_->enqueue(std::move(res.value()));
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> InboundEndpoint::sendPartialResponse(int request_id) {
+  IPFS::outcome::result<void> InboundEndpoint::sendPartialResponse(int request_id) {
     static const std::vector<Extension> dummy_extensions;
     return sendResponse(request_id, RS_PARTIAL_CONTENT, dummy_extensions);
   }

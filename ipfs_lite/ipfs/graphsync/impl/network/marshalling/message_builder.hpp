@@ -24,7 +24,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     size_t getSerializedSize() const;
 
     /// Serializes message to shared byte buffer
-    outcome::result<SharedData> serialize();
+    IPFS::outcome::result<SharedData> serialize();
 
     /// Clears all entries added
     void clear();

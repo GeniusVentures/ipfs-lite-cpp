@@ -28,7 +28,7 @@ namespace sgns::codec::rle {
    * @return Decoded data
    */
   template <typename T>
-  outcome::result<std::set<T>> decode(gsl::span<const uint8_t> input) {
+  IPFS::outcome::result<std::set<T>> decode(gsl::span<const uint8_t> input) {
     std::set<T> data;
     RLEPlusDecodingStream decoder(input);
     try {

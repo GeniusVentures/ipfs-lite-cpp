@@ -29,7 +29,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // clang-format off
     // host_->setProtocolHandler(
     //     protocol_id_,
-    //     [wptr = weak_from_this()] (outcome::result<StreamPtr> rstream) {
+    //     [wptr = weak_from_this()] (IPFS::outcome::result<StreamPtr> rstream) {
     //       auto self = wptr.lock();
     //       if (self) { self->onStreamAccepted(std::move(rstream)); }
     //     }
@@ -193,7 +193,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         pi,
         protocol_id_,
         [wptr{ctx->weak_from_this()}]
-        (outcome::result<StreamPtr> rstream) {
+        (IPFS::outcome::result<StreamPtr> rstream) {
           auto ctx_ = wptr.lock();
           if (ctx_) {
             ctx_->onStreamConnected(std::move(rstream));
@@ -203,7 +203,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // clang-format on
   }
 
-  void Network::onStreamAccepted(outcome::result<StreamPtr> rstream) {
+  void Network::onStreamAccepted(IPFS::outcome::result<StreamPtr> rstream) {
     if (!started_) {
       return;
     }

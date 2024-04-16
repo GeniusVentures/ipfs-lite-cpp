@@ -15,11 +15,11 @@ namespace dataset {
    * @param from - child node
    * @return operation result
    */
-  sgns::outcome::result<void> link(const std::shared_ptr<IPLDNode> &to,
+  sgns::IPFS::outcome::result<void> link(const std::shared_ptr<IPLDNode> &to,
                                  const std::shared_ptr<const IPLDNode> &from) {
     OUTCOME_TRY((auto &&, from_id), from->getCID().toString());
     EXPECT_OUTCOME_TRUE_1(to->addChild(from_id, from));
-    return sgns::outcome::success();
+    return sgns::IPFS::outcome::success();
   }
 
   /**

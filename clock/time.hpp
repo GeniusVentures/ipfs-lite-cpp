@@ -21,7 +21,7 @@ namespace sgns::clock {
     UnixTimeNano unixTimeNano() const;
     bool operator<(const Time &other) const;
     bool operator==(const Time &other) const;
-    static outcome::result<Time> fromString(const std::string &str);
+    static IPFS::outcome::result<Time> fromString(const std::string &str);
 
    private:
     UnixTimeNano unix_time_nano_;

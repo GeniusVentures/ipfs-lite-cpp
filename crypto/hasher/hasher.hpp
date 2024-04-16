@@ -12,7 +12,7 @@ namespace sgns::crypto {
      *        sha2-256
      *        blakeb2-256
      */
-  class Hasher {
+  class IPFSHasher {
    protected:
     using HashType = libp2p::multi::HashType;
     using Multihash = libp2p::multi::Multihash;

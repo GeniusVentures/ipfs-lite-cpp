@@ -30,16 +30,16 @@ namespace sgns::ipfs_lite::ipfs {
      * @param options rocksdb database options
      * @return shared pointer to instance
      */
-    static outcome::result<std::shared_ptr<RocksdbDatastore>> create(
+    static IPFS::outcome::result<std::shared_ptr<RocksdbDatastore>> create(
         std::string_view rocksdb_directory, rocksdb::Options options);
 
-    outcome::result<bool> contains(const CID &key) const override;
+    IPFS::outcome::result<bool> contains(const CID &key) const override;
 
-    outcome::result<void> set(const CID &key, Value value) override;
+    IPFS::outcome::result<void> set(const CID &key, Value value) override;
 
-    outcome::result<Value> get(const CID &key) const override;
+    IPFS::outcome::result<Value> get(const CID &key) const override;
 
-    outcome::result<void> remove(const CID &key) override;
+    IPFS::outcome::result<void> remove(const CID &key) override;
 
    private:
     std::shared_ptr<rocksdb> rocksdb_;  ///< underlying db wrapper

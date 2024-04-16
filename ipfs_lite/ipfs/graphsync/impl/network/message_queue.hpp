@@ -11,7 +11,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
    public:
     /// Feedback: called either on errors or when all buffers written
     using FeedbackFn =
-        std::function<void(const StreamPtr &stream, outcome::result<void> res)>;
+        std::function<void(const StreamPtr &stream, IPFS::outcome::result<void> res)>;
 
     /// State of the queue
     struct State {
@@ -59,7 +59,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void beginWrite(SharedData buffer);
 
     /// Async write result callback
-    void onMessageWritten(outcome::result<size_t> res);
+    void onMessageWritten(IPFS::outcome::result<size_t> res);
 
     /// Owner's callback
     FeedbackFn feedback_;

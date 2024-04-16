@@ -46,26 +46,26 @@ namespace sgns {
      * @brief string-encodes cid
      * @return encoded value or error
      */
-    outcome::result<std::string> toString() const;
+    IPFS::outcome::result<std::string> toString() const;
 
     /**
      * @brief encodes CID to bytes
      * @return byte-representation of CID
      */
-    outcome::result<std::vector<uint8_t>> toBytes() const;
+    IPFS::outcome::result<std::vector<uint8_t>> toBytes() const;
 
-    static outcome::result<CID> fromString(const std::string &str);
+    static IPFS::outcome::result<CID> fromString(const std::string &str);
 
-    static outcome::result<CID> fromBytes(gsl::span<const uint8_t> input);
+    static IPFS::outcome::result<CID> fromBytes(gsl::span<const uint8_t> input);
 
-    static outcome::result<CID> read(gsl::span<const uint8_t> &input,
+    static IPFS::outcome::result<CID> read(gsl::span<const uint8_t> &input,
                                      bool prefix = false);
   };
 }  // namespace sgns
 
 namespace sgns::common {
   /// Compute CID from bytes
-  outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes);
+  IPFS::outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes);
 
 }  // namespace sgns::common
 

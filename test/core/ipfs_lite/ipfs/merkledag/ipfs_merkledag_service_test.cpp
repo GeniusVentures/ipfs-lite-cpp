@@ -53,12 +53,12 @@ struct CommonFeaturesTest : public testing::TestWithParam<DataSample> {
    * @param nodes - data to save
    * @return operation result
    */
-  sgns::outcome::result<void> saveToBlockService(
+  sgns::IPFS::outcome::result<void> saveToBlockService(
       const std::vector<std::shared_ptr<IPLDNode>> &nodes) {
     for (const auto &node : nodes) {
       EXPECT_OUTCOME_TRUE_1(merkledag_service_->addNode(node));
     }
-    return sgns::outcome::success();
+    return sgns::IPFS::outcome::success();
   }
 
   /**

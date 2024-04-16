@@ -62,7 +62,7 @@ namespace sgns::common {
     return data_[index];
   }
 
-  outcome::result<Buffer> Buffer::fromHex(std::string_view hex) {
+  IPFS::outcome::result<Buffer> Buffer::fromHex(std::string_view hex) {
     OUTCOME_TRY((auto &&, bytes), unhex(hex));
     return Buffer{std::move(bytes)};
   }

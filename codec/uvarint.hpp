@@ -10,7 +10,7 @@ namespace sgns::codec::uvarint {
   using Input = gsl::span<const uint8_t>;
 
   template <auto error, typename T = uint64_t>
-  outcome::result<T> read(Input &input) {
+  IPFS::outcome::result<T> read(Input &input) {
     auto value = libp2p::multi::UVarint::create(input);
     if (!value) {
       return error;
@@ -20,7 +20,7 @@ namespace sgns::codec::uvarint {
   }
 
   template <auto error_length, auto error_data>
-  outcome::result<Input> readBytes(Input &input) {
+  IPFS::outcome::result<Input> readBytes(Input &input) {
     OUTCOME_TRY((auto &&, size), read<error_length>(input));
     if (input.size() < static_cast<ptrdiff_t>(size)) {
       return error_data;

@@ -23,7 +23,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Callback for async length delimited read operations
     /// \param stream
     /// \param res
-    void onMessageRead(const StreamPtr &stream, outcome::result<ByteArray> res);
+    void onMessageRead(const StreamPtr &stream, IPFS::outcome::result<ByteArray> res);
 
     /// Owner's feedback interface
     EndpointToPeerFeedback &feedback_;

@@ -12,7 +12,7 @@ namespace sgns::common::libp2p {
   class CborStream : public std::enable_shared_from_this<CborStream> {
    public:
     using Stream = ::libp2p::connection::Stream;
-    using ReadCallback = void(outcome::result<gsl::span<const uint8_t>>);
+    using ReadCallback = void(IPFS::outcome::result<gsl::span<const uint8_t>>);
     using ReadCallbackFunc = std::function<ReadCallback>;
     using WriteCallbackFunc = Stream::WriteCallbackFunc;
 
@@ -29,7 +29,7 @@ namespace sgns::common::libp2p {
 
     /// Read cbor object
     template <typename T>
-    void read(std::function<void(outcome::result<T>)> cb) {
+    void read(std::function<void(IPFS::outcome::result<T>)> cb) {
       readRaw([cb{std::move(cb)}](auto input) {
         if (input.has_error()) {
           return cb(input.error());

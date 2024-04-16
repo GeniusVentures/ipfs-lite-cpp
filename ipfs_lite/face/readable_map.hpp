@@ -21,7 +21,7 @@ namespace sgns::ipfs_lite::face {
      * @param key K
      * @return V
      */
-    virtual outcome::result<V> get(const K &key) const = 0;
+    virtual IPFS::outcome::result<V> get(const K &key) const = 0;
 
     /**
      * @brief Returns true if given key-value binding exists in the storage.

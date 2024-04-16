@@ -39,9 +39,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     return queue_ != nullptr;
   }
 
-  outcome::result<void> OutboundEndpoint::enqueue(SharedData data) {
+  IPFS::outcome::result<void> OutboundEndpoint::enqueue(SharedData data) {
     if (!data || data->empty()) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
     size_t pending_bytes =
@@ -58,7 +58,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       pending_buffers_.emplace_back(std::move(data));
     }
 
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
   void OutboundEndpoint::clearPendingMessages() {

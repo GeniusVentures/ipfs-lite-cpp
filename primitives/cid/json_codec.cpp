@@ -11,7 +11,7 @@
 namespace sgns::codec::json {
   using boost::property_tree::ptree;
 
-  outcome::result<std::string> encodeCidVector(gsl::span<const CID> span) {
+  IPFS::outcome::result<std::string> encodeCidVector(gsl::span<const CID> span) {
     ptree tree;
     ptree children;
     for (const auto &it : span) {
@@ -30,7 +30,7 @@ namespace sgns::codec::json {
     return out.str();
   }
 
-  outcome::result<std::vector<CID>> decodeCidVector(std::string_view data) {
+  IPFS::outcome::result<std::vector<CID>> decodeCidVector(std::string_view data) {
     ptree tree;
     std::stringstream stream;
     stream << data;

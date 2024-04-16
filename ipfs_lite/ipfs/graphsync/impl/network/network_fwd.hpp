@@ -75,13 +75,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param stream libp2p stream
     /// \param message Graphsync message or read error
     virtual void onReaderEvent(const StreamPtr &stream,
-                               outcome::result<Message> message) = 0;
+                               IPFS::outcome::result<Message> message) = 0;
 
     /// Called on message is written asynchronously
     /// \param stream libp2p stream
     /// \param message Write result
     virtual void onWriterEvent(const StreamPtr &stream,
-                               outcome::result<void> result) = 0;
+                               IPFS::outcome::result<void> result) = 0;
   };
 
   /// Operators needed to find a PeerContext in a set by peer id

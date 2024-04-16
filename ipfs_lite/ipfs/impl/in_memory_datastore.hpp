@@ -13,16 +13,16 @@ namespace sgns::ipfs_lite::ipfs {
     ~InMemoryDatastore() override = default;
 
     /** @copydoc IpfsDatastore::contains() */
-    outcome::result<bool> contains(const CID &key) const override;
+    IPFS::outcome::result<bool> contains(const CID &key) const override;
 
     /** @copydoc IpfsDatastore::set() */
-    outcome::result<void> set(const CID &key, Value value) override;
+    IPFS::outcome::result<void> set(const CID &key, Value value) override;
 
     /** @copydoc IpfsDatastore::get() */
-    outcome::result<Value> get(const CID &key) const override;
+    IPFS::outcome::result<Value> get(const CID &key) const override;
 
     /** @copydoc IpfsDatastore::remove() */
-    outcome::result<void> remove(const CID &key) override;
+    IPFS::outcome::result<void> remove(const CID &key) override;
 
    private:
     std::map<CID, Value> storage_;

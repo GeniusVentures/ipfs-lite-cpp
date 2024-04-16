@@ -11,14 +11,14 @@ namespace sgns::codec::json {
   /**
    * @brief json-encodes span of CID objects
    */
-  outcome::result<std::string> encodeCidVector(gsl::span<const CID> span);
+  IPFS::outcome::result<std::string> encodeCidVector(gsl::span<const CID> span);
 
   /**
    * @brief tries to json-decode vector of CID objects
    * @param data source
    * @return vector of CID objects or error
    */
-  outcome::result<std::vector<CID>> decodeCidVector(std::string_view data);
+  IPFS::outcome::result<std::vector<CID>> decodeCidVector(std::string_view data);
 }  // namespace sgns::codec::json
 
 OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::json, JsonCodecError);

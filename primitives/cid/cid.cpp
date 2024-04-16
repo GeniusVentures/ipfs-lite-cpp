@@ -46,25 +46,25 @@ namespace sgns {
     return *this;
   }
 
-  outcome::result<std::string> CID::toString() const {
+  IPFS::outcome::result<std::string> CID::toString() const {
     return libp2p::multi::ContentIdentifierCodec::toString(*this);
   }
 
-  outcome::result<std::vector<uint8_t>> CID::toBytes() const {
+  IPFS::outcome::result<std::vector<uint8_t>> CID::toBytes() const {
     return libp2p::multi::ContentIdentifierCodec::encode(*this);
   }
 
-  outcome::result<CID> CID::fromString(const std::string &str) {
+  IPFS::outcome::result<CID> CID::fromString(const std::string &str) {
     OUTCOME_TRY((auto &&, cid), libp2p::multi::ContentIdentifierCodec::fromString(str));
     return CID{std::move(cid)};
   }
 
-  outcome::result<CID> CID::fromBytes(gsl::span<const uint8_t> input) {
+  IPFS::outcome::result<CID> CID::fromBytes(gsl::span<const uint8_t> input) {
     OUTCOME_TRY((auto &&, cid), libp2p::multi::ContentIdentifierCodec::decode(input));
     return CID{std::move(cid)};
   }
 
-  outcome::result<CID> CID::read(gsl::span<const uint8_t> &input, bool prefix) {
+  IPFS::outcome::result<CID> CID::read(gsl::span<const uint8_t> &input, bool prefix) {
     using Error = libp2p::multi::ContentIdentifierCodec::DecodeError;
     CID cid;
     if (input.size() >= 2 && HashType{input[0]} == HashType::sha256
@@ -111,7 +111,7 @@ namespace sgns {
 }  // namespace sgns
 
 namespace sgns::common {
-  outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes) {
+  IPFS::outcome::result<CID> getCidOf(gsl::span<const uint8_t> bytes) {
     auto hash_raw = crypto::blake2b::blake2b_256(bytes);
     OUTCOME_TRY((auto &&, hash), Multihash::create(HashType::blake2b_256, hash_raw));
     return CID(CID::Version::V1, CID::Multicodec::DAG_CBOR, hash);

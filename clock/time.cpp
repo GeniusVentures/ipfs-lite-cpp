@@ -44,7 +44,7 @@ namespace sgns::clock {
     return this->unix_time_nano_ == other.unix_time_nano_;
   }
 
-  outcome::result<Time> Time::fromString(const std::string &str) {
+  IPFS::outcome::result<Time> Time::fromString(const std::string &str) {
     if (str.size() != 30 || str[str.size() - 1] != 'Z') {
       return TimeFromStringError::INVALID_FORMAT;
     }

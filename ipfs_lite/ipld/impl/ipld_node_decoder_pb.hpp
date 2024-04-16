@@ -20,7 +20,7 @@ namespace sgns::ipfs_lite::ipld {
      * @param input - bytes to decode
      * @return operation result
      */
-    outcome::result<void> decode(gsl::span<const uint8_t> input);
+    IPFS::outcome::result<void> decode(gsl::span<const uint8_t> input);
 
     /**
      * @brief Get Node content

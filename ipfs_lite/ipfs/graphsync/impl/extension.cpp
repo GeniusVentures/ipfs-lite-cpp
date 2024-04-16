@@ -24,7 +24,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     // Decodes cbor boolean from byte
-    outcome::result<bool> decodeBool(uint8_t byte) {
+    IPFS::outcome::result<bool> decodeBool(uint8_t byte) {
       constexpr uint8_t kCborFalse = 0xF4;
       constexpr uint8_t kCborTrue = 0xF5;
       if (byte == kCborFalse) {
@@ -38,7 +38,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     // Decodes cbor boolean from string or byte array
     template <typename Container>
-    outcome::result<bool> decodeBool(const Container &s) {
+    IPFS::outcome::result<bool> decodeBool(const Container &s) {
       if (s.size() == 1) {
         return decodeBool((uint8_t)s[0]);
       }
@@ -68,7 +68,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     return e;
   }
 
-  outcome::result<ResponseMetadata> decodeResponseMetadata(
+  IPFS::outcome::result<ResponseMetadata> decodeResponseMetadata(
       const Extension &extension) {
     ResponseMetadata pairs;
 
@@ -138,7 +138,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     return e;
   }
 
-  outcome::result<std::set<CID>> decodeDontSendCids(
+  IPFS::outcome::result<std::set<CID>> decodeDontSendCids(
       const Extension &extension) {
     if (extension.name != kDontSendCidsProtocol) {
       return Error::MESSAGE_PARSE_ERROR;

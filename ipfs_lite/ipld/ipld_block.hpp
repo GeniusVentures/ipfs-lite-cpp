@@ -40,7 +40,7 @@ namespace sgns::ipfs_lite::ipld {
     static IPLDBlock create(const T &entity) {
       IPLDType params = IPLDBlock::getType<T>();
       common::Buffer bytes = IPLDBlock::serialize(entity);
-      auto multihash = crypto::Hasher::calculate(params.hash_type, bytes);
+      auto multihash = crypto::IPFSHasher::calculate(params.hash_type, bytes);
       return IPLDBlock{CID{params.cid_version, params.content_type, multihash},
                        bytes};
     }

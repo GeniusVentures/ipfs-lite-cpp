@@ -51,7 +51,7 @@ namespace sgns::common {
     return res;
   }
 
-  outcome::result<std::vector<uint8_t>> unhex(std::string_view hex) {
+  IPFS::outcome::result<std::vector<uint8_t>> unhex(std::string_view hex) {
     std::vector<uint8_t> blob;
     blob.reserve((hex.size() + 1) / 2);
 

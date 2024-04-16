@@ -17,26 +17,26 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::codec::cbor, CborResolveError, e) {
 }
 
 namespace sgns::codec::cbor {
-  outcome::result<uint64_t> parseIndex(const std::string &str) {
+  IPFS::outcome::result<uint64_t> parseIndex(const std::string &str) {
     uint64_t value;
     size_t chars;
     try {
       value = std::stoul(str, &chars);
     } catch (std::invalid_argument &) {
-      return outcome::failure(CborResolveError::INT_KEY_EXPECTED);
+      return IPFS::outcome::failure(CborResolveError::INT_KEY_EXPECTED);
     } catch (std::out_of_range &) {
-      return outcome::failure(CborResolveError::KEY_NOT_FOUND);
+      return IPFS::outcome::failure(CborResolveError::KEY_NOT_FOUND);
     }
     if (chars != str.size()) {
-      return outcome::failure(CborResolveError::INT_KEY_EXPECTED);
+      return IPFS::outcome::failure(CborResolveError::INT_KEY_EXPECTED);
     }
     if (str[0] == '-') {
-      return outcome::failure(CborResolveError::INT_KEY_EXPECTED);
+      return IPFS::outcome::failure(CborResolveError::INT_KEY_EXPECTED);
     }
     return value;
   }
 
-  outcome::result<void> resolve(CborDecodeStream &stream,
+  IPFS::outcome::result<void> resolve(CborDecodeStream &stream,
                                 const std::string &part) {
     try {
       if (stream.isList()) {
@@ -59,8 +59,8 @@ namespace sgns::codec::cbor {
         return CborResolveError::CONTAINER_EXPECTED;
       }
     } catch (std::system_error &e) {
-      return outcome::failure(e.code());
+      return IPFS::outcome::failure(e.code());
     }
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 }  // namespace sgns::codec::cbor

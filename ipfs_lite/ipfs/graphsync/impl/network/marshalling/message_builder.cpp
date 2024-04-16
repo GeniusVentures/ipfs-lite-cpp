@@ -22,7 +22,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     return pb_msg_->ByteSizeLong();
   }
 
-  outcome::result<SharedData> MessageBuilder::serialize() {
+  IPFS::outcome::result<SharedData> MessageBuilder::serialize() {
     auto res = serializeProtobufMessage(*pb_msg_);
     if (!res) {
       logger()->error("cannot serialize protobuf message, size={}",

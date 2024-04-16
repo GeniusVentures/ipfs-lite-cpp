@@ -25,10 +25,10 @@ namespace sgns::ipfs_lite::ipld {
 
     const common::Buffer &content() const override;
 
-    outcome::result<void> addChild(
+    IPFS::outcome::result<void> addChild(
         const std::string &name, std::shared_ptr<const IPLDNode> node) override;
 
-    outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
+    IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
         const std::string &name) const override;
 
     void removeLink(const std::string &name) override;
@@ -43,7 +43,7 @@ namespace sgns::ipfs_lite::ipld {
     static std::shared_ptr<IPLDNode> createFromString(
         const std::string &content);
 
-    static outcome::result<std::shared_ptr<IPLDNode>> createFromRawBytes(
+    static IPFS::outcome::result<std::shared_ptr<IPLDNode>> createFromRawBytes(
         gsl::span<const uint8_t> input);
 
     const IPLDBlock &getIPLDBlock() const;

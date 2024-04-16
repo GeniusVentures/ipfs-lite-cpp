@@ -36,14 +36,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   Extension encodeResponseMetadata(const ResponseMetadata &metadata);
 
   /// Decodes metadata pairs
-  outcome::result<ResponseMetadata> decodeResponseMetadata(
+  IPFS::outcome::result<ResponseMetadata> decodeResponseMetadata(
       const Extension &extension);
 
   /// Encodes CIDS for "graphsync/do-not-send-cids" extension
   Extension encodeDontSendCids(const std::vector<CID> &dont_send_cids);
 
   /// Decodes CID subset not to be included into response
-  outcome::result<std::set<CID>> decodeDontSendCids(const Extension &extension);
+  IPFS::outcome::result<std::set<CID>> decodeDontSendCids(const Extension &extension);
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 

@@ -9,7 +9,7 @@
 
 namespace sgns::ipfs_lite {
 
-  outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(
+  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(
       std::string_view path, rocksdb::Options options) {
     rocksdb::DB *db = nullptr;
     auto status = rocksdb::DB::Open(options, path.data(), &db);
@@ -22,7 +22,7 @@ namespace sgns::ipfs_lite {
     return error_as_result<std::shared_ptr<rocksdb>>(status);
   }
 
-  outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(const std::shared_ptr<DB>& db)
+  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(const std::shared_ptr<DB>& db)
   {
     if (db == nullptr)
     {
@@ -51,7 +51,7 @@ namespace sgns::ipfs_lite {
     wo_ = wo;
   }
 
-  outcome::result<Buffer> rocksdb::get(const Buffer &key) const {
+  IPFS::outcome::result<Buffer> rocksdb::get(const Buffer &key) const {
     std::string value;
     auto status = db_->Get(ro_, make_slice(key), &value);
     if (status.ok()) {
@@ -68,27 +68,34 @@ namespace sgns::ipfs_lite {
     return get(key).has_value();
   }
 
-  outcome::result<void> rocksdb::put(const Buffer &key, const Buffer &value) {
+  IPFS::outcome::result<void> rocksdb::put(const Buffer &key, const Buffer &value) {
     auto status = db_->Put(wo_, make_slice(key), make_slice(value));
     if (status.ok()) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
     return error_as_result<void>(status, logger_);
   }
 
-  outcome::result<void> rocksdb::put(const Buffer &key, Buffer &&value) {
+  IPFS::outcome::result<void> rocksdb::put(const Buffer &key, Buffer &&value) {
     Buffer copy(std::move(value));
     return put(key, copy);
   }
 
-  outcome::result<void> rocksdb::remove(const Buffer &key) {
+  IPFS::outcome::result<void> rocksdb::remove(const Buffer &key) {
     auto status = db_->Delete(wo_, make_slice(key));
     if (status.ok()) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
     return error_as_result<void>(status, logger_);
+  }
+    IPFS::outcome::result<void> rocksdb::close() {
+
+    auto status = db_->Close();
+    if (status.ok()) {
+      return IPFS::outcome::success();
+    }
   }
 
 }  // namespace sgns::ipfs_lite

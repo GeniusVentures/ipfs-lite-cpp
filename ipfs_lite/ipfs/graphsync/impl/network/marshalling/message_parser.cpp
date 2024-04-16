@@ -17,7 +17,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     // Checks status code received from wire
-    outcome::result<ResponseStatusCode> extractStatusCode(int code) {
+    IPFS::outcome::result<ResponseStatusCode> extractStatusCode(int code) {
       switch (code) {
 // clang-format off
 #define CHECK_CASE(X) case RS_##X: return RS_##X;
@@ -44,7 +44,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     // Extracts requests from protobuf message
-    outcome::result<void> parseRequests(pb::Message &pb_msg, Message &msg) {
+    IPFS::outcome::result<void> parseRequests(pb::Message &pb_msg, Message &msg) {
       auto sz = pb_msg.requests_size();
       if (sz > 0) {
         msg.requests.reserve(sz);
@@ -70,11 +70,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           }
         }
       }
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
     // Extracts responses from protobuf message
-    outcome::result<void> parseResponses(pb::Message &pb_msg, Message &msg) {
+    IPFS::outcome::result<void> parseResponses(pb::Message &pb_msg, Message &msg) {
       size_t sz = pb_msg.responses_size();
       if (sz > 0) {
         msg.responses.reserve(sz);
@@ -95,11 +95,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           }
         }
       }
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
     // Extracts data blocks from protobuf message
-    outcome::result<void> parseBlocks(pb::Message &pb_msg, Message &msg) {
+    IPFS::outcome::result<void> parseBlocks(pb::Message &pb_msg, Message &msg) {
       size_t sz = pb_msg.data_size();
       if (sz > 0) {
         msg.data.reserve(sz);
@@ -112,16 +112,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
             return Error::MESSAGE_PARSE_ERROR;
           }
           cid.content_address =
-              crypto::Hasher::calculate(cid.content_address.getType(), data);
+              crypto::IPFSHasher::calculate(cid.content_address.getType(), data);
           msg.data.emplace_back(std::move(cid), data);
         }
       }
-      return outcome::success();
+      return IPFS::outcome::success();
     }
 
   }  // namespace
 
-  outcome::result<Message> parseMessage(gsl::span<const uint8_t> bytes) {
+  IPFS::outcome::result<Message> parseMessage(gsl::span<const uint8_t> bytes) {
     pb::Message pb_msg;
 
     if (!pb_msg.ParseFromArray(bytes.data(), bytes.size())) {

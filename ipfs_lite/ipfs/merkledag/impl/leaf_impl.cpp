@@ -13,7 +13,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     return children_.size();
   }
 
-  outcome::result<std::reference_wrapper<const Leaf>> LeafImpl::subLeaf(
+  IPFS::outcome::result<std::reference_wrapper<const Leaf>> LeafImpl::subLeaf(
       std::string_view name) const {
     if (auto iter = children_.find(name); iter != children_.end()) {
       return iter->second;
@@ -29,11 +29,11 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     return names;
   }
 
-  outcome::result<void> LeafImpl::insertSubLeaf(std::string name,
+  IPFS::outcome::result<void> LeafImpl::insertSubLeaf(std::string name,
                                                  LeafImpl children) {
     auto result = children_.emplace(std::move(name), std::move(children));
     if (result.second) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
     return LeafError::DUPLICATE_LEAF;
   }

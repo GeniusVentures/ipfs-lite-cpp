@@ -38,7 +38,7 @@ namespace sgns::codec::cbor {
   CborEncodeStream &CborEncodeStream::operator<<(const CID &cid) {
     auto maybe_cid_bytes = cid.toBytes();
     if (maybe_cid_bytes.has_error()) {
-      outcome::raise(CborEncodeError::INVALID_CID);
+      IPFS::outcome::raise(CborEncodeError::INVALID_CID);
     }
     auto cid_bytes = maybe_cid_bytes.value();
     cid_bytes.insert(cid_bytes.begin(), 0);
@@ -91,7 +91,7 @@ namespace sgns::codec::cbor {
     std::map<std::vector<uint8_t>, std::vector<uint8_t>, LessCborKey> sorted;
     for (const auto &pair : map) {
       if (pair.second.count_ != 1) {
-        outcome::raise(CborEncodeError::EXPECTED_MAP_VALUE_SINGLE);
+        IPFS::outcome::raise(CborEncodeError::EXPECTED_MAP_VALUE_SINGLE);
       }
       sorted.insert(std::make_pair((CborEncodeStream() << pair.first).data(),
                                    pair.second.data()));

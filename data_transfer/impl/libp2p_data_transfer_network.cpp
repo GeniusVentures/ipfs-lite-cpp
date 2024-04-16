@@ -3,7 +3,7 @@
 #include "data_transfer/message.hpp"
 
 /**
- * Check outcome and calls receiver->receiveError in case of failure
+ * Check IPFS::outcome and calls receiver->receiveError in case of failure
  */
 #define CHECK_OUTCOME_RESULT(expression, receiver) \
   if (expression.has_error()) {                    \
@@ -29,7 +29,7 @@ namespace sgns::data_transfer {
       std::shared_ptr<libp2p::Host> host)
       : host_(std::move(host)) {}
 
-  outcome::result<void> Libp2pDataTransferNetwork::setDelegate(
+  IPFS::outcome::result<void> Libp2pDataTransferNetwork::setDelegate(
       std::shared_ptr<MessageReceiver> receiver) {
     receiver_ = std::move(receiver);
     host_->setProtocolHandler(
@@ -43,7 +43,7 @@ namespace sgns::data_transfer {
             // read up to buffer_max bytes and try decode
             std::array<uint8_t, 1024> buffer{0};
             stream->read(
-                buffer, buffer.size(), [this](outcome::result<size_t> read) {
+                buffer, buffer.size(), [this](IPFS::outcome::result<size_t> read) {
                   if (!read) {
                     this->receiver_->receiveError();
                   }
@@ -70,17 +70,17 @@ namespace sgns::data_transfer {
             }
           }
         });
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> Libp2pDataTransferNetwork::connectTo(
+  IPFS::outcome::result<void> Libp2pDataTransferNetwork::connectTo(
       const PeerId &peer) {
     PeerInfo peer_info = host_->getPeerRepository().getPeerInfo(peer);
     host_->connect(peer_info);
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<std::shared_ptr<MessageSender>>
+  IPFS::outcome::result<std::shared_ptr<MessageSender>>
   Libp2pDataTransferNetwork::newMessageSender(const PeerId &peer) {
     std::shared_ptr<libp2p::connection::Stream> stream;
     PeerInfo peer_info = host_->getPeerRepository().getPeerInfo(peer);
@@ -88,7 +88,7 @@ namespace sgns::data_transfer {
         peer_info,
         kDataTransferLibp2pProtocol,
         [&stream](
-            outcome::result<std::shared_ptr<libp2p::connection::Stream>> s) {
+            IPFS::outcome::result<std::shared_ptr<libp2p::connection::Stream>> s) {
           stream = std::move(s.value());
         });
     return std::make_shared<StreamMessageSender>(stream);

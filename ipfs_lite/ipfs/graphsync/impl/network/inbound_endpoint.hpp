@@ -23,14 +23,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// response is needed
     /// \param cid CID of data block
     /// \param data Raw data
-    outcome::result<void> addBlockToResponse(RequestId request_id,
+    IPFS::outcome::result<void> addBlockToResponse(RequestId request_id,
                                              const CID &cid,
                                              const common::Buffer &data);
     /// Sends response via message queue
     /// \param request_id id of request
     /// \param status status code
     /// \param extensions - data for protocol extensions
-    outcome::result<void> sendResponse(
+    IPFS::outcome::result<void> sendResponse(
         RequestId request_id,
         ResponseStatusCode status,
         const std::vector<Extension> &extensions);
@@ -40,7 +40,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// limits
     /// \param request_id request id
     /// \return result of queue operation
-    outcome::result<void> sendPartialResponse(RequestId request_id);
+    IPFS::outcome::result<void> sendPartialResponse(RequestId request_id);
 
     /// Max pending bytes in message queue.
     const size_t max_pending_bytes_;

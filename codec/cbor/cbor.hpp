@@ -16,13 +16,13 @@ namespace sgns::codec::cbor {
    * @return encoded data
    */
   template <typename T>
-  outcome::result<Buffer> encode(const T &arg) {
+  IPFS::outcome::result<Buffer> encode(const T &arg) {
     try {
       CborEncodeStream encoder;
       encoder << arg;
       return Buffer{encoder.data()};
     } catch (std::system_error &e) {
-      return outcome::failure(e.code());
+      return IPFS::outcome::failure(e.code());
     }
   }
 
@@ -34,14 +34,14 @@ namespace sgns::codec::cbor {
    * @see cbor_errors.hpp for possible error cases
    */
   template <typename T>
-  outcome::result<T> decode(gsl::span<const uint8_t> input) {
+  IPFS::outcome::result<T> decode(gsl::span<const uint8_t> input) {
     try {
       T data{};
       CborDecodeStream decoder(input);
       decoder >> data;
       return data;
     } catch (std::system_error &e) {
-      return outcome::failure(e.code());
+      return IPFS::outcome::failure(e.code());
     }
   }
 }  // namespace sgns::codec::cbor

@@ -72,7 +72,7 @@
 
 /**
  * Use this macro in GTEST with 2 arguments to assert that
- * result of expression as outcome::result<T> is value and,
+ * result of expression as IPFS::outcome::result<T> is value and,
  * but the value itself is not necessary.
  * If result is error, macro prints corresponding error message
  * and appends custom error message specified in msg.
@@ -82,7 +82,7 @@
 
 /**
  * Use this macro in GTEST with 3 arguments to assert that
- * result of expression as outcome::result<T> is value and
+ * result of expression as IPFS::outcome::result<T> is value and
  * immediately get access to this value.
  * If result is error, macro prints corresponding error message
  * and appends custom error message specified in msg.

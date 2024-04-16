@@ -16,9 +16,9 @@ namespace sgns::ipfs_lite::ipld::walker {
   struct Walker {
     Walker(Ipld &store) : store{store} {}
 
-    outcome::result<void> select(const CID &root, const Selector &selector);
+    IPFS::outcome::result<void> select(const CID &root, const Selector &selector);
 
-    outcome::result<void> recursiveAll(const CID &cid);
+    IPFS::outcome::result<void> recursiveAll(const CID &cid);
 
     void recursiveAll(CborDecodeStream &s);
 

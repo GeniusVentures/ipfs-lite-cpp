@@ -74,7 +74,7 @@ namespace sgns::common {
      * @param data arbitrary string containing
      * @return result containing Blob object if string has proper size
      */
-    static outcome::result<Blob<size_>> fromString(std::string_view data) {
+    static IPFS::outcome::result<Blob<size_>> fromString(std::string_view data) {
       return fromSpan(span::cbytes(data));
     }
 
@@ -84,7 +84,7 @@ namespace sgns::common {
      * @return result containing Blob object if hex string has proper size and
      * is in hex format
      */
-    static outcome::result<Blob<size_>> fromHex(std::string_view hex) {
+    static IPFS::outcome::result<Blob<size_>> fromHex(std::string_view hex) {
       OUTCOME_TRY((auto &&, res), unhex(hex));
       return fromSpan(res);
     }
@@ -94,7 +94,7 @@ namespace sgns::common {
      * @param buffer
      * @return
      */
-    static outcome::result<Blob<size_>> fromSpan(
+    static IPFS::outcome::result<Blob<size_>> fromSpan(
         const gsl::span<const uint8_t> &span) {
       if (span.size() != size_) {
         return BlobError::INCORRECT_LENGTH;

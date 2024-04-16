@@ -13,10 +13,10 @@ namespace sgns::codec::cbor {
 
   using Path = gsl::span<const std::string>;
 
-  outcome::result<uint64_t> parseIndex(const std::string &str);
+  IPFS::outcome::result<uint64_t> parseIndex(const std::string &str);
 
   /** Resolves path in CBOR object to CBOR subobject */
-  outcome::result<void> resolve(CborDecodeStream &stream,
+  IPFS::outcome::result<void> resolve(CborDecodeStream &stream,
                                 const std::string &part);
 }  // namespace sgns::codec::cbor
 

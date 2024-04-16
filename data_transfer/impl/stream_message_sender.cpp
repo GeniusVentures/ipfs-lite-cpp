@@ -8,25 +8,25 @@ namespace sgns::data_transfer {
       std::shared_ptr<libp2p::connection::Stream> stream)
       : stream_{std::move(stream)} {}
 
-  outcome::result<void> StreamMessageSender::sendMessage(
+  IPFS::outcome::result<void> StreamMessageSender::sendMessage(
       const DataTransferMessage &message) {
     OUTCOME_TRY((auto &&, encoded_message), codec::cbor::encode(message));
     stream_->write(encoded_message,
                    encoded_message.size(),
-                   [](outcome::result<size_t> rwrite) {
+                   [](IPFS::outcome::result<size_t> rwrite) {
                      // nothing;
                    });
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> StreamMessageSender::close() {
-    stream_->close([stream{stream_}](outcome::result<void>) {});
-    return outcome::success();
+  IPFS::outcome::result<void> StreamMessageSender::close() {
+    stream_->close([stream{stream_}](IPFS::outcome::result<void>) {});
+    return IPFS::outcome::success();
   }
 
-  outcome::result<void> StreamMessageSender::reset() {
+  IPFS::outcome::result<void> StreamMessageSender::reset() {
     stream_->reset();
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
 }  // namespace sgns::data_transfer

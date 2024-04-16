@@ -17,12 +17,12 @@ namespace sgns::ipfs_lite {
 
     explicit Batch(rocksdb &db);
 
-    outcome::result<void> put(const Buffer &key, const Buffer &value) override;
-    outcome::result<void> put(const Buffer &key, Buffer &&value) override;
+    IPFS::outcome::result<void> put(const Buffer &key, const Buffer &value) override;
+    IPFS::outcome::result<void> put(const Buffer &key, Buffer &&value) override;
 
-    outcome::result<void> remove(const Buffer &key) override;
+    IPFS::outcome::result<void> remove(const Buffer &key) override;
 
-    outcome::result<void> commit() override;
+    IPFS::outcome::result<void> commit() override;
 
     void clear() override;
 

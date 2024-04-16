@@ -1,11 +1,11 @@
 #include "ipfs_lite/ipld/impl/ipld_node_decoder_pb.hpp"
 
 namespace sgns::ipfs_lite::ipld {
-  outcome::result<void> IPLDNodeDecoderPB::decode(
+  IPFS::outcome::result<void> IPLDNodeDecoderPB::decode(
       gsl::span<const uint8_t> input) {
     const uint8_t *raw_bytes = input.data();
     if (pb_node_.ParseFromArray(raw_bytes, input.size())) {
-      return outcome::success();
+      return IPFS::outcome::success();
     }
     return IPLDNodeDecoderPBError::INVALID_RAW_BYTES;
   }

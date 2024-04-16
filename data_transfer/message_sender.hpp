@@ -14,12 +14,12 @@ namespace sgns::data_transfer {
    public:
     virtual ~MessageSender() = default;
 
-    virtual outcome::result<void> sendMessage(
+    virtual IPFS::outcome::result<void> sendMessage(
         const DataTransferMessage &message) = 0;
 
-    virtual outcome::result<void> close() = 0;
+    virtual IPFS::outcome::result<void> close() = 0;
 
-    virtual outcome::result<void> reset() = 0;
+    virtual IPFS::outcome::result<void> reset() = 0;
   };
 
 }  // namespace sgns::data_transfer

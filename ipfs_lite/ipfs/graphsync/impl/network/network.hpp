@@ -94,7 +94,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Libp2p network server callback
     /// \param rstream Accept result, contains a new inbound stream on success
-    void onStreamAccepted(outcome::result<StreamPtr> rstream);
+    void onStreamAccepted(IPFS::outcome::result<StreamPtr> rstream);
 
     /// Closes all peers gracefully
     void closeAllPeers();

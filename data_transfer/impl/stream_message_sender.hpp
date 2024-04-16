@@ -13,12 +13,12 @@ namespace sgns::data_transfer {
     explicit StreamMessageSender(
         std::shared_ptr<libp2p::connection::Stream> stream);
 
-    outcome::result<void> sendMessage(
+    IPFS::outcome::result<void> sendMessage(
         const DataTransferMessage &message) override;
 
-    outcome::result<void> close() override;
+    IPFS::outcome::result<void> close() override;
 
-    outcome::result<void> reset() override;
+    IPFS::outcome::result<void> reset() override;
 
    private:
     std::shared_ptr<libp2p::connection::Stream> stream_;

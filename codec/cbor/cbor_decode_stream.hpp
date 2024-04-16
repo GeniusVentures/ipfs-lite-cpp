@@ -31,23 +31,23 @@ namespace sgns::codec::cbor {
       }
       if constexpr (std::is_same_v<T, bool>) {
         if (!cbor_value_is_boolean(&value_)) {
-          outcome::raise(CborDecodeError::WRONG_TYPE);
+          IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
         }
         bool bool_value;
         cbor_value_get_boolean(&value_, &bool_value);
         num = bool_value;
       } else {
         if (!cbor_value_is_integer(&value_)) {
-          outcome::raise(CborDecodeError::WRONG_TYPE);
+          IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
         }
         if constexpr (std::is_unsigned_v<T>) {
           if (!cbor_value_is_unsigned_integer(&value_)) {
-            outcome::raise(CborDecodeError::INT_OVERFLOW);
+            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
           }
           uint64_t num64;
           cbor_value_get_uint64(&value_, &num64);
           if (num64 > std::numeric_limits<T>::max()) {
-            outcome::raise(CborDecodeError::INT_OVERFLOW);
+            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
           }
           num = static_cast<T>(num64);
         } else {
@@ -55,7 +55,7 @@ namespace sgns::codec::cbor {
           cbor_value_get_int64(&value_, &num64);
           if (num64 > static_cast<int64_t>(std::numeric_limits<T>::max())
               || num64 < static_cast<int64_t>(std::numeric_limits<T>::min())) {
-            outcome::raise(CborDecodeError::INT_OVERFLOW);
+            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
           }
           num = static_cast<T>(num64);
         }

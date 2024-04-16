@@ -21,10 +21,10 @@ namespace sgns::data_transfer {
    public:
     virtual ~MessageReceiver() = default;
 
-    virtual outcome::result<void> receiveRequest(
+    virtual IPFS::outcome::result<void> receiveRequest(
         const PeerId &initiator, const DataTransferRequest &request) = 0;
 
-    virtual outcome::result<void> receiveResponse(
+    virtual IPFS::outcome::result<void> receiveResponse(
         const PeerId &sender, const DataTransferResponse &response) = 0;
 
     virtual void receiveError() = 0;
@@ -35,7 +35,7 @@ namespace sgns::data_transfer {
      * @param validator for voucher
      * @return error in case of failure
      */
-    outcome::result<void> registerVoucherType(
+    IPFS::outcome::result<void> registerVoucherType(
         const std::string &type, std::shared_ptr<RequestValidator> validator);
 
    protected:
@@ -50,7 +50,7 @@ namespace sgns::data_transfer {
      *  - deserialization of selector fails
      *  - validation fails
      */
-    outcome::result<void> validateVoucher(
+    IPFS::outcome::result<void> validateVoucher(
         const PeerId &sender, const DataTransferRequest &request) const;
 
     common::Logger logger_ = common::createLogger("data_transfer");

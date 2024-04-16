@@ -16,7 +16,7 @@ namespace sgns::ipfs_lite::face {
      * @brief Writes batch.
      * @return error code in case of error.
      */
-    virtual outcome::result<void> commit() = 0;
+    virtual IPFS::outcome::result<void> commit() = 0;
 
     /**
      * @brief Clear batch.

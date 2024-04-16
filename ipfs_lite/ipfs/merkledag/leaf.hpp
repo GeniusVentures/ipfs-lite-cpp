@@ -33,7 +33,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param name - leaf name
      * @return operation result
      */
-    virtual outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
+    virtual IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
         std::string_view name) const = 0;
 
     /**

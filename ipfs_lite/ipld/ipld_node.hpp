@@ -61,7 +61,7 @@ namespace sgns::ipfs_lite::ipld {
      * @param node - child object to link
      * @return operation result
      */
-    virtual outcome::result<void> addChild(
+    virtual IPFS::outcome::result<void> addChild(
         const std::string &name, std::shared_ptr<const IPLDNode> node) = 0;
 
     /**
@@ -69,7 +69,7 @@ namespace sgns::ipfs_lite::ipld {
      * @param name - id of the link
      * @return Requested link of error, if link not found
      */
-    virtual outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
+    virtual IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
         const std::string &name) const = 0;
 
     /**

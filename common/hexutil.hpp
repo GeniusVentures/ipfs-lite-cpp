@@ -47,7 +47,7 @@ namespace sgns::common {
    * @see
    * https://www.boost.org/doc/libs/1_51_0/libs/algorithm/doc/html/the_boost_algorithm_library/Misc/hex.html
    */
-  outcome::result<std::vector<uint8_t>> unhex(std::string_view hex);
+  IPFS::outcome::result<std::vector<uint8_t>> unhex(std::string_view hex);
 
 }  // namespace filecoin::common
 

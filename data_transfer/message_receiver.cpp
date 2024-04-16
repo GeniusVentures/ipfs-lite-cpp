@@ -3,16 +3,16 @@
 
 namespace sgns::data_transfer {
 
-  outcome::result<void> MessageReceiver::registerVoucherType(
+  IPFS::outcome::result<void> MessageReceiver::registerVoucherType(
       const std::string &type, std::shared_ptr<RequestValidator> validator) {
     auto res = voucher_validators_.try_emplace(type, validator);
     if (!res.second)
       return MessageReceiverError::VOUCHER_VALIDATOR_ALREADY_REGISTERED;
 
-    return sgns::outcome::success();
+    return sgns::IPFS::outcome::success();
   }
 
-  outcome::result<void> MessageReceiver::validateVoucher(
+  IPFS::outcome::result<void> MessageReceiver::validateVoucher(
       const PeerId &sender, const DataTransferRequest &request) const {
     auto validator = voucher_validators_.find(request.voucher_type);
     if (validator == voucher_validators_.end()) {
@@ -28,7 +28,7 @@ namespace sgns::data_transfer {
           sender, request.voucher, base_cid, selector));
     }
 
-    return outcome::success();
+    return IPFS::outcome::success();
   }
 
 }  // namespace sgns::data_transfer

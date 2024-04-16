@@ -11,8 +11,8 @@
 
 namespace sgns::common {
   /**
-   * @brief throws outcome::result error as boost exception
-   * @tparam T enum error type, only outcome::result enums are allowed
+   * @brief throws IPFS::outcome::result error as boost exception
+   * @tparam T enum error type, only IPFS::outcome::result enums are allowed
    * @param t error value
    */
   template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
@@ -22,9 +22,9 @@ namespace sgns::common {
   }
 
   /**
-   * @brief throws outcome::result error made of error as boost exception
-   * @tparam T outcome error type
-   * @param t outcome error value
+   * @brief throws IPFS::outcome::result error made of error as boost exception
+   * @tparam T IPFS::outcome error type
+   * @param t IPFS::outcome error value
    */
   template <typename T, typename = std::enable_if_t<!std::is_enum_v<T>>>
   void raise(const T &t) {

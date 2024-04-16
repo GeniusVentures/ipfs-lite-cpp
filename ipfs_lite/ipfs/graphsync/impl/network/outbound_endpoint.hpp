@@ -33,7 +33,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Enqueues an outgoing message
     /// \param msg Raw message body as shared ptr
     /// \return Enqueue result (the queue can be overflown)
-    outcome::result<void> enqueue(SharedData msg);
+    IPFS::outcome::result<void> enqueue(SharedData msg);
 
     /// Clears all pending messages
     void clearPendingMessages();

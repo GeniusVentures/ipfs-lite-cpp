@@ -30,15 +30,15 @@ namespace sgns::data_transfer {
     /**
      * Registers the Receiver to handle messages received from the network
      */
-    virtual outcome::result<void> setDelegate(
+    virtual IPFS::outcome::result<void> setDelegate(
         std::shared_ptr<MessageReceiver> receiver) = 0;
 
     /**
      * Establishes a connection to the given peer
      */
-    virtual outcome::result<void> connectTo(const PeerId &peer) = 0;
+    virtual IPFS::outcome::result<void> connectTo(const PeerId &peer) = 0;
 
-    virtual outcome::result<std::shared_ptr<MessageSender>> newMessageSender(
+    virtual IPFS::outcome::result<std::shared_ptr<MessageSender>> newMessageSender(
         const PeerId &peer) = 0;
   };
 

@@ -21,15 +21,15 @@ namespace sgns::ipfs_lite::face {
      * @param value value
      * @return result containing void if put successful, error otherwise
      */
-    virtual outcome::result<void> put(const K &key, const V &value) = 0;
-    virtual outcome::result<void> put(const K &key, V&& value) = 0;
+    virtual IPFS::outcome::result<void> put(const K &key, const V &value) = 0;
+    virtual IPFS::outcome::result<void> put(const K &key, V&& value) = 0;
 
     /**
      * @brief Remove value by key
      * @param key K
      * @return error code if error happened
      */
-    virtual outcome::result<void> remove(const K &key) = 0;
+    virtual IPFS::outcome::result<void> remove(const K &key) = 0;
   };
 
 }  // namespace sgns::ipfs_lite::face

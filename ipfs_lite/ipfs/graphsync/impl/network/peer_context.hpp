@@ -64,8 +64,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Called on new outbound stream, connected to this peer
     /// \param rstream libp2p stream or error
-    // void onStreamConnected(outcome::result<StreamPtr> rstream);
-    void onStreamConnected(outcome::result<StreamPtr> rstream);
+    // void onStreamConnected(IPFS::outcome::result<StreamPtr> rstream);
+    void onStreamConnected(IPFS::outcome::result<StreamPtr> rstream);
 
     /// Called on new accepted stream from the peer
     /// \param stream libp2p stream
@@ -139,13 +139,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param stream libp2p stream
     /// \param message Graphsync message or read error
     void onReaderEvent(const StreamPtr &stream,
-                       outcome::result<Message> message) override;
+                       IPFS::outcome::result<Message> message) override;
 
     /// Feedback from endpoints on async write operations
     /// \param stream libp2p stream
     /// \param message Write result
     void onWriterEvent(const StreamPtr &stream,
-                       outcome::result<void> result) override;
+                       IPFS::outcome::result<void> result) override;
 
     /// Called on new stream. The common part of handling connected
     /// and accepted streams

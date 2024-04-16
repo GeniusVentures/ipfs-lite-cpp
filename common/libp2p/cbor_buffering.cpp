@@ -8,7 +8,7 @@ OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::common::libp2p, CborBuffering::Error, e) {
 namespace sgns::common::libp2p {
   using Head = CborBuffering::Head;
 
-  outcome::result<Head> Head::first(size_t &more, uint8_t first) {
+  IPFS::outcome::result<Head> Head::first(size_t &more, uint8_t first) {
     // https://tools.ietf.org/html/rfc7049#section-2
     // decode major type
     auto type = Type{(first & 0xe0) >> 5};
@@ -71,7 +71,7 @@ namespace sgns::common::libp2p {
     return more_bytes != 0 ? more_bytes : more_nested.empty() ? 0 : 1;
   }
 
-  outcome::result<size_t> CborBuffering::consume(
+  IPFS::outcome::result<size_t> CborBuffering::consume(
       gsl::span<const uint8_t> input) {
     assert(!done());
     auto size = static_cast<size_t>(input.size());

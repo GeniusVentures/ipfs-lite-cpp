@@ -19,7 +19,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
 
     size_t count() const override;
 
-    outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
+    IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
         std::string_view name) const override;
 
     std::vector<std::string_view> getSubLeafNames() const override;
@@ -30,7 +30,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      * @param children - leaf to insert
      * @return operation result
      */
-    outcome::result<void> insertSubLeaf(std::string name, LeafImpl children);
+    IPFS::outcome::result<void> insertSubLeaf(std::string name, LeafImpl children);
 
    private:
     common::Buffer content_;
