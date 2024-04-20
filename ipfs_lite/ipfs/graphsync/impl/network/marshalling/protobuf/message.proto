@@ -11,6 +11,7 @@ message Message {
     map<string, bytes> extensions = 4;    // aux information. useful for other protocols
     int32 priority = 5;	// the priority (normalized). default to 1
     bool  cancel = 6;   // whether this cancels a request
+	bool update = 7;         // whether this is an update to an in progress request
   }
 
   message Response {
