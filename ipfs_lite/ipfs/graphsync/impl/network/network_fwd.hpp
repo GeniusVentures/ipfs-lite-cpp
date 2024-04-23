@@ -90,7 +90,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   bool operator<(const PeerContextPtr &a, const PeerContextPtr &b);
 
   /// Protocol version
-  constexpr std::string_view kProtocolVersion = "/ipfs/graphsync/1.0.0";
+  constexpr std::string_view kProtocolVersion = "/ipfs/graphsync/2.0.0";
 
   /// Max byte size of individual message
   constexpr size_t kMaxMessageSize = 16 * 1024 * 1024;
