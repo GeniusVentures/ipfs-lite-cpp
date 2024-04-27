@@ -1,10 +1,12 @@
 #ifndef IPFS_PUBSUB_KAD
 #define IPFS_PUBSUB_KAD
 
+#include <iostream>
 #include <vector>
 #include <string>
 #include <memory>
 #include "libp2p/protocol/kademlia/kademlia.hpp"
+#include "libp2p/multi/content_identifier_codec.hpp"
 
 namespace sgns::ipfs_lite::ipfs::dht
 {

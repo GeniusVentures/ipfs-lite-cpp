@@ -113,6 +113,7 @@ install(TARGETS ipfs_blockservice
               blob
               graphsync_proto
               ipld_node_protobuf
+              ipfs_kad_dht
       EXPORT ${CONFIG_NAME}
       LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
       ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
