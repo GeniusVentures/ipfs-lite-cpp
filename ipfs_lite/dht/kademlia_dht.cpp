@@ -92,6 +92,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         bool need_error
     )
     {
+        kademlia_->bootstrap();
         kademlia_->provide(key,need_error);
         //if(provide.has_error())
         //{
