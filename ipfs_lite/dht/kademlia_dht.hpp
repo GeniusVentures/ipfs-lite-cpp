@@ -30,6 +30,11 @@ namespace sgns::ipfs_lite::ipfs::dht
 		void FindPeer(
 			const libp2p::peer::PeerId& peerId,
 			std::function<void(libp2p::outcome::result<libp2p::peer::PeerInfo>)> onPeerFound);
+
+		void ProvideCID(
+			libp2p::protocol::kademlia::ContentId key,
+			bool need_err
+		);
 	private:
 		std::vector<libp2p::peer::PeerInfo> GetBootstrapNodes() const;
 

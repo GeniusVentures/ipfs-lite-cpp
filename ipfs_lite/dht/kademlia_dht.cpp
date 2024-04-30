@@ -74,4 +74,16 @@ namespace sgns::ipfs_lite::ipfs::dht
     {
         [[maybe_unused]] auto res = kademlia_->findPeer(peerId, onPeerFound);
     }
+
+    void IpfsDHT::ProvideCID(
+        libp2p::protocol::kademlia::ContentId key,
+        bool need_error
+    )
+    {
+        kademlia_->provide(key,need_error);
+        //if(provide.has_error())
+        //{
+
+        //}
+    }
 }
