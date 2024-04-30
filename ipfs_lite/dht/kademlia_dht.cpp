@@ -44,6 +44,18 @@ namespace sgns::ipfs_lite::ipfs::dht
         }
     }
 
+    bool IpfsDHT::FindProviders(
+        const libp2p::protocol::kademlia::ContentId& key,
+        std::function<void(libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound)> onProvidersFound)
+    {
+        //std::cout << "actually find providers" << std::endl;
+        kademlia_->bootstrap();
+        [[maybe_unused]] auto res = kademlia_->findProviders(
+            key, 0, onProvidersFound);
+        return true;
+        
+    }
+
     std::vector<libp2p::peer::PeerInfo> IpfsDHT::GetBootstrapNodes() const
     {
         std::unordered_map<libp2p::peer::PeerId,
