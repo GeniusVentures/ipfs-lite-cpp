@@ -1,6 +1,6 @@
-
 #include "ipfs_lite/rocksdb/rocksdb.hpp"
 
+#include <memory>
 #include <utility>
 
 #include "ipfs_lite/rocksdb/rocksdb_batch.hpp"
@@ -16,22 +16,21 @@ namespace sgns::ipfs_lite {
     if (status.ok()) {
       auto l = std::make_shared<rocksdb>();
       l->db_ = std::shared_ptr<rocksdb::DB>(db);
-      return std::move(l); // clang 6.0.1 issue
+      return l;
     }
 
     return error_as_result<std::shared_ptr<rocksdb>>(status);
   }
 
-  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(const std::shared_ptr<DB>& db)
-  {
+  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(std::shared_ptr<DB> db) {
     if (db == nullptr)
     {
       return error_as_result<std::shared_ptr<rocksdb>>(rocksdb::Status(rocksdb::Status::PathNotFound()));
     }
 
-    auto l = std::make_unique<rocksdb>();
-    l->db_ = db;
-    return std::move(l); // clang 6.0.1 issue
+    auto l = std::make_shared<rocksdb>();
+    l->db_ = std::move(db);
+    return l;
   }
 
   std::unique_ptr<BufferMapCursor> rocksdb::cursor() {
