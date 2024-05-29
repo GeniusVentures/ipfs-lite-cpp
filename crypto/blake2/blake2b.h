@@ -36,7 +36,7 @@ void blake2b_update(blake2b_ctx *ctx,  // context
 void blake2b_final(blake2b_ctx *ctx, void *out);
 
 // All-in-one convenience function.
-int blake2b(void *out,
+int sgns_blake2b(void *out,
             size_t outlen,  // return buffer for digest
             const void *key,
             size_t keylen,  // optional secret key

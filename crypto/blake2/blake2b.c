@@ -170,7 +170,7 @@ void blake2b_final(blake2b_ctx *ctx, void *out) {
 
 // Convenience function for all-in-one computation.
 
-int blake2b(void *out, size_t outlen, const void *key, size_t keylen,
+int sgns_blake2b(void *out, size_t outlen, const void *key, size_t keylen,
             const void *in, size_t inlen) {
   blake2b_ctx ctx;
 

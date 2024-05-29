@@ -8,7 +8,7 @@ namespace sgns::crypto::blake2b {
 
   Blake2b160Hash blake2b_160(gsl::span<const uint8_t> to_hash) {
     Blake2b160Hash res{};
-    ::blake2b(res.data(),
+    ::sgns_blake2b(res.data(),
               BLAKE2B160_HASH_LENGTH,
               nullptr,
               0,
@@ -19,7 +19,7 @@ namespace sgns::crypto::blake2b {
 
   Blake2b256Hash blake2b_256(gsl::span<const uint8_t> to_hash) {
     Blake2b256Hash res{};
-    ::blake2b(res.data(),
+    ::sgns_blake2b(res.data(),
               BLAKE2B256_HASH_LENGTH,
               nullptr,
               0,
