@@ -101,6 +101,7 @@ set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
 install(TARGETS ipfs_blockservice
               ipfs_datastore_rocksdb
               ipfs_datastore_in_memory
+              ipfs_datastore_error
               ipfs_merkledag_service
               graphsync
               buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger
