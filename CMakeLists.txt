@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.22)
 set(
     CMAKE_TOOLCHAIN_FILE
     "${CMAKE_SOURCE_DIR}/cmake/toolchain/cxx17.cmake"
