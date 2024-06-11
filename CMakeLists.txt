@@ -6,33 +6,17 @@ set(
     FILEPATH
     "Default toolchain"
 )
+
 # Project
-project(ipfs-lite-cpp C CXX)
+project(ipfs-lite-cpp LANGUAGES C CXX)
 
-if (NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
-  # https://cgold.readthedocs.io/en/latest/tutorials/toolchain/globals/cxx-standard.html#summary
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  set(CMAKE_CXX_EXTENSIONS OFF)
-  set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-endif ()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-# set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-# set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-
-# set(CompilerFlags
-#         CMAKE_CXX_FLAGS
-#         CMAKE_CXX_FLAGS_DEBUG
-#         CMAKE_CXX_FLAGS_RELEASE
-#         CMAKE_C_FLAGS
-#         CMAKE_C_FLAGS_DEBUG
-#         CMAKE_C_FLAGS_RELEASE
-#         )
-# foreach(CompilerFlag ${CompilerFlags})
-#   string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-# endforeach()
+if(NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
+    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+endif()
 
 include(cmake/functions.cmake)
 include(cmake/print.cmake)
@@ -44,29 +28,24 @@ print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
 print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 # BOOST library
-# set(Boost_USE_STATIC_LIBS ON)
-# set(Boost_USE_MULTITHREADED ON)
-# set(Boost_USE_STATIC_RUNTIME ON)
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
 
 include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${_FINDPACKAGE_GSL_INCLUDE_DIR}
-  deps/tinycbor/src
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${_FINDPACKAGE_GSL_INCLUDE_DIR}
+    deps/tinycbor/src
 )
 
-# # find packages for common
-# message("libp2p_DIR=" ${libp2p_DIR})
+# find packages for common
 find_package(GTest CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
 find_package(libp2p CONFIG REQUIRED)
-#find_package(c-ares CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(soralog CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
-find_package(Protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
 
 option(TESTING "Build tests" ON)
@@ -80,52 +59,52 @@ add_subdirectory(crypto)
 add_subdirectory(data_transfer)
 add_subdirectory(ipfs_lite)
 
-      #message("${CMAKE_CURRENT_LIST_DIR}")
-      #message("${CMAKE_INSTALL_INCLUDEDIR}")
-    install_hfile(ipfs-lite)
+install_hfile(ipfs-lite)
 
-if (TESTING)
+if(TESTING)
     SET(WIN_CRYPT_LIBRARY)
-    if (NOT UNIX)
+
+    if(NOT UNIX)
         SET(WIN_CRYPT_LIBRARY crypt32)
     endif()
-  enable_testing()
-  add_subdirectory(test)
-  add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS rocksdb_integration_test)
-endif ()
+
+    enable_testing()
+    add_subdirectory(test)
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS rocksdb_integration_test)
+endif()
 
 set(CONFIG_NAME "ipfs-lite-cppConfig")
 set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
-#make_directory(${CMAKE_INSTALL_PREFIX}/include/protobuf)
 
 install(TARGETS ipfs_blockservice
-              ipfs_datastore_rocksdb
-              ipfs_datastore_in_memory
-              ipfs_datastore_error
-              ipfs_merkledag_service
-              graphsync
-              buffer  rocksdb_wrapper  cid ipld_node cbor ipfs_lite_hasher logger
-              hexutil
-              blake2
-              ipld_link
-              outcome
-              tinycbor
-              ipld_block
-              blob
-              graphsync_proto
-              ipld_node_protobuf
-              ipfs_kad_dht
-      EXPORT ${CONFIG_NAME}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-      PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
-      FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
-      )
+    ipfs_datastore_rocksdb
+    ipfs_datastore_in_memory
+    ipfs_datastore_error
+    ipfs_merkledag_service
+    graphsync
+    buffer rocksdb_wrapper cid ipld_node cbor ipfs_lite_hasher logger
+    hexutil
+    blake2
+    ipld_link
+    outcome
+    tinycbor
+    ipld_block
+    blob
+    graphsync_proto
+    ipld_node_protobuf
+    ipfs_kad_dht
+    EXPORT ${CONFIG_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
+    FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
+)
 message("--install --- ${CMAKE_INSTALL_PREFIX}/include/protobuf")
-### install header files ###
+
+# install header files
 install_hfile(codec)
 install_hfile(common)
 install_hfile(crypto)
@@ -135,20 +114,18 @@ install_hfile(platform)
 install_hfile(primitives)
 install_hfile(ipfs_lite)
 install_hfile(clock)
-### install protobuf header files ###
+
+# install protobuf header files
 message("-gen---${CMAKE_BINARY_DIR}/generated")
 install(
-        DIRECTORY ${CMAKE_BINARY_DIR}/generated/ipfs_lite
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-        FILES_MATCHING # install only matched files
-        PATTERN "*.pb.h" # select header files hpp or h file
-    )
-#message("---proto-----${proto_h_files}")
-
-#INSTALL(FILES ${proto_h_files} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/protobuf)
+    DIRECTORY ${CMAKE_BINARY_DIR}/generated/ipfs_lite
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+    FILES_MATCHING # install only matched files
+    PATTERN "*.pb.h" # select header files hpp or h file
+)
 
 install(
-  EXPORT ${CONFIG_NAME}
-  NAMESPACE ipfs-lite-cpp::
-  DESTINATION ${CONFIG_DESTINATION_DIR}
+    EXPORT ${CONFIG_NAME}
+    NAMESPACE ipfs-lite-cpp::
+    DESTINATION ${CONFIG_DESTINATION_DIR}
 )
