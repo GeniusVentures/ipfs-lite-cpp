@@ -10,22 +10,8 @@ set(
 # Project
 project(ipfs-lite-cpp LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-if(NOT EXISTS "${CMAKE_TOOLCHAIN_FILE}")
-    set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
-endif()
-
 include(cmake/functions.cmake)
 include(cmake/print.cmake)
-print("C flags: ${CMAKE_C_FLAGS}")
-print("CXX flags: ${CMAKE_CXX_FLAGS}")
-print("C Debug flags: ${CMAKE_C_FLAGS_DEBUG}")
-print("CXX Debug flags: ${CMAKE_CXX_FLAGS_DEBUG}")
-print("C Release flags: ${CMAKE_C_FLAGS_RELEASE}")
-print("CXX Release flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 # BOOST library
 find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
@@ -45,7 +31,7 @@ find_package(libp2p CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(soralog CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
 
 option(TESTING "Build tests" ON)
