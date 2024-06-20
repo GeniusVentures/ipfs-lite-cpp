@@ -19,7 +19,7 @@ namespace sgns::crypto {
     using HashMethod = Multihash (*)(gsl::span<const uint8_t>);
 
    private:
-    static std::map<HashType, HashMethod> methods_;
+    static std::map<HashType, HashMethod> &GetMethods();
 
    public:
     static Multihash calculate(HashType hash_type,
