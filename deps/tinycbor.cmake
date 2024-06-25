@@ -8,4 +8,5 @@ add_library(tinycbor
     tinycbor/src/cborpretty_stdio.c
     tinycbor/src/cborvalidation.c
     )
+target_include_directories(tinycbor PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/tinycbor/src> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/deps/tinycbor/src>)
 disable_clang_tidy(tinycbor)

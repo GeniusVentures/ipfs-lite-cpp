@@ -10,6 +10,8 @@ set(
 # Project
 project(ipfs-lite-cpp LANGUAGES C CXX)
 
+include(GNUInstallDirs)
+
 include(cmake/functions.cmake)
 include(cmake/print.cmake)
 
@@ -18,8 +20,6 @@ find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # head
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${_FINDPACKAGE_GSL_INCLUDE_DIR}
-    deps/tinycbor/src
 )
 
 # find packages for common
@@ -80,15 +80,8 @@ install(TARGETS ipfs_blockservice
     ipld_node_protobuf
     ipfs_kad_dht
     EXPORT ${CONFIG_NAME}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-    PUBLIC_PROTO_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include/protobuf"
-    FRAMEWORK DESTINATION ${CMAKE_INSTALL_PREFIX}
 )
-message("--install --- ${CMAKE_INSTALL_PREFIX}/include/protobuf")
 
 # install header files
 install_hfile(codec)
@@ -100,6 +93,7 @@ install_hfile(platform)
 install_hfile(primitives)
 install_hfile(ipfs_lite)
 install_hfile(clock)
+install_hfile(deps/tinycbor/src)
 
 # install protobuf header files
 message("-gen---${CMAKE_BINARY_DIR}/generated")

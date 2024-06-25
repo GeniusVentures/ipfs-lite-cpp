@@ -11,7 +11,8 @@ target_link_libraries(cid
     c-ares::cares
     soralog::soralog
     fmt::fmt
-    )
+    cbor
+)
 
 add_library(comm_cid
     comm_cid.cpp

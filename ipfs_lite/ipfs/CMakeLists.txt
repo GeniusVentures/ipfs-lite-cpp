@@ -27,9 +27,10 @@ add_library(ipfs_blockservice
     impl/ipfs_block_service.cpp
     )
 target_link_libraries(ipfs_blockservice
+    cbor
     buffer
     logger
-    )
+)
 
 add_subdirectory(merkledag)
 add_subdirectory(graphsync)

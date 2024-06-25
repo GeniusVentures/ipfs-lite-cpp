@@ -27,7 +27,8 @@ target_link_libraries(ipld_node
     ipld_block
     Boost::boost
     cid
-    )
+    cbor
+)
 
 add_library(ipld_walker
     walker.cpp

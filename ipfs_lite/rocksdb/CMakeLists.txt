@@ -10,3 +10,4 @@ target_link_libraries(rocksdb_wrapper
     buffer
     logger
     )
+target_include_directories(rocksdb_wrapper PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

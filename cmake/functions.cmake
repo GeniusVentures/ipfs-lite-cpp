@@ -111,7 +111,7 @@ endfunction()
 function(install_hfile dir_name)    
     install(
         DIRECTORY ${CMAKE_SOURCE_DIR}/${dir_name}
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         FILES_MATCHING # install only matched files
         PATTERN "*.h*" # select header files hpp or h file
     )
