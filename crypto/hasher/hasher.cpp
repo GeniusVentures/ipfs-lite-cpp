@@ -4,13 +4,18 @@
 #include "crypto/blake2/blake2b160.hpp"
 
 namespace sgns::crypto {
-  std::map<IPFSHasher::HashType, IPFSHasher::HashMethod> IPFSHasher::methods_{
-      {HashType::sha256, IPFSHasher::sha2_256},
-      {HashType::blake2b_256, IPFSHasher::blake2b_256}};
+
+  std::map<IPFSHasher::HashType, IPFSHasher::HashMethod> &IPFSHasher::GetMethods()
+  {
+    static std::map<IPFSHasher::HashType, IPFSHasher::HashMethod> methods_{
+        {HashType::sha256, IPFSHasher::sha2_256},
+        {HashType::blake2b_256, IPFSHasher::blake2b_256}};
+    return methods_;
+  }
 
   IPFSHasher::Multihash IPFSHasher::calculate(HashType hash_type,
                                       gsl::span<const uint8_t> buffer) {
-    HashMethod hash_method = methods_.at(hash_type);
+    HashMethod hash_method = GetMethods().at(hash_type);
     return std::invoke(hash_method, buffer);
   }
 
