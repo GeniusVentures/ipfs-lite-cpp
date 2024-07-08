@@ -4,4 +4,5 @@ add_library(cbor_stream
     )
 target_link_libraries(cbor_stream
     cbor
-    )
+    p2p::p2p_event
+)

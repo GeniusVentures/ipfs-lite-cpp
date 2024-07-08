@@ -16,14 +16,13 @@ include(cmake/functions.cmake)
 include(cmake/print.cmake)
 
 # BOOST library
-find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
+find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex system)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # find packages for common
-find_package(GTest CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
@@ -48,6 +47,8 @@ add_subdirectory(ipfs_lite)
 install_hfile(ipfs-lite)
 
 if(TESTING)
+    find_package(GTest CONFIG REQUIRED)
+
     SET(WIN_CRYPT_LIBRARY)
 
     if(NOT UNIX)

@@ -11,4 +11,6 @@ target_link_libraries(cbor
     outcome
     PUBLIC
     tinycbor
+    p2p::p2p_event
+    Boost::headers
 )
