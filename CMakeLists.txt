@@ -30,6 +30,7 @@ find_package(libp2p CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(soralog CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
+set(protobuf_MODULE_COMPATIBLE ON)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
 
