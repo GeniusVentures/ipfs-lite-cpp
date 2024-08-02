@@ -62,7 +62,7 @@ if(TESTING)
 endif()
 
 set(CONFIG_NAME "ipfs-lite-cppConfig")
-set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
+set(CONFIG_DESTINATION_DIR "lib/cmake/${PROJECT_NAME}")
 
 install(TARGETS ipfs_blockservice
     ipfs_datastore_rocksdb
