@@ -7,6 +7,9 @@
 #include <memory>
 #include "libp2p/protocol/kademlia/kademlia.hpp"
 #include "libp2p/multi/content_identifier_codec.hpp"
+#include <boost/asio.hpp>
+#include <boost/asio/steady_timer.hpp>
+#include <chrono>
 
 namespace sgns::ipfs_lite::ipfs::dht
 {
@@ -19,7 +22,8 @@ namespace sgns::ipfs_lite::ipfs::dht
 	public:
 		IpfsDHT(
 			std::shared_ptr<libp2p::protocol::kademlia::Kademlia> kademlia,
-			std::vector<std::string> bootstrapAddresses);
+			std::vector<std::string> bootstrapAddresses,
+			std::shared_ptr<boost::asio::io_context> io_context);
 
 		void Start();
 
@@ -40,10 +44,13 @@ namespace sgns::ipfs_lite::ipfs::dht
 			bool need_err
 		);
 	private:
+		void ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err);
 		std::vector<libp2p::peer::PeerInfo> GetBootstrapNodes() const;
 
 		std::shared_ptr<libp2p::protocol::kademlia::Kademlia> kademlia_;
 		std::vector<std::string> bootstrapAddresses_;
+		std::shared_ptr<boost::asio::io_context> io_context_;
+		boost::asio::steady_timer timer_;
 	};
 }
 

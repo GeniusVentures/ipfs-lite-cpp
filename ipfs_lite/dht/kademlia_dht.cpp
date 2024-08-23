@@ -4,9 +4,12 @@ namespace sgns::ipfs_lite::ipfs::dht
 {
     IpfsDHT::IpfsDHT(
         std::shared_ptr<libp2p::protocol::kademlia::Kademlia> kademlia,
-        std::vector<std::string> bootstrapAddresses)
+        std::vector<std::string> bootstrapAddresses,
+        std::shared_ptr<boost::asio::io_context> io_context)
         : kademlia_(std::move(kademlia))
         , bootstrapAddresses_(bootstrapAddresses)
+        , io_context_(io_context)
+        , timer_(*io_context)
     {
     }
 
@@ -93,10 +96,26 @@ namespace sgns::ipfs_lite::ipfs::dht
     )
     {
         kademlia_->bootstrap();
-        kademlia_->provide(key,need_error);
+        kademlia_->provide(key, need_error);
         //if(provide.has_error())
         //{
 
         //}
+        ScheduleProvideCID(key, need_error);
+    }
+
+    void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
+    {
+        //Set the timer to expire in 5 minutes
+        timer_.expires_after(std::chrono::minutes(5));
+
+        //Start an asynchronous wait
+        timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
+            if (!ec) {
+                //re-call ProvideCID
+                ProvideCID(key, need_err);
+            }
+            
+        });
     }
 }
