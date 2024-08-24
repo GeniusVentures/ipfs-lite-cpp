@@ -92,16 +92,18 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ProvideCID(
         libp2p::protocol::kademlia::ContentId key,
-        bool need_error
+        bool need_error,
+        bool force
     )
     {
+        std::cout << "Provide CID" << std::endl;
         kademlia_->bootstrap();
         kademlia_->provide(key, need_error);
-        //if(provide.has_error())
-        //{
-
-        //}
-        ScheduleProvideCID(key, need_error);
+        //Schedule next provide if not a force
+        if(!force)
+        {
+            ScheduleProvideCID(key, need_error);
+        }
     }
 
     void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)

@@ -41,7 +41,8 @@ namespace sgns::ipfs_lite::ipfs::dht
 
 		void ProvideCID(
 			libp2p::protocol::kademlia::ContentId key,
-			bool need_err
+			bool need_err,
+			bool force = false
 		);
 	private:
 		void ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err);
