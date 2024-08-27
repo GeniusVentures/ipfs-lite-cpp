@@ -3,4 +3,5 @@ add_library(ipfs_lite_hasher
     )
 target_link_libraries(ipfs_lite_hasher
     blake2
-    )
+    Boost::headers
+)

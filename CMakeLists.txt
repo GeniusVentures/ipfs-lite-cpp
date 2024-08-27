@@ -16,14 +16,13 @@ include(cmake/functions.cmake)
 include(cmake/print.cmake)
 
 # BOOST library
-find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex) # header only libraries must not be added here
+find_package(Boost REQUIRED COMPONENTS date_time filesystem random regex system)
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # find packages for common
-find_package(GTest CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(tsl_hat_trie CONFIG REQUIRED)
@@ -31,6 +30,7 @@ find_package(libp2p CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(soralog CONFIG REQUIRED)
 find_package(yaml-cpp CONFIG REQUIRED)
+set(protobuf_MODULE_COMPATIBLE ON)
 find_package(Protobuf CONFIG REQUIRED)
 find_package(RocksDB CONFIG REQUIRED)
 
@@ -48,6 +48,8 @@ add_subdirectory(ipfs_lite)
 install_hfile(ipfs-lite)
 
 if(TESTING)
+    find_package(GTest CONFIG REQUIRED)
+
     SET(WIN_CRYPT_LIBRARY)
 
     if(NOT UNIX)
@@ -60,7 +62,7 @@ if(TESTING)
 endif()
 
 set(CONFIG_NAME "ipfs-lite-cppConfig")
-set(CONFIG_DESTINATION_DIR "${CMAKE_INSTALL_PREFIX}/cmake/${PROJECT_NAME}")
+set(CONFIG_DESTINATION_DIR "lib/cmake/${PROJECT_NAME}")
 
 install(TARGETS ipfs_blockservice
     ipfs_datastore_rocksdb

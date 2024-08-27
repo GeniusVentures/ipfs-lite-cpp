@@ -4,4 +4,5 @@
 #     )
 # target_link_libraries(cid_json_test
 #     cid
+#     json_cid_codec
 #     )
