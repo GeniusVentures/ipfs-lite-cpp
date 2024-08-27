@@ -96,7 +96,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         bool force
     )
     {
-        std::cout << "Provide CID" << std::endl;
+        std::cout << "Provide CID:" << force << std::endl;
         kademlia_->bootstrap();
         kademlia_->provide(key, need_error);
         //Schedule next provide if not a force
@@ -108,8 +108,9 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
     {
+        std::cout << "Schedule next provide event" << std::endl;
         //Set the timer to expire in 5 minutes
-        timer_.expires_after(std::chrono::minutes(5));
+        timer_.expires_after(std::chrono::seconds(10));
 
         //Start an asynchronous wait
         timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
