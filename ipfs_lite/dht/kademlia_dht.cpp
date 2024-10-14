@@ -108,7 +108,6 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
     {
-        return;
         std::cout << "Schedule next provide event" << std::endl;
         //Set the timer to expire in 5 minutes
         timer_.expires_after(std::chrono::seconds(10));
