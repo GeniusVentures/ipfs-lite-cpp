@@ -48,7 +48,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Stores network address for outbound connections. May be updated.
     /// \param connect_to address, optional
     void setOutboundAddress(
-        boost::optional<libp2p::multi::Multiaddress> connect_to);
+        boost::optional<std::vector<libp2p::multi::Multiaddress>> connect_to);
 
     /// Returns true if there's no streams to this peer yet
     bool needToConnect();
@@ -207,7 +207,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     Scheduler &scheduler_;
 
     /// Outbound address
-    boost::optional<libp2p::multi::Multiaddress> connect_to_;
+    boost::optional<std::vector<libp2p::multi::Multiaddress>> connect_to_;
 
     /// The only one per peer requests sending endpoint
     std::unique_ptr<OutboundEndpoint> requests_endpoint_;

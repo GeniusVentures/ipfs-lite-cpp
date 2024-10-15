@@ -128,7 +128,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// this subscription is cancelled or goes out of scope
     virtual Subscription makeRequest(
         const libp2p::peer::PeerId &peer,
-        boost::optional<libp2p::multi::Multiaddress> address,
+        boost::optional<std::vector<libp2p::multi::Multiaddress>> address,
         const CID &root_cid,
         gsl::span<const uint8_t> selector,
         const std::vector<Extension> &extensions,
