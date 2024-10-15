@@ -27,6 +27,8 @@ namespace sgns::ipfs_lite::ipfs::dht
 
 		void Start();
 
+		void bootstrap();
+
 		bool FindProviders(
 			const libp2p::multi::ContentIdentifier& cid,
 			std::function<void(libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound)> onProvidersFound);

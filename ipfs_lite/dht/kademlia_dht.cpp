@@ -23,6 +23,11 @@ namespace sgns::ipfs_lite::ipfs::dht
         kademlia_->start();
     }
 
+    void IpfsDHT::bootstrap()
+    {
+        kademlia_->bootstrap();
+    }
+
     bool IpfsDHT::FindProviders(
         const libp2p::multi::ContentIdentifier& cid,
         std::function<void(libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound)> onProvidersFound)
