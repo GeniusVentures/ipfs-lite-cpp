@@ -58,7 +58,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void PeerContext::setOutboundAddress(
-      boost::optional<libp2p::multi::Multiaddress> connect_to) {
+      boost::optional<std::vector<libp2p::multi::Multiaddress>> connect_to) {
     if (connect_to) {
       connect_to_ = std::move(connect_to);
     }
@@ -98,7 +98,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   libp2p::peer::PeerInfo PeerContext::getOutboundPeerInfo() const {
     libp2p::peer::PeerInfo pi{peer, {}};
     if (connect_to_) {
-      pi.addresses.push_back(connect_to_.value());
+      //pi.addresses.push_back(connect_to_.value());
+      pi.addresses = connect_to_.value();
     }
     return pi;
   }

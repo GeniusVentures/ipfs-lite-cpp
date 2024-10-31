@@ -65,7 +65,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void Network::makeRequest(
       const PeerId &peer,
-      boost::optional<libp2p::multi::Multiaddress> address,
+      boost::optional<std::vector<libp2p::multi::Multiaddress>> address,
       RequestId request_id,
       SharedData request_body) {
     if (!canSendRequest(peer)) {

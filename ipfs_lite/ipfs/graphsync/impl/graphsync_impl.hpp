@@ -43,7 +43,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void stop() override;
     Subscription makeRequest(
         const libp2p::peer::PeerId &peer,
-        boost::optional<libp2p::multi::Multiaddress> address,
+        boost::optional<std::vector<libp2p::multi::Multiaddress>> address,
         const CID &root_cid,
         gsl::span<const uint8_t> selector,
         const std::vector<Extension> &extensions,

@@ -4,9 +4,12 @@ namespace sgns::ipfs_lite::ipfs::dht
 {
     IpfsDHT::IpfsDHT(
         std::shared_ptr<libp2p::protocol::kademlia::Kademlia> kademlia,
-        std::vector<std::string> bootstrapAddresses)
+        std::vector<std::string> bootstrapAddresses,
+        std::shared_ptr<boost::asio::io_context> io_context)
         : kademlia_(std::move(kademlia))
         , bootstrapAddresses_(bootstrapAddresses)
+        , io_context_(io_context)
+        , timer_(*io_context)
     {
     }
 
@@ -18,6 +21,11 @@ namespace sgns::ipfs_lite::ipfs::dht
         }
         
         kademlia_->start();
+    }
+
+    void IpfsDHT::bootstrap()
+    {
+        kademlia_->bootstrap();
     }
 
     bool IpfsDHT::FindProviders(
@@ -89,14 +97,33 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ProvideCID(
         libp2p::protocol::kademlia::ContentId key,
-        bool need_error
+        bool need_error,
+        bool force
     )
     {
+        std::cout << "Provide CID:" << force << std::endl;
         kademlia_->bootstrap();
-        kademlia_->provide(key,need_error);
-        //if(provide.has_error())
-        //{
+        kademlia_->provide(key, need_error);
+        //Schedule next provide if not a force
+        if(!force)
+        {
+            ScheduleProvideCID(key, need_error);
+        }
+    }
 
-        //}
+    void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
+    {
+        std::cout << "Schedule next provide event" << std::endl;
+        //Set the timer to expire in 5 minutes
+        timer_.expires_after(std::chrono::seconds(10));
+
+        //Start an asynchronous wait
+        timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
+            if (!ec) {
+                //re-call ProvideCID
+                ProvideCID(key, need_err);
+            }
+            
+        });
     }
 }
