@@ -198,7 +198,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           if (ctx_) {
             ctx_->onStreamConnected(std::move(rstream));
           }
-        }
+        },std::chrono::milliseconds(10000)
     );
     // clang-format on
   }
