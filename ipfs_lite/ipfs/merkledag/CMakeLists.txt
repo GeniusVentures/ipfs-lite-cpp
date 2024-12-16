@@ -3,8 +3,9 @@ add_library(ipfs_merkledag_service
     impl/leaf_impl.cpp
     )
 target_link_libraries(ipfs_merkledag_service
+    graphsync
     Boost::boost
     ipld_node
     ipfs_blockservice
     ipfs_datastore_in_memory
-    )
+)
