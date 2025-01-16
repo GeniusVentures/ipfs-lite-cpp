@@ -7,7 +7,6 @@
 #include <memory>
 #include "libp2p/protocol/kademlia/kademlia.hpp"
 #include "libp2p/multi/content_identifier_codec.hpp"
-#include <boost/asio.hpp>
 #include <boost/asio/steady_timer.hpp>
 #include <chrono>
 
