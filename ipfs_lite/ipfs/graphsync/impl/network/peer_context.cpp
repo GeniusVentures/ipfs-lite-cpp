@@ -309,20 +309,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     requests_endpoint_.reset();
   }
 
-  void PeerContext::onResponse(Message::Response &response) {
+void PeerContext::onResponse(Message::Response &response) {
     auto it = local_request_ids_.find(response.id);
     if (it == local_request_ids_.end()) {
-      logger()->info(
-          "ignoring response for unexpected request id={} from peer {}",
-          response.id,
-          str);
+        logger()->info(
+            "ignoring response for unexpected request id={} from peer {}",
+            response.id,
+            str);
+        return;
     }
+    
     if (isTerminal(response.status)) {
-      local_request_ids_.erase(it);
+        local_request_ids_.erase(it);
     }
+    
     graphsync_feedback_.onResponse(
         peer, response.id, response.status, std::move(response.extensions));
-  }
+}
 
   void PeerContext::onRequest(const StreamPtr &stream,
                               Message::Request &request) {
