@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <utility>
+#include <rocksdb/table.h>
+#include <rocksdb/filter_policy.h>
+#include <rocksdb/slice_transform.h>
 
 #include "ipfs_lite/rocksdb/rocksdb_batch.hpp"
 #include "ipfs_lite/rocksdb/rocksdb_cursor.hpp"
@@ -18,7 +21,7 @@ namespace sgns::ipfs_lite {
       l->options_ = std::make_shared<Options>(options);
 
       // Set up bloom filter
-      BlockBasedTableOptions table_options;
+      ::ROCKSDB_NAMESPACE::BlockBasedTableOptions table_options;
       table_options.filter_policy.reset(::ROCKSDB_NAMESPACE::NewBloomFilterPolicy(10, false));
       table_options.whole_key_filtering = true;
       l->options_->table_factory.reset(NewBlockBasedTableFactory(table_options));
@@ -38,7 +41,7 @@ namespace sgns::ipfs_lite {
           // Wrap DB* into a shared_ptr with a custom deleter to ensure cleanup
           l->db_ = std::shared_ptr<DB>(db);
           // Create logger
-          l->logger_ = base::createLogger("rocksdb");
+          l->logger_ = common::createLogger("rocksdb");
           return l;  // Return the shared_ptr
       }
 
@@ -59,7 +62,7 @@ namespace sgns::ipfs_lite {
 
     auto l = std::make_shared<rocksdb>();
     l->db_ = db;
-    l->logger_ = base::createLogger("rocksdb");
+    l->logger_ = common::createLogger("rocksdb");
     return l;
   }
 
@@ -125,6 +128,7 @@ namespace sgns::ipfs_lite {
     if (status.ok()) {
       return IPFS::outcome::success();
     }
+    return IPFS::outcome::failure(boost::system::error_code{});
   }
 
 }  // namespace sgns::ipfs_lite
