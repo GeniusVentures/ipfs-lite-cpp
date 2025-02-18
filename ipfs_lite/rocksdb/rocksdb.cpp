@@ -6,6 +6,12 @@
 #include <rocksdb/filter_policy.h>
 #include <rocksdb/slice_transform.h>
 
+#include <common/logger.hpp>
+
+#include <rocksdb/table.h>
+#include <rocksdb/filter_policy.h>
+#include <rocksdb/slice_transform.h>
+
 #include "ipfs_lite/rocksdb/rocksdb_batch.hpp"
 #include "ipfs_lite/rocksdb/rocksdb_cursor.hpp"
 #include "ipfs_lite/rocksdb/rocksdb_util.hpp"
