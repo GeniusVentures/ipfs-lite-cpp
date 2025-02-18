@@ -38,7 +38,12 @@ namespace sgns::ipfs_lite {
   template <typename T>
   inline IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
                                             const common::Logger &logger) {
-    logger->error(s.ToString());
+    // if we are checking if it exists, don't log as an error
+    if (s.IsNotFound()) {
+      logger->debug(s.ToString());
+    } else {
+      logger->error(s.ToString());
+    }
     return error_as_result<T>(s);
   }
 
