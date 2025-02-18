@@ -10,26 +10,56 @@
 namespace sgns::ipfs_lite {
 
   IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(
-      std::string_view path, rocksdb::Options options) {
-    rocksdb::DB *db = nullptr;
-    auto status = rocksdb::DB::Open(options, path.data(), &db);
-    if (status.ok()) {
+      std::string_view path, const rocksdb::Options &options) {
+      // Create a shared_ptr immediately to avoid manual memory management
       auto l = std::make_shared<rocksdb>();
-      l->db_ = std::shared_ptr<rocksdb::DB>(db);
-      return l;
-    }
 
-    return error_as_result<std::shared_ptr<rocksdb>>(status);
-  }
+      // Store a deep copy of options
+      l->options_ = std::make_shared<Options>(options);
 
-  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(std::shared_ptr<DB> db) {
+      // Set up bloom filter
+      BlockBasedTableOptions table_options;
+      table_options.filter_policy.reset(::ROCKSDB_NAMESPACE::NewBloomFilterPolicy(10, false));
+      table_options.whole_key_filtering = true;
+      l->options_->table_factory.reset(NewBlockBasedTableFactory(table_options));
+
+      // Define a prefix extractor
+      l->options_->prefix_extractor.reset(::ROCKSDB_NAMESPACE::NewCappedPrefixTransform(3));
+
+      l->options_->info_log_level = ::ROCKSDB_NAMESPACE::InfoLogLevel::ERROR_LEVEL;
+      // Configure threading environment
+      l->options_->env = ::rocksdb::Env::Default();
+      l->options_->env->SetBackgroundThreads(4, ::rocksdb::Env::Priority::HIGH);
+
+      rocksdb::DB *db = nullptr;
+      auto status = rocksdb::DB::Open(options, path.data(), &db);
+      if (status.ok())
+      {
+          // Wrap DB* into a shared_ptr with a custom deleter to ensure cleanup
+          l->db_ = std::shared_ptr<DB>(db);
+          // Create logger
+          l->logger_ = base::createLogger("rocksdb");
+          return l;  // Return the shared_ptr
+      }
+
+      // Clean up manually allocated DB if Open() succeeded but logic fails
+      if (db)
+      {
+          delete db;
+      }
+
+      // Return an error result
+      return error_as_result<std::shared_ptr<rocksdb>>(status);  }
+
+  IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create(const std::shared_ptr<DB> &db) {
     if (db == nullptr)
     {
       return error_as_result<std::shared_ptr<rocksdb>>(rocksdb::Status(rocksdb::Status::PathNotFound()));
     }
 
     auto l = std::make_shared<rocksdb>();
-    l->db_ = std::move(db);
+    l->db_ = db;
+    l->logger_ = base::createLogger("rocksdb");
     return l;
   }
 

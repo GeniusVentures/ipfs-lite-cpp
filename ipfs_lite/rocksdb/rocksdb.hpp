@@ -34,13 +34,13 @@ namespace sgns::ipfs_lite {
      * @return instance of rocksdb
      */
     static IPFS::outcome::result<std::shared_ptr<rocksdb>> create(
-        std::string_view path, Options options = Options());
+        std::string_view path, const Options& options = Options());
 
     /**
     * @brief Factory method to create an instance of rocksdb class.
     * @param db pointer to rocksdb database instance
     */
-    static IPFS::outcome::result<std::shared_ptr<rocksdb>> create(std::shared_ptr<DB> db);
+    static IPFS::outcome::result<std::shared_ptr<rocksdb>> create(const std::shared_ptr<DB> &db);
 
     /**
      * @brief Set read options, which are used in @see rocksdb#get
@@ -78,6 +78,8 @@ namespace sgns::ipfs_lite {
     ReadOptions ro_;
     WriteOptions wo_;
     common::Logger logger_ = common::createLogger("rocksdb");
+    std::shared_ptr<Options> options_;
+
   };
 
 }  // namespace sgns::ipfs_lite
