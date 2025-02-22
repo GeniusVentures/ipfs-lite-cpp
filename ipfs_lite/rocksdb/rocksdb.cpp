@@ -51,12 +51,6 @@ namespace sgns::ipfs_lite {
           return l;  // Return the shared_ptr
       }
 
-      // Clean up manually allocated DB if Open() succeeded but logic fails
-      if (db)
-      {
-          delete db;
-      }
-
       // Return an error result
       return error_as_result<std::shared_ptr<rocksdb>>(status);  }
 
