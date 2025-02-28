@@ -71,6 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     if (isTerminal(status)) {
       auto cb = std::move(it->second);
+      logger()->trace("{}: isTerminal id={}", __FUNCTION__, request_id);
       active_requests_.erase(it);
       cb(status, std::move(extensions));
     } else {
@@ -110,6 +111,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void LocalRequests::cancelAll() {
     cancelAll(active_requests_);
+    logger()->trace("{}: cancelling all", __FUNCTION__);
     cancelAll(rejected_requests_);
   }
 
@@ -126,6 +128,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (it == active_requests_.end()) {
       return;
     }
+    logger()->trace("{}: deleting it id={}", __FUNCTION__, request_id);
     active_requests_.erase(it);
 
     request_builder_.addCancelRequest(request_id);

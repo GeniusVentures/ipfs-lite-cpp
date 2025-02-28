@@ -412,15 +412,17 @@ void PeerContext::onResponse(Message::Response &response) {
       onRequest(stream, item);
     }
 
-    for (auto &item : msg.data) {
-      graphsync_feedback_.onBlock(
-          peer, std::move(item.first), std::move(item.second));
-    }
+
 
     for (auto &item : msg.responses) {
       onResponse(item);
     }
 
+    for (auto &item : msg.data) {
+      graphsync_feedback_.onBlock(
+          peer, std::move(item.first), std::move(item.second));
+    }
+    
     shiftExpireTime(it->second);
   }
 

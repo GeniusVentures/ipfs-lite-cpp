@@ -47,6 +47,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       block_cb_ = Graphsync::BlockCallback{};
       dag_.reset();
       network_->stop();
+      logger()->trace("{}: Stopping all", __FUNCTION__);
+
       local_requests_->cancelAll();
     }
   }
