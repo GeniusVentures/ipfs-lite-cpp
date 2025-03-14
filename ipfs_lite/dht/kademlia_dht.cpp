@@ -115,7 +115,7 @@ namespace sgns::ipfs_lite::ipfs::dht
     {
         std::cout << "Schedule next provide event" << std::endl;
         //Set the timer to expire in 5 minutes
-        timer_.expires_after(std::chrono::seconds(10));
+        timer_.expires_after(std::chrono::seconds(30000));
 
         //Start an asynchronous wait
         timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
