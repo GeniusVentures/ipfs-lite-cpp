@@ -93,7 +93,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
                                      child_leaf,
                                      node->getLinks(),
                                      max_depth,
-                                     ++current_depth);
+                                     current_depth + 1);
       if (build_result.has_error()) {
         return build_result;
       }
