@@ -76,7 +76,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     auto ctx = findContext(peer, false);
     assert(ctx);
 
-    logger()->trace("makeRequest: {} has state {}", ctx->str, ctx->getState());
+    logger()->trace("makeRequest: {} has state {}", ctx->str, fmt::underlying(ctx->getState()));
 
     ctx->setOutboundAddress(std::move(address));
     if (ctx->needToConnect()) {
