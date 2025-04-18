@@ -27,7 +27,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param host libp2p host object
     /// \param scheduler libp2p scheduler
     GraphsyncImpl(std::shared_ptr<libp2p::Host> host,
-                  std::shared_ptr<libp2p::protocol::Scheduler> scheduler);
+                  std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
+                  std::shared_ptr<Network> network);
 
     ~GraphsyncImpl() override;
 

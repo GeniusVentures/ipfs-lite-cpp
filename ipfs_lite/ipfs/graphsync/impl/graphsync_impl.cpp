@@ -13,9 +13,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   GraphsyncImpl::GraphsyncImpl(
       std::shared_ptr<libp2p::Host> host,
-      std::shared_ptr<libp2p::protocol::Scheduler> scheduler)
+      std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
+      std::shared_ptr<Network> network)
       : scheduler_(scheduler),
-        network_(std::make_shared<Network>(std::move(host), scheduler)),
+        network_(network)),
         local_requests_(std::make_shared<LocalRequests>(
             std::move(scheduler),
             [this](RequestId request_id, SharedData body) {

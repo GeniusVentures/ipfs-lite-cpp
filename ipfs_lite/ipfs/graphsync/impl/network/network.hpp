@@ -118,7 +118,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     libp2p::peer::Protocol protocol_id_;
 
     /// Feedback to graphsync core module (owning object)
-    std::shared_ptr<PeerToGraphsyncFeedback> feedback_;
+    std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> feedbacks_;
 
     /// Peer set, where item can be found by const PeerID& (see operators <)
     using PeerSet = std::set<PeerContextPtr, std::less<>>;

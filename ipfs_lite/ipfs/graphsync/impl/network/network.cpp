@@ -23,28 +23,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void Network::start(std::shared_ptr<PeerToGraphsyncFeedback> feedback) {
-    feedback_ = std::move(feedback);
-    assert(feedback_);
-
-    // clang-format off
-    // host_->setProtocolHandler(
-    //     protocol_id_,
-    //     [wptr = weak_from_this()] (IPFS::outcome::result<StreamPtr> rstream) {
-    //       auto self = wptr.lock();
-    //       if (self) { self->onStreamAccepted(std::move(rstream)); }
-    //     }
-    // );
-    host_->setProtocolHandler(
-        protocol_id_,
-        [wptr = weak_from_this()] (StreamPtr rstream) {
-          auto self = wptr.lock();
-          // auto param = std::move(rstream);
-          if (self) { self->onStreamAccepted(std::move(rstream)); }
-        }
-    );
-    // clang-format on
-    started_ = true;
-  }
+    assert(feedback);
+  
+    bool first_feedback = feedbacks_.empty();
+    feedbacks_.emplace_back(feedback);
+  
+    if (first_feedback) {
+      host_->setProtocolHandler(
+          protocol_id_,
+          [wptr = weak_from_this()] (StreamPtr rstream) {
+            if (auto self = wptr.lock()) {
+              self->onStreamAccepted(std::move(rstream));
+            }
+          }
+      );
+      started_ = true;
+    }
+  }  
 
   void Network::stop() {
     started_ = false;
