@@ -328,7 +328,7 @@ void PeerContext::onResponse(Message::Response &response) {
     }
     for (const auto &wfb : graphsync_feedbacks_) {
       if (auto fb = wfb.lock()) {
-        fb->onResponse(peer, response.id, response.status, std::move(response.extensions));
+        fb->onResponse(peer, response.id, response.status, response.extensions);
       }
     }
 }
@@ -358,7 +358,7 @@ void PeerContext::onResponse(Message::Response &response) {
             "onRequest: peer {} created request {}", str, request.id);
         for (const auto &wfb : graphsync_feedbacks_) {
           if (auto fb = wfb.lock()) {
-            fb->onRemoteRequest(peer, std::move(request));
+            fb->onRemoteRequest(peer, request);
           }
         }
       }
@@ -431,7 +431,7 @@ void PeerContext::onResponse(Message::Response &response) {
     for (auto &item : msg.data) {
       for (const auto &wfb : graphsync_feedbacks_) {
         if (auto fb = wfb.lock()) {
-          fb->onBlock(peer, std::move(item.first), std::move(item.second));
+          fb->onBlock(peer, item.first, item.second);
         }
       }
     }
