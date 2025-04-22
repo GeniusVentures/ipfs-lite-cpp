@@ -7,8 +7,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   LocalRequests::LocalRequests(
       std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-      CancelRequestFn cancel_fn)
-      : scheduler_(std::move(scheduler)), cancel_fn_(std::move(cancel_fn)) {
+      CancelRequestFn cancel_fn,
+      std::shared_ptr<RequestIdGenerator> generator)
+      : scheduler_(std::move(scheduler)), 
+      cancel_fn_(std::move(cancel_fn)),
+      id_generator_(std::move(generator)) {
     assert(scheduler_);
     assert(cancel_fn_);
   }
@@ -140,21 +143,20 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   RequestId LocalRequests::nextRequestId() {
-    RequestId id = ++current_request_id_;
+    RequestId id = id_generator_->next();
     if (id > 0 && active_requests_.count(id) == 0) {
       return id;
     }
-    // We prepare for long uptimes,
-    // the graphsync wire protocol does not (int32 there)
+  
+    // In the highly unlikely case of collision, search for an unused ID
     id = 1;
     while (active_requests_.count(id) != 0) {
       if (++id == 0) {
-        // almost impossible
-        return 0;
+        return 0;  // exhausted
       }
     }
-    current_request_id_ = id;
     return id;
   }
+  
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

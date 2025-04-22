@@ -14,14 +14,15 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   GraphsyncImpl::GraphsyncImpl(
       std::shared_ptr<libp2p::Host> host,
       std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-      std::shared_ptr<Network> network)
+      std::shared_ptr<Network> network,
+      std::shared_ptr<RequestIdGenerator> generator)
       : scheduler_(scheduler),
         network_(network),
         local_requests_(std::make_shared<LocalRequests>(
             std::move(scheduler),
             [this](RequestId request_id, SharedData body) {
               cancelLocalRequest(request_id, std::move(body));
-            })) {}
+            }, generator)) {}
 
   GraphsyncImpl::~GraphsyncImpl() {
     doStop();
@@ -113,13 +114,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                               CID cid,
                               common::Buffer data) {
     // TODO peer ratings according to status
-
+    logger()->trace("Got a block for CID {}", cid.toString().value());
     if (!started_) {
+      logger()->error("Got a block, but Graphsync Not Started");
       return;
     }
     if (requested_cids_.find(cid) == requested_cids_.end()) {
+      logger()->error("Got a block, but we're not waiting for this cid{}", cid.toString().value());
       return;
     }
+    logger()->trace("Block callback for CID {}", cid.toString().value());
     block_cb_(std::move(cid), std::move(data));
   }
 

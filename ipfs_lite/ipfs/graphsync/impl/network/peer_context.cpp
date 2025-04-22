@@ -347,11 +347,13 @@ void PeerContext::onResponse(Message::Response &response) {
       remote_requests_streams_.erase(request.id);
       logger()->debug(
           "onRequest: peer {} cancelled request {}", str, request.id);
-    } else {
+    } 
+    else {
       createResponseEndpoint(stream, ctx);
       if (remote_requests_streams_.count(request.id)) {
         sendResponse(request.id, RS_REJECTED, {});
-      } else {
+      } 
+      else {
         remote_requests_streams_.emplace(request.id, stream);
         ctx.remote_request_ids.insert(request.id);
         logger()->debug(
@@ -386,6 +388,8 @@ void PeerContext::onResponse(Message::Response &response) {
   void PeerContext::onReaderEvent(const StreamPtr &stream,
                                   IPFS::outcome::result<Message> msg_res) {
     if (closed_) {
+      logger()->info(
+        "stream read error: this stream is closed closed");
       return;
     }
 

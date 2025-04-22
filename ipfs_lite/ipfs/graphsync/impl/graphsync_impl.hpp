@@ -17,6 +17,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   class LocalRequests;
   class Network;
+  class RequestIdGenerator;
 
   /// Core graphsync component. The central module
   class GraphsyncImpl : public Graphsync,
@@ -28,7 +29,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param scheduler libp2p scheduler
     GraphsyncImpl(std::shared_ptr<libp2p::Host> host,
                   std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-                  std::shared_ptr<Network> network);
+                  std::shared_ptr<Network> network,
+                  std::shared_ptr<RequestIdGenerator> generator);
 
     ~GraphsyncImpl() override;
 

@@ -9,7 +9,15 @@
 #include "network/marshalling/request_builder.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
-
+  class RequestIdGenerator {
+    public:
+     RequestId next() {
+       return ++counter_;
+     }
+   
+    private:
+     std::atomic<RequestId> counter_{0};  // start at 1 (zero is reserved)
+   };
   /// Local requests module for graphsync, manages requests made by this host
   class LocalRequests : public Subscription::Source {
    public:
@@ -33,7 +41,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param cancel_fn feedback to the core component
     explicit LocalRequests(
         std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-        CancelRequestFn cancel_fn);
+        CancelRequestFn cancel_fn,
+        std::shared_ptr<RequestIdGenerator> generator);
 
     /// Non-network part of Graphsync's makeRequest implementation.
     /// Creates a new request and NewRequest fields
@@ -105,8 +114,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Current rejected id, always negative and decremented
     RequestId current_rejected_request_id_ = 0;
-  };
 
+    std::shared_ptr<RequestIdGenerator> id_generator_;
+  };
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 
 #endif  // CPP_IPFS_LITE_GRAPHSYNC_LOCAL_REQUESTS_HPP
