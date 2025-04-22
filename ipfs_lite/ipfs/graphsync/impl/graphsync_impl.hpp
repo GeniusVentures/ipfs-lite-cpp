@@ -78,6 +78,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     //List of requested CIDs
     std::unordered_set<CID> requested_cids_;
+    
+    //CID Mutex
+    mutable std::mutex requested_cids_mutex_;
 
     /// Flag, indicates that instance is started
     bool started_ = false;

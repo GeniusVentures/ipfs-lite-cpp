@@ -179,7 +179,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     if (!ctx && create_if_not_found) {
-      ctx = std::make_shared<PeerContext>(peer, *feedbacks_, *this, *scheduler_);
+      ctx = std::make_shared<PeerContext>(peer, feedbacks_, *this, *scheduler_);
       peers_.insert(ctx);
     }
 

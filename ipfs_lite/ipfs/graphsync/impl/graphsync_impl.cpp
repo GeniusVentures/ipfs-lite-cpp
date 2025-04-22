@@ -47,7 +47,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       started_ = false;
       block_cb_ = Graphsync::BlockCallback{};
       dag_.reset();
-      network_->stop();
+      network_->stop(shared_from_this());
       logger()->trace("{}: Stopping all", __FUNCTION__);
 
       local_requests_->cancelAll();
@@ -74,7 +74,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     std::lock_guard lock(requested_cids_mutex_);
     if (!requested_cids_.insert(root_cid).second) {
       logger()->trace("makeRequest: already requested {}",
-        root_cid.toString());   
+        root_cid.toString().value());   
         return local_requests_->newRejectedRequest(std::move(callback));  
     }
     auto newRequest = local_requests_->newRequest(
@@ -117,7 +117,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!started_) {
       return;
     }
-    if (!requested_cids_.contains(cid)) {
+    if (requested_cids_.find(cid) == requested_cids_.end()) {
       return;
     }
     block_cb_(std::move(cid), std::move(data));
