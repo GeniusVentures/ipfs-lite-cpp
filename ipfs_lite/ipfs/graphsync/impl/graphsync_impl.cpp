@@ -16,7 +16,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
       std::shared_ptr<Network> network)
       : scheduler_(scheduler),
-        network_(network)),
+        network_(network),
         local_requests_(std::make_shared<LocalRequests>(
             std::move(scheduler),
             [this](RequestId request_id, SharedData body) {
@@ -71,6 +71,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       selector = kSelectorMatcher;
     }
 
+    std::lock_guard lock(requested_cids_mutex_);
+    if (!requested_cids_.insert(root_cid).second) {
+      logger()->trace("makeRequest: already requested {}",
+        root_cid.toString());   
+        return local_requests_->newRejectedRequest(std::move(callback));  
+    }
     auto newRequest = local_requests_->newRequest(
         root_cid, selector, extensions, std::move(callback));
 
@@ -111,7 +117,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!started_) {
       return;
     }
-
+    if (!requested_cids_.contains(cid)) {
+      return;
+    }
     block_cb_(std::move(cid), std::move(data));
   }
 

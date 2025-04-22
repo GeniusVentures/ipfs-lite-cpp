@@ -76,6 +76,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// The only subscription to blocks (at the moment)
     Graphsync::BlockCallback block_cb_;
 
+    //List of requested CIDs
+    std::unordered_set<CID> requested_cids_;
+
     /// Flag, indicates that instance is started
     bool started_ = false;
   };

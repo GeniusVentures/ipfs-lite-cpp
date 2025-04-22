@@ -41,9 +41,20 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
   }  
 
-  void Network::stop() {
-    started_ = false;
-    closeAllPeers();
+  void Network::stop(const std::shared_ptr<PeerToGraphsyncFeedback>& feedback) {
+    feedbacks_.erase(
+      std::remove_if(feedbacks_.begin(), feedbacks_.end(),
+        [&](const std::weak_ptr<PeerToGraphsyncFeedback>& f) {
+          auto s = f.lock();
+          return !s || s == feedback;
+        }),
+      feedbacks_.end()
+    );
+    if(feedbacks_.empty())
+    {
+      started_ = false;
+      closeAllPeers();
+    }
   }
 
   bool Network::canSendRequest(const PeerId &peer) {
@@ -81,22 +92,22 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     ctx->enqueueRequest(request_id, std::move(request_body));
   }
 
-  void Network::asyncFeedback(const PeerId &peer,
-                              RequestId request_id,
-                              ResponseStatusCode status) {
-    scheduler_
-        ->schedule(
-            [wptr{weak_from_this()}, p = peer, id = request_id, s = status]() {
-              auto self = wptr.lock();
-              if (self && self->started_) {
-                if (isTerminal(s)) {
-                  self->active_requests_per_peer_.erase(id);
-                }
-                self->feedback_->onResponse(p, id, s, {});
-              }
-            })
-        .detach();
-  }
+  // void Network::asyncFeedback(const PeerId &peer,
+  //                             RequestId request_id,
+  //                             ResponseStatusCode status) {
+  //   scheduler_
+  //       ->schedule(
+  //           [wptr{weak_from_this()}, p = peer, id = request_id, s = status]() {
+  //             auto self = wptr.lock();
+  //             if (self && self->started_) {
+  //               if (isTerminal(s)) {
+  //                 self->active_requests_per_peer_.erase(id);
+  //               }
+  //               self->feedback_->onResponse(p, id, s, {});
+  //             }
+  //           })
+  //       .detach();
+  // }
 
   void Network::cancelRequest(RequestId request_id, SharedData request_body) {
     if (!started_) {
@@ -154,7 +165,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   PeerContextPtr Network::findContext(const PeerId &peer,
                                       bool create_if_not_found) {
-    assert(started_ && feedback_);
+    assert(started_);
 
     PeerContextPtr ctx;
 
@@ -168,7 +179,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     if (!ctx && create_if_not_found) {
-      ctx = std::make_shared<PeerContext>(peer, *feedback_, *this, *scheduler_);
+      ctx = std::make_shared<PeerContext>(peer, *feedbacks_, *this, *scheduler_);
       peers_.insert(ctx);
     }
 

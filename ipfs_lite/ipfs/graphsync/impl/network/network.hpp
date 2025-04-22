@@ -29,7 +29,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void start(std::shared_ptr<PeerToGraphsyncFeedback> feedback);
 
     /// Stops all network operations gracefully
-    void stop();
+    void stop(const std::shared_ptr<PeerToGraphsyncFeedback>& feedback);
 
     /// Called by core graphsync module to know if peer is requestable at the
     /// moment. Creates a peer context in the background, if needed

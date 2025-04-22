@@ -24,12 +24,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }  // namespace
 
   PeerContext::PeerContext(PeerId peer_id,
-                           PeerToGraphsyncFeedback &graphsync_feedback,
+                           std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                            PeerToNetworkFeedback &network_feedback,
                            libp2p::protocol::Scheduler &scheduler)
       : peer(std::move(peer_id)),
         str(makeStringRepr(peer)),
-        graphsync_feedback_(graphsync_feedback),
+        graphsync_feedbacks_(graphsync_feedbacks),
         network_feedback_(network_feedback),
         scheduler_(scheduler) {}
 
@@ -303,7 +303,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!local_request_ids_.empty()) {
       std::set<RequestId> ids = std::move(local_request_ids_);
       for (auto id : ids) {
-        graphsync_feedback_.onResponse(peer, id, close_status_, {});
+        for (const auto &wfb : graphsync_feedbacks_) {
+          if (auto fb = wfb.lock()) {
+            fb->onResponse(peer, id, close_status_, {});
+          }
+        }
       }
     }
     requests_endpoint_.reset();
@@ -322,9 +326,11 @@ void PeerContext::onResponse(Message::Response &response) {
     if (isTerminal(response.status)) {
         local_request_ids_.erase(it);
     }
-    
-    graphsync_feedback_.onResponse(
-        peer, response.id, response.status, std::move(response.extensions));
+    for (const auto &wfb : graphsync_feedbacks_) {
+      if (auto fb = wfb.lock()) {
+        fb->onResponse(peer, response.id, response.status, std::move(response.extensions));
+      }
+    }
 }
 
   void PeerContext::onRequest(const StreamPtr &stream,
@@ -350,7 +356,11 @@ void PeerContext::onResponse(Message::Response &response) {
         ctx.remote_request_ids.insert(request.id);
         logger()->debug(
             "onRequest: peer {} created request {}", str, request.id);
-        graphsync_feedback_.onRemoteRequest(peer, std::move(request));
+        for (const auto &wfb : graphsync_feedbacks_) {
+          if (auto fb = wfb.lock()) {
+            fb->onRemoteRequest(peer, std::move(request));
+          }
+        }
       }
     }
   }
@@ -419,8 +429,11 @@ void PeerContext::onResponse(Message::Response &response) {
     }
 
     for (auto &item : msg.data) {
-      graphsync_feedback_.onBlock(
-          peer, std::move(item.first), std::move(item.second));
+      for (const auto &wfb : graphsync_feedbacks_) {
+        if (auto fb = wfb.lock()) {
+          fb->onBlock(peer, std::move(item.first), std::move(item.second));
+        }
+      }
     }
     
     shiftExpireTime(it->second);

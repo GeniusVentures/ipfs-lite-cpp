@@ -32,7 +32,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param network_feedback feedback interface of network module
     /// \param scheduler libp2p scheduler
     PeerContext(PeerId peer_id,
-                PeerToGraphsyncFeedback &graphsync_feedback,
+                std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                 PeerToNetworkFeedback &network_feedback,
                 libp2p::protocol::Scheduler &scheduler);
 
@@ -198,7 +198,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     Streams::iterator findResponseSink(RequestId request_id);
 
     /// Feedback to GraphsyncImpl module
-    PeerToGraphsyncFeedback &graphsync_feedback_;
+    //PeerToGraphsyncFeedback &graphsync_feedback_;
+    std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> graphsync_feedbacks_;
 
     /// Feedback to Network module
     PeerToNetworkFeedback &network_feedback_;
