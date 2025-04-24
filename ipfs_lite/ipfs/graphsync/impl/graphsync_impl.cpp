@@ -111,7 +111,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void GraphsyncImpl::onBlock(const PeerId &from,
-                              CID cid,
+                              const CID &root_cid,
+                              const CID &cid,
                               common::Buffer data) {
     // TODO peer ratings according to status
     logger()->trace("Got a block for CID {}", cid.toString().value());
@@ -119,8 +120,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       logger()->error("Got a block, but Graphsync Not Started");
       return;
     }
-    if (requested_cids_.find(cid) == requested_cids_.end()) {
-      logger()->error("Got a block, but we're not waiting for this cid{}", cid.toString().value());
+    if (requested_cids_.find(root_cid) == requested_cids_.end()) {
+      logger()->error("Got a block, but we're not waiting for this root cid {} to cid{}", root_cid.toString().value(), cid.toString().value());
       return;
     }
     logger()->trace("Block callback for CID {}", cid.toString().value());

@@ -432,10 +432,16 @@ void PeerContext::onResponse(Message::Response &response) {
       onResponse(item);
     }
 
+    CID root_cid;
+    bool root_set = false;
     for (auto &item : msg.data) {
+      if (!root_set) {
+        root_cid = item.first;
+        root_set = true;
+      }
       for (const auto &wfb : graphsync_feedbacks_) {
         if (auto fb = wfb.lock()) {
-          fb->onBlock(peer, item.first, item.second);
+          fb->onBlock(peer, root_cid, item.first, item.second);
         }
       }
     }

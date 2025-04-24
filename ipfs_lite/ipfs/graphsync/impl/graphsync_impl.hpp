@@ -57,7 +57,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                     RequestId request_id,
                     ResponseStatusCode status,
                     std::vector<Extension> extensions) override;
-    void onBlock(const PeerId &from, CID cid, common::Buffer data) override;
+    void onBlock(const PeerId &from, const CID &root_cid, const CID &cid, common::Buffer data) override;
     void onRemoteRequest(const PeerId &from, Message::Request request) override;
 
     /// NVI for stop()
