@@ -60,6 +60,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void onBlock(const PeerId &from, const CID &root_cid, const CID &cid, common::Buffer data) override;
     void onRemoteRequest(const PeerId &from, Message::Request request) override;
 
+    // Clear from list of requested CIDs so we can try to request this again
+    void clearRequestedCid(const CID &cid);
+
     /// NVI for stop()
     void doStop();
 

@@ -45,6 +45,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     ctx.body = std::move(serialize_res.value());
     active_requests_[ctx.request_id] = std::move(callback);
 
+    request_to_cid_[ctx.request_id] = root_cid;
+
     logger()->trace("{}: id={}", __FUNCTION__, ctx.request_id);
 
     return ctx;
@@ -156,6 +158,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       }
     }
     return id;
+  }
+  boost::optional<CID> LocalRequests::getRequestRootCid(RequestId request_id) const {
+    auto it = request_to_cid_.find(request_id);
+    if (it != request_to_cid_.end()) {
+        return it->second;
+    }
+    return boost::none;
   }
   
 

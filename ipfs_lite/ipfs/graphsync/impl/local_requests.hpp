@@ -74,6 +74,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Cancels all requests, called during Graphsync::stop()
     void cancelAll();
 
+    // Obtained a root cid for a given request.
+    boost::optional<CID> getRequestRootCid(RequestId request_id) const;
+
    private:
     /// Container that tracks all local requests
     using RequestMap = std::map<RequestId, Graphsync::RequestProgressCallback>;
@@ -116,6 +119,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     RequestId current_rejected_request_id_ = 0;
 
     std::shared_ptr<RequestIdGenerator> id_generator_;
+
+    std::unordered_map<RequestId, CID> request_to_cid_;
   };
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 

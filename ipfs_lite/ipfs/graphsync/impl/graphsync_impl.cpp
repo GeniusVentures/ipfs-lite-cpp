@@ -106,7 +106,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!started_) {
       return;
     }
-
+    if (isTerminal(status)) {
+        // Look up the request to get the root CID
+        auto root_cid = local_requests_->getRequestRootCid(request_id);
+        if (root_cid) {
+            clearRequestedCid(root_cid.value());
+        }
+    }
     local_requests_->onResponse(request_id, status, std::move(extensions));
   }
 
@@ -172,5 +178,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                                          SharedData body) {
     network_->cancelRequest(request_id, std::move(body));
   }
+
+  void GraphsyncImpl::clearRequestedCid(const CID &cid) {
+    std::lock_guard lock(requested_cids_mutex_);
+    requested_cids_.erase(cid);
+    logger()->trace("clearRequestedCid: removed {} from tracking", 
+                   cid.toString().value());
+  }
+
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
