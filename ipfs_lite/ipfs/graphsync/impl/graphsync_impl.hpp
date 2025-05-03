@@ -24,6 +24,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                         public std::enable_shared_from_this<GraphsyncImpl>,
                         public PeerToGraphsyncFeedback {
    public:
+    enum class RequestState {
+      IN_PROGRESS,
+      COMPLETED,
+      FAILED
+    };
+    
+    struct RequestTrackingInfo {
+      RequestState state;
+      RequestId request_id;
+    };
     /// Ctor.
     /// \param host libp2p host object
     /// \param scheduler libp2p scheduler
@@ -42,7 +52,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     // Graphsync interface overrides
     void start(std::shared_ptr<MerkleDagBridge> dag,
-               BlockCallback callback) override;
+               BlockCallback callback) override;  
     void stop() override;
     Subscription makeRequest(
         const libp2p::peer::PeerId &peer,
@@ -61,7 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void onRemoteRequest(const PeerId &from, Message::Request request) override;
 
     // Clear from list of requested CIDs so we can try to request this again
-    void clearRequestedCid(const CID &cid);
+    void cleanupOldRequests();
 
     /// NVI for stop()
     void doStop();
@@ -82,15 +92,17 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     Graphsync::BlockCallback block_cb_;
 
     //List of requested CIDs
-    std::unordered_set<CID> requested_cids_;
+    std::unordered_map<CID, RequestTrackingInfo> tracked_requests_;
     
     //CID Mutex
     mutable std::mutex requested_cids_mutex_;
 
     /// Flag, indicates that instance is started
     bool started_ = false;
-  };
 
+
+  };
+  constexpr unsigned kCleanupIntervalMs = 120000;
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 
 #endif  // CPP_IPFS_LITE_GRAPHSYNC_IMPL_HPP

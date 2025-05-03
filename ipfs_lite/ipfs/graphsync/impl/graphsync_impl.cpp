@@ -22,7 +22,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
             std::move(scheduler),
             [this](RequestId request_id, SharedData body) {
               cancelLocalRequest(request_id, std::move(body));
-            }, generator)) {}
+            }, generator)) {
+              scheduler_->schedule(kCleanupIntervalMs, [weak_this = weak_from_this()]() {
+                auto self = weak_this.lock();
+                if (self) {
+                    self->cleanupOldRequests();
+                }
+              });
+            }
 
   GraphsyncImpl::~GraphsyncImpl() {
     doStop();
@@ -73,13 +80,20 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     std::lock_guard lock(requested_cids_mutex_);
-    if (!requested_cids_.insert(root_cid).second) {
-      logger()->trace("makeRequest: already requested {}",
-        root_cid.toString().value());   
+    auto it = tracked_requests_.find(root_cid);
+    
+    if (it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS) {
+        // Only reject if there's an in-progress request
+        logger()->trace("makeRequest: already in progress for {}", 
+            root_cid.toString().value());   
         return local_requests_->newRejectedRequest(std::move(callback));  
     }
+
     auto newRequest = local_requests_->newRequest(
         root_cid, selector, extensions, std::move(callback));
+
+    // Update or insert the tracking info
+    tracked_requests_[root_cid] = {RequestState::IN_PROGRESS, newRequest.request_id};
 
     if (newRequest.request_id > 0) {
       assert(newRequest.body);
@@ -107,10 +121,21 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return;
     }
     if (isTerminal(status)) {
-        // Look up the request to get the root CID
         auto root_cid = local_requests_->getRequestRootCid(request_id);
         if (root_cid) {
-            clearRequestedCid(root_cid.value());
+            std::lock_guard lock(requested_cids_mutex_);
+            auto it = tracked_requests_.find(root_cid.value());
+            if (it != tracked_requests_.end()) {
+                // Update the state based on status
+                if (status == RS_FULL_CONTENT) {
+                    it->second.state = RequestState::COMPLETED;
+                } else {
+                    it->second.state = RequestState::FAILED;
+                }
+                logger()->trace("Request {} for CID {} completed with status {}", 
+                          request_id, root_cid.value().toString().value(), 
+                          statusCodeToString(status));
+            }
         }
     }
     local_requests_->onResponse(request_id, status, std::move(extensions));
@@ -126,9 +151,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       logger()->error("Got a block, but Graphsync Not Started");
       return;
     }
-    if (requested_cids_.find(root_cid) == requested_cids_.end()) {
-      logger()->error("Got a block, but we're not waiting for this root cid {} to cid{}", root_cid.toString().value(), cid.toString().value());
-      return;
+    std::lock_guard lock(requested_cids_mutex_);
+    if (tracked_requests_.find(root_cid) == tracked_requests_.end()) {
+        logger()->error("Got a block, but we're not waiting for this root cid {} to cid{}", 
+                     root_cid.toString().value(), cid.toString().value());
+        return;
     }
     logger()->trace("Block callback for CID {}", cid.toString().value());
     block_cb_(std::move(cid), std::move(data));
@@ -179,11 +206,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     network_->cancelRequest(request_id, std::move(body));
   }
 
-  void GraphsyncImpl::clearRequestedCid(const CID &cid) {
+  void GraphsyncImpl::cleanupOldRequests() {
     std::lock_guard lock(requested_cids_mutex_);
-    requested_cids_.erase(cid);
-    logger()->trace("clearRequestedCid: removed {} from tracking", 
-                   cid.toString().value());
+    for (auto it = tracked_requests_.begin(); it != tracked_requests_.end();) {
+        // Only remove COMPLETED or FAILED requests
+        if (it->second.state != RequestState::IN_PROGRESS) {
+            it = tracked_requests_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+          // Reschedule the next cleanup
+    scheduler_->schedule(kCleanupIntervalMs, [weak_this = weak_from_this()]() {
+      auto self = weak_this.lock();
+      if (self) {
+          self->cleanupOldRequests();
+      }
+    });
   }
 
 
