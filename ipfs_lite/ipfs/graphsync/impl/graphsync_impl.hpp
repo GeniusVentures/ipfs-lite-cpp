@@ -7,6 +7,7 @@
 #include <libp2p/protocol/common/scheduler.hpp>
 
 #include "network/network_fwd.hpp"
+#include <libp2p/outcome/outcome.hpp>
 
 namespace libp2p {
   // libp2p host interface forward declaration
@@ -24,10 +25,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                         public std::enable_shared_from_this<GraphsyncImpl>,
                         public PeerToGraphsyncFeedback {
    public:
-    enum class RequestState {
-      IN_PROGRESS,
-      COMPLETED,
-      FAILED
+
+    enum class Error
+    {
+      REQUEST_NOT_FOUND = 0,      ///< The requested CID wasn't found
     };
     
     struct RequestTrackingInfo {
@@ -43,6 +44,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                   std::shared_ptr<RequestIdGenerator> generator);
 
     ~GraphsyncImpl() override;
+
+    IPFS::outcome::result<Graphsync::RequestState> getRequestState(const CID &root_cid) const override;
 
    private:
     /// Callback from LocalRequests module. Cancels a request made by this host

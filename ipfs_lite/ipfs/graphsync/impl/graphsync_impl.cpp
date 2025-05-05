@@ -6,7 +6,15 @@
 
 #include "local_requests.hpp"
 // #include "network/network.hpp"
-
+OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::ipfs_lite::ipfs::graphsync, GraphsyncImpl::Error, e )
+{
+    switch ( e )
+    {
+        case sgns::ipfs_lite::ipfs::graphsync::GraphsyncImpl::Error::REQUEST_NOT_FOUND:
+            return "The Request was not found, it has either been cleaned up or did not exist to begin with.";
+    }
+    return "Unknown error";
+}
 namespace sgns::ipfs_lite::ipfs::graphsync {
   /// Selector that matches current node
   common::Buffer kSelectorMatcher{0xa1, 0x61, 0x2e, 0xa0};
@@ -79,7 +87,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       selector = kSelectorMatcher;
     }
 
-    std::lock_guard lock(requested_cids_mutex_);
+    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
     auto it = tracked_requests_.find(root_cid);
     
     if (it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS) {
@@ -123,7 +131,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (isTerminal(status)) {
         auto root_cid = local_requests_->getRequestRootCid(request_id);
         if (root_cid) {
-            std::lock_guard lock(requested_cids_mutex_);
+            std::lock_guard<std::mutex> lock(requested_cids_mutex_);
             auto it = tracked_requests_.find(root_cid.value());
             if (it != tracked_requests_.end()) {
                 // Update the state based on status
@@ -151,7 +159,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       logger()->error("Got a block, but Graphsync Not Started");
       return;
     }
-    std::lock_guard lock(requested_cids_mutex_);
+    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
     if (tracked_requests_.find(root_cid) == tracked_requests_.end()) {
         logger()->error("Got a block, but we're not waiting for this root cid {} to cid{}", 
                      root_cid.toString().value(), cid.toString().value());
@@ -207,7 +215,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void GraphsyncImpl::cleanupOldRequests() {
-    std::lock_guard lock(requested_cids_mutex_);
+    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
     for (auto it = tracked_requests_.begin(); it != tracked_requests_.end();) {
         // Only remove COMPLETED or FAILED requests
         if (it->second.state != RequestState::IN_PROGRESS) {
@@ -225,5 +233,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     });
   }
 
+  IPFS::outcome::result<Graphsync::RequestState> GraphsyncImpl::getRequestState(const CID &root_cid) const {
+    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+    
+    auto it = tracked_requests_.find(root_cid);
+    if (it == tracked_requests_.end()) {
+      // Request not found
+      return IPFS::outcome::failure(Error::REQUEST_NOT_FOUND);
+    }
+    
+    return it->second.state;
+  }
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

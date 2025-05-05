@@ -166,6 +166,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   void PeerContext::enqueueRequest(RequestId request_id,
                                    SharedData request_body) {
     if (!requests_endpoint_) {
+      logger()->error("enqueueRequest: Internal error");
       close(RS_INTERNAL_ERROR);
     }
     auto res = requests_endpoint_->enqueue(std::move(request_body));
