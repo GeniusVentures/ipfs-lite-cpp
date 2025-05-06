@@ -66,10 +66,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     if (length == 0) {
-      // Instead of returning an error, just start a new read cycle
       reading_ = false;
-      continueReading();
-      return;
+      return feedback_(stream_, Error::STREAM_NOT_READABLE);
     }
 
     if (length > max_message_size_) {
