@@ -65,7 +65,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       dag_.reset();
       network_->stop(shared_from_this());
       logger()->trace("{}: Stopping all", __FUNCTION__);
-
+      tracked_requests_.clear();
+      
       local_requests_->cancelAll();
     }
   }
