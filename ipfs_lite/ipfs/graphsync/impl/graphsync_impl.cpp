@@ -23,14 +23,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       std::shared_ptr<libp2p::Host> host,
       std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
       std::shared_ptr<Network> network,
-      std::shared_ptr<RequestIdGenerator> generator)
+      std::shared_ptr<RequestIdGenerator> generator,
+      std::shared_ptr<boost::asio::io_context> io_context)
       : scheduler_(scheduler),
         network_(network),
         local_requests_(std::make_shared<LocalRequests>(
             std::move(scheduler),
             [this](RequestId request_id, SharedData body) {
               cancelLocalRequest(request_id, std::move(body));
-            }, generator)) {
+            }, generator)),
+        io_context_(io_context) {
               scheduler_->schedule(kCleanupIntervalMs, [weak_this = weak_from_this()]() {
                 auto self = weak_this.lock();
                 if (self) {
@@ -66,7 +68,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       network_->stop(shared_from_this());
       logger()->trace("{}: Stopping all", __FUNCTION__);
       tracked_requests_.clear();
-      
+
       local_requests_->cancelAll();
     }
   }
@@ -170,44 +172,62 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     block_cb_(std::move(cid), std::move(data));
   }
 
-  void GraphsyncImpl::onRemoteRequest(const PeerId &from,
-                                      Message::Request request) {
-    // TODO make this asynchronous
-
-    bool send_response = true;
-
-    auto data_handler = [&](const CID &cid,
-                            const common::Buffer &data) -> bool {
-      bool data_present = !data.empty();
-
-      if (data_present) {
-        if (!network_->addBlockToResponse(from, request.id, cid, data)) {
-          send_response = false;
-          return false;
-        }
-      }
-
-      return true;
-    };
-
-    auto select_res =
-        dag_->select(request.root_cid, request.selector, data_handler);
-
-    if (!send_response) {
-      // ignore response due to network side
+  void GraphsyncImpl::onRemoteRequest(const PeerId &from, Message::Request request) {
+    // Don't process if we're shutting down
+    if (!started_) {
       return;
     }
-
-    ResponseStatusCode status = RS_REQUEST_FAILED;
-    if (select_res) {
-      if (select_res.value() > 0) {
-        status = RS_FULL_CONTENT;
-      } else {
-        status = RS_NOT_FOUND;
+    
+    // Capture the peer and request by value since they're not shared_ptr
+    PeerId peer_copy = from;
+    Message::Request request_copy = request;
+    
+    // Safety: capture weak_ptr to self
+    std::weak_ptr<GraphsyncImpl> weak_self = shared_from_this();
+    
+    // Post the task to the io_context thread pool - capture shared_ptrs directly
+    boost::asio::post(*io_context_, [weak_self, peer_copy, request_copy, this]() {
+      // Convert weak_ptr to shared_ptr to check if GraphsyncImpl is still alive
+      auto self = weak_self.lock();
+      if (!self || !self->started_) {
+        return;  // GraphsyncImpl was destroyed or stopped
       }
-    }
-
-    network_->sendResponse(from, request.id, status, request.extensions);
+      
+      bool send_response = true;
+      ResponseStatusCode status = RS_REQUEST_FAILED;
+      
+      auto data_handler = [&](const CID &cid, const common::Buffer &data) -> bool {
+        bool data_present = !data.empty();
+        
+        if (data_present) {
+          // Use the original shared_ptr directly
+          if (!self->network_->addBlockToResponse(peer_copy, request_copy.id, cid, data)) {
+            send_response = false;
+            return false;
+          }
+        }
+        
+        return true;
+      };
+      
+      // Execute the potentially heavy selection process using original shared_ptr
+      auto select_res = self->dag_->select(request_copy.root_cid, request_copy.selector, data_handler);
+      
+      if (!send_response) {
+        return;  // ignore response due to network side
+      }
+      
+      if (select_res) {
+        if (select_res.value() > 0) {
+          status = RS_FULL_CONTENT;
+        } else {
+          status = RS_NOT_FOUND;
+        }
+      }
+      
+      // Send the response back using original shared_ptr
+      self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+    });
   }
 
   void GraphsyncImpl::cancelLocalRequest(RequestId request_id,

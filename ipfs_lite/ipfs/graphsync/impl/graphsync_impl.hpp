@@ -41,7 +41,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     GraphsyncImpl(std::shared_ptr<libp2p::Host> host,
                   std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
                   std::shared_ptr<Network> network,
-                  std::shared_ptr<RequestIdGenerator> generator);
+                  std::shared_ptr<RequestIdGenerator> generator,
+                  std::shared_ptr<boost::asio::io_context> io_context);
 
     ~GraphsyncImpl() override;
 
@@ -87,6 +88,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     /// Local requests handling module
     std::shared_ptr<LocalRequests> local_requests_;
+
+    std::shared_ptr<boost::asio::io_context> io_context_;
 
     /// Interface to MerkleDAG component
     std::shared_ptr<MerkleDagBridge> dag_;
