@@ -91,6 +91,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     std::shared_ptr<boost::asio::io_context> io_context_;
 
+    std::shared_ptr<RequestIdGenerator> reqgenerator_;
+
     /// Interface to MerkleDAG component
     std::shared_ptr<MerkleDagBridge> dag_;
 

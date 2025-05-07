@@ -9,15 +9,89 @@
 #include "network/marshalling/request_builder.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
+  struct StatusHolder {
+    ResponseStatusCode status = RS_AWAITING_STATUS;
+    size_t holder_id = 0;
+    
+    StatusHolder(size_t id) : holder_id(id) {}
+  };
   class RequestIdGenerator {
     public:
+    RequestIdGenerator() : next_holder_id_(0) {}
      RequestId next() {
        return ++counter_;
      }
-   
+    // Register a status for a remote request, returns shared_ptr to status holder
+    std::shared_ptr<StatusHolder> registerStatus(RequestId request_id) {
+      std::lock_guard<std::mutex> lock(mutex_);
+      
+      size_t holder_id = next_holder_id_++;
+      auto holder = std::make_shared<StatusHolder>(holder_id);
+      
+      auto& holders = request_holders_[request_id];
+      holders.push_back(holder);
+      
+      return holder;
+    }
+    
+    // Remove a status holder for a request
+    void removeStatus(RequestId request_id, std::shared_ptr<StatusHolder> holder) {
+      std::lock_guard<std::mutex> lock(mutex_);
+      
+      auto it = request_holders_.find(request_id);
+      if (it == request_holders_.end()) {
+        return;
+      }
+      
+      auto& holders = it->second;
+      for (auto it = holders.begin(); it != holders.end(); ++it) {
+        if (*it == holder) {
+          holders.erase(it);
+          break;
+        }
+      }
+      
+      if (holders.empty()) {
+        request_holders_.erase(request_id);
+      }
+    }
+    
+    // Check if all statuses for a request are NOT_FOUND
+    bool allStatusesNotFound(RequestId request_id) {
+      std::lock_guard<std::mutex> lock(mutex_);
+      
+      auto it = request_holders_.find(request_id);
+      if (it == request_holders_.end() || it->second.empty()) {
+        return false;
+      }
+      
+      for (const auto& holder : it->second) {
+        if (holder->status != RS_NOT_FOUND) {
+          return false;
+        }
+      }
+      
+      return true;
+    }
+    
+    // Remove all tracking for a request
+    void removeRequest(RequestId request_id) {
+      std::lock_guard<std::mutex> lock(mutex_);
+      request_holders_.erase(request_id);
+    }
     private:
-     std::atomic<RequestId> counter_{0};  // start at 1 (zero is reserved)
+     
+    std::atomic<RequestId> counter_{0};  // start at 1 (zero is reserved)
+    // ID for status holders
+    std::atomic<size_t> next_holder_id_;
+
+    // Mutex for protecting the tracking map
+    std::mutex mutex_;
+      
+    // Map of request IDs to their status vectors
+    std::unordered_map<RequestId, std::vector<std::shared_ptr<StatusHolder>>> request_holders_;
    };
+
   /// Local requests module for graphsync, manages requests made by this host
   class LocalRequests : public Subscription::Source {
    public:

@@ -32,7 +32,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
             [this](RequestId request_id, SharedData body) {
               cancelLocalRequest(request_id, std::move(body));
             }, generator)),
-        io_context_(io_context) {
+        io_context_(io_context),
+        reqgenerator_(generator) {
               scheduler_->schedule(kCleanupIntervalMs, [weak_this = weak_from_this()]() {
                 auto self = weak_this.lock();
                 if (self) {
@@ -180,6 +181,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return;
     }
     
+    // Register a status holder for this instance
+    std::shared_ptr<StatusHolder> status_holder = reqgenerator_->registerStatus(request.id);
+    
     // Capture the peer and request by value since they're not shared_ptr
     PeerId peer_copy = from;
     Message::Request request_copy = request;
@@ -187,14 +191,19 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // Safety: capture weak_ptr to self
     std::weak_ptr<GraphsyncImpl> weak_self = shared_from_this();
     
-    // Post the task to the io_context thread pool - capture shared_ptrs directly
-    boost::asio::post(*io_context_, [weak_self, peer_copy, request_copy, this]() {
+    // Post the task to the io_context thread pool - pass shared_ptr by value for safety
+    boost::asio::post(*io_context_, [weak_self, peer_copy, request_copy, status_holder, this]() {
       // Convert weak_ptr to shared_ptr to check if GraphsyncImpl is still alive
       logger()->trace("onRemoteRequest Post");
       auto self = weak_self.lock();
       if (!self || !self->started_) {
         logger()->trace("onRemoteRequest weak pointer fail");
-        return;  // GraphsyncImpl was destroyed or stopped
+        
+        // Clean up our status holder if we still have the generator
+        if (self) {
+          self->reqgenerator_->removeStatus(request_copy.id, status_holder);
+        }
+        return;
       }
       
       bool send_response = true;
@@ -218,20 +227,43 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       auto select_res = self->dag_->select(request_copy.root_cid, request_copy.selector, data_handler);
       
       if (!send_response) {
-        return;  // ignore response due to network side
+        // Update status and remove our status holder
+        status_holder->status = RS_REQUEST_FAILED;
+        self->reqgenerator_->removeStatus(request_copy.id, status_holder);
+        return;
       }
       
       if (select_res) {
         if (select_res.value() > 0) {
+          // Content found!
           status = RS_FULL_CONTENT;
-                // Send the response back using original shared_ptr
+          status_holder->status = RS_FULL_CONTENT;
+          
+          // Send the positive response immediately
           self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+          
+          // Remove all tracking for this request
+          self->reqgenerator_->removeRequest(request_copy.id);
+          return;
         } else {
+          // No content found
           status = RS_NOT_FOUND;
+          status_holder->status = RS_NOT_FOUND;
+          
+          // Check if all other instances also reported NOT_FOUND
+          if (self->reqgenerator_->allStatusesNotFound(request_copy.id)) {
+            // All instances reported NOT_FOUND, safe to send the response
+            self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+            
+            // Remove all tracking for this request
+            self->reqgenerator_->removeRequest(request_copy.id);
+          }
         }
+      } else {
+        // Selection failed
+        status_holder->status = RS_REQUEST_FAILED;
+        self->reqgenerator_->removeStatus(request_copy.id, status_holder);
       }
-      
-
     });
   }
 

@@ -55,6 +55,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     RS_INTERNAL_ERROR = -5,    // internal error (due to local components)
     RS_REJECTED_LOCALLY = -6,  // request was rejected by local side
     RS_SLOW_STREAM = -7,       // slow stream: outbound buffers overflow
+    RS_AWAITING_STATUS = -8,   // Temporary status while we decide
 
     // Other response codes are received from the network
 
