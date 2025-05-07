@@ -225,7 +225,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         if (select_res.value() > 0) {
           status = RS_FULL_CONTENT;
                 // Send the response back using original shared_ptr
-      self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+          self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
         } else {
           status = RS_NOT_FOUND;
         }
