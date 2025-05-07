@@ -358,7 +358,7 @@ void PeerContext::onResponse(Message::Response &response) {
         remote_requests_streams_.emplace(request.id, stream);
         ctx.remote_request_ids.insert(request.id);
         logger()->debug(
-            "onRequest: peer {} created request {}", str, request.id);
+            "onRequest: peer {} created request {} sending to {} feedbacks", str, request.id, graphsync_feedbacks_.size());
         for (const auto &wfb : graphsync_feedbacks_) {
           if (auto fb = wfb.lock()) {
             fb->onRemoteRequest(peer, request);

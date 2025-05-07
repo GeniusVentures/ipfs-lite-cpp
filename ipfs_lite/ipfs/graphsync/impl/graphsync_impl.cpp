@@ -173,8 +173,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void GraphsyncImpl::onRemoteRequest(const PeerId &from, Message::Request request) {
+    logger()->trace("onRemoteRequest");
     // Don't process if we're shutting down
     if (!started_) {
+      logger()->trace("onRemoteRequest Not Started");
       return;
     }
     
@@ -188,8 +190,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     // Post the task to the io_context thread pool - capture shared_ptrs directly
     boost::asio::post(*io_context_, [weak_self, peer_copy, request_copy, this]() {
       // Convert weak_ptr to shared_ptr to check if GraphsyncImpl is still alive
+      logger()->trace("onRemoteRequest Post");
       auto self = weak_self.lock();
       if (!self || !self->started_) {
+        logger()->trace("onRemoteRequest weak pointer fail");
         return;  // GraphsyncImpl was destroyed or stopped
       }
       
@@ -220,13 +224,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       if (select_res) {
         if (select_res.value() > 0) {
           status = RS_FULL_CONTENT;
+                // Send the response back using original shared_ptr
+      self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
         } else {
           status = RS_NOT_FOUND;
         }
       }
       
-      // Send the response back using original shared_ptr
-      self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+
     });
   }
 
