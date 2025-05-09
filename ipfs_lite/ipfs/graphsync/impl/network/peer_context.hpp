@@ -152,6 +152,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param stream libp2p stream
     void onNewStream(StreamPtr stream);
 
+    /**
+     * @brief       Finishes the configuration of the stream
+     * @param[in]   stream: new stream
+     */
+    void finishStreamConfig(StreamPtr stream);
+
     /// Closes a stream
     /// \param stream libp2p stream
     /// \param status close reason
@@ -231,6 +237,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Response status code stored to be forwarded asynchronously
     /// in the next cycle
     ResponseStatusCode close_status_ = RS_INTERNAL_ERROR;
+
+    static constexpr size_t GRAHPSYNC_WINDOW_SIZE = 64 * 1024 * 1024; 
   };
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

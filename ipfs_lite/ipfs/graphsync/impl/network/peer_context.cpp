@@ -113,6 +113,22 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return;
     }
 
+    stream->adjustWindowSize(GRAHPSYNC_WINDOW_SIZE, [wptr{weak_from_this()}, stream](IPFS::outcome::result<void> res) {
+      auto self = wptr.lock();
+        if (self) {
+          if (res) {
+            self->finishStreamConfig(stream);
+          } else {
+            logger()->error( "cannot adjustWindowSize, peer={} with size {}", self->str, GRAHPSYNC_WINDOW_SIZE );
+            if (self->getState() == is_connecting) {
+              self->closeLocalRequests(RS_CANNOT_CONNECT);
+            }
+          }
+        }
+    });
+  }
+
+  void PeerContext::finishStreamConfig(StreamPtr stream) {
     StreamCtx stream_ctx;
     stream_ctx.reader = std::make_unique<MessageReader>(stream, *this);
 

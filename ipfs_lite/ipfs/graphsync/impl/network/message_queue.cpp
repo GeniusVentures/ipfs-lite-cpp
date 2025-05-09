@@ -65,7 +65,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     assert(state_.stream);
 
     state_.writing_bytes = buffer->size();
-    logger()->trace("Actually writing to a stream");
+
+    logger()->trace("beginWrite: writing to a stream with {} bytes",buffer->size());
+
     // clang-format off
     state_.stream->write(
         *buffer,
@@ -87,6 +89,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       // dont need the result anymore
       return;
     }
+    logger()->trace("onMessageWritten: Writing data with {} bytes",state_.writing_bytes);
 
     auto n = state_.writing_bytes;
     state_.writing_bytes = 0;
