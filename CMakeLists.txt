@@ -36,9 +36,10 @@ find_package(RocksDB CONFIG REQUIRED)
 
 option(TESTING "Build tests" ON)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_subdirectory(deps)
 add_subdirectory(primitives)
-add_subdirectory(clock)
 add_subdirectory(codec)
 add_subdirectory(common)
 add_subdirectory(crypto)

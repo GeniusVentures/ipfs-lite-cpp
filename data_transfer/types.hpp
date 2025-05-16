@@ -2,7 +2,6 @@
 #define CPP_IPFS_LITE_DATA_TRANSFER_TYPES_HPP
 
 #include <libp2p/peer/peer_id.hpp>
-#include "clock/time.hpp"
 #include "primitives/cid/cid.hpp"
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
 #include "ipfs_lite/ipld/ipld_node.hpp"
@@ -123,7 +122,6 @@ namespace sgns::data_transfer {
   struct Event {
     EventCode code;         // What type of event it is
     std::string message;    // Any clarifying information about the event
-    clock::Time timestamp;  // when the event happened
   };
 
   /**
