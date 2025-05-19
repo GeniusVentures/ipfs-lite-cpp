@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 #include "common/outcome.hpp"
-#include "common/visitor.hpp"
 
 #define PP_CAT(a, b) PP_CAT_I(a, b)
 #define PP_CAT_I(a, b) PP_CAT_II(~, a##b)

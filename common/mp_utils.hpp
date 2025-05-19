@@ -8,14 +8,6 @@
 
 namespace sgns::common {
 
-  namespace detail {
-    template <size_t size, typename uint>
-    std::array<uint8_t, size> uint_to_bytes(uint &&i);
-
-    template <size_t size, typename uint>
-    uint bytes_to_uint(gsl::span<uint8_t, size> bytes);
-  }  // namespace detail
-
   std::array<uint8_t, 8> uint64_t_to_bytes(uint64_t number);
 
   uint64_t bytes_to_uint64_t(gsl::span<uint8_t, 8> bytes);

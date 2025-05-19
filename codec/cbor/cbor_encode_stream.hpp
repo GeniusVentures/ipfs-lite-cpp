@@ -4,11 +4,11 @@
 #include "codec/cbor/cbor_common.hpp"
 
 #include <array>
+#include <type_traits>
 #include <vector>
 
 #include <cbor.h>
 
-#include "common/enum.hpp"
 #include "platform/platform.hpp"
 
 namespace sgns::codec::cbor {
@@ -23,7 +23,7 @@ namespace sgns::codec::cbor {
         typename = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>>
     CborEncodeStream &operator<<(T num) {
       if constexpr (std::is_enum_v<T>) {
-        return *this << common::to_int(num);
+        return *this << static_cast<std::underlying_type<T>>(num);
       }
       addCount(1);
       std::array<uint8_t, 9> buffer{0};

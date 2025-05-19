@@ -28,14 +28,6 @@ namespace sgns::common {
   std::string hex_upper(gsl::span<const uint8_t> bytes) noexcept;
 
   /**
-   * @brief Converts bytes to hex representation
-   * @param array bytes
-   * @param len length of bytes
-   * @return hexstring
-   */
-  std::string hex_lower(gsl::span<const uint8_t> bytes) noexcept;
-
-  /**
    * @brief Converts hex representation to bytes
    * @param array individual chars
    * @param len length of chars

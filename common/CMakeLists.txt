@@ -34,13 +34,6 @@ target_link_libraries(logger
     )
 add_subdirectory(libp2p)
 
-add_library(todo_error
-    todo_error.hpp
-    todo_error.cpp
-    )
-target_link_libraries(todo_error
-    outcome
-    )
 add_library(mp_utils
     mp_utils.cpp
     mp_utils.hpp
