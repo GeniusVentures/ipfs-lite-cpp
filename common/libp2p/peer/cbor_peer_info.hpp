@@ -1,9 +1,8 @@
 #ifndef CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_INFO_HPP
 #define CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_INFO_HPP
 
-#include <libp2p/peer/peer_id.hpp>
+#include <libp2p/peer/peer_info.hpp>
 #include "codec/cbor/streams_annotation.hpp"
-#include "common/libp2p/multi/cbor_multiaddress.hpp"
 #include "common/libp2p/peer/cbor_peer_id.hpp"
 
 using libp2p::peer::PeerId;

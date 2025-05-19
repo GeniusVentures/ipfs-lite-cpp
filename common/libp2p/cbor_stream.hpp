@@ -17,7 +17,7 @@ namespace sgns::common::libp2p {
     using WriteCallbackFunc = Stream::WriteCallbackFunc;
 
     /// Max number of bytes to read at a time
-    static constexpr size_t kReserveBytes = 4 << 10;
+    static constexpr size_t kMaxBytesToRead = 4 << 10;
 
     explicit CborStream(std::shared_ptr<Stream> stream);
 

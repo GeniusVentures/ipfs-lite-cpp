@@ -23,20 +23,22 @@ namespace sgns::common::libp2p {
 
   void CborStream::readMore(ReadCallbackFunc cb) {
     if (buffering_.done()) {
-      return cb(gsl::make_span(buffer_).subspan(0, size_));
+        cb(gsl::make_span(buffer_).subspan(0, size_));
+        return;
     }
-    buffer_.resize(size_ + kReserveBytes);
+
+    buffer_.resize(size_ + kMaxBytesToRead);
     stream_->readSome(
         gsl::make_span(buffer_).subspan(size_),
-        kReserveBytes,
+        kMaxBytesToRead,
         [cb{std::move(cb)}, self{shared_from_this()}](auto count) {
-          if (!count) {
+        if (!count) {
             return cb(count.error());
-          }
-          self->buffer_.resize(self->size_ + count.value());
-          self->consume(gsl::make_span(self->buffer_).subspan(self->size_),
-                        std::move(cb));
-        });
+        }
+        self->buffer_.resize(self->size_ + count.value());
+        self->consume(gsl::make_span(self->buffer_).subspan(self->size_), std::move(cb));
+    }
+    );
   }
 
   void CborStream::consume(gsl::span<uint8_t> input, ReadCallbackFunc cb) {
