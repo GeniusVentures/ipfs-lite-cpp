@@ -67,6 +67,7 @@ namespace sgns {
   IPFS::outcome::result<CID> CID::read(gsl::span<const uint8_t> &input, bool prefix) {
     using Error = libp2p::multi::ContentIdentifierCodec::DecodeError;
     CID cid;
+    
     if (input.size() >= 2 && HashType{input[0]} == HashType::sha256
         && input[1] == 32) {
       cid.version = Version::V0;
@@ -93,6 +94,7 @@ namespace sgns {
             input));
     OUTCOME_TRY((auto &&, hash_size),
                 codec::uvarint::read<Multihash::Error::INPUT_TOO_SHORT>(input));
+
     gsl::span<const uint8_t> hash_span;
     if (prefix) {
       static const uint8_t empty[Multihash::kMaxHashLength]{};

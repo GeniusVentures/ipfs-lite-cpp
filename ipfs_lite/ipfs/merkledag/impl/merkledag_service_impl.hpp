@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "ipfs_lite/ipfs/datastore.hpp"
-#include "ipfs_lite/ipfs/merkledag/impl/leaf_impl.hpp"
+#include "ipfs_lite/ipfs/merkledag/leaf.hpp"
 #include "ipfs_lite/ipfs/merkledag/merkledag_service.hpp"
 #include "ipfs_lite/ipld/ipld_link.hpp"
 
@@ -65,7 +65,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      */
     static IPFS::outcome::result<void> buildGraph(
         std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
-        const std::shared_ptr<LeafImpl> &root,
+        const std::shared_ptr<Leaf> &root,
         const std::vector<std::reference_wrapper<const IPLDLink>> &links,
         std::optional<size_t> max_depth,
         size_t current_depth = 0);
