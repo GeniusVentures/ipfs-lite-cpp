@@ -49,12 +49,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   }  // namespace
 
-  Extension encodeMetadataRequest() {
-    static const Extension e = {std::string(kResponseMetadataProtocol),
-                                std::vector<uint8_t>{0xF5}};
-    return e;
-  }
-
   Extension encodeResponseMetadata(const ResponseMetadata &metadata) {
     Extension e;
     e.name = kResponseMetadataProtocol;
@@ -64,7 +58,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     CborEncodeStream encoder;
     encoder << l;
-    e.data = encoder.data();
+    e.data = std::move(encoder.data());
     return e;
   }
 
@@ -119,7 +113,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
         OUTCOME_TRY((auto &&, present), decodeBool(present_p->second.raw()));
 
-        pairs.push_back({std::move(cid), present});
+        pairs.emplace_back(std::move(cid), present);
       }
     } catch (const std::exception &e) {
       logger()->warn("{}: {}", __FUNCTION__, e.what());
@@ -136,24 +130,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     encoder << dont_send_cids;
     e.data = encoder.data();
     return e;
-  }
-
-  IPFS::outcome::result<std::set<CID>> decodeDontSendCids(
-      const Extension &extension) {
-    if (extension.name != kDontSendCidsProtocol) {
-      return Error::MESSAGE_PARSE_ERROR;
-    }
-
-    std::vector<CID> cids;
-    try {
-      CborDecodeStream decoder(extension.data);
-      decoder >> cids;
-    } catch (const std::exception &e) {
-      logger()->warn("{}: {}", __FUNCTION__, e.what());
-      return Error::MESSAGE_PARSE_ERROR;
-    }
-    return std::set<CID>(std::move_iterator(cids.begin()),
-                         std::move_iterator(cids.end()));
   }
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

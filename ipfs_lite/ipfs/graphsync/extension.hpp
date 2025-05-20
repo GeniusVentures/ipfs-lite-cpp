@@ -26,9 +26,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
   };
 
-  /// Returns "graphsync/response-metadata":true extension
-  Extension encodeMetadataRequest();
-
   /// Response metadata indicates whether the responder has certain CIDs
   using ResponseMetadata = std::vector<std::pair<CID, bool>>;
 
@@ -41,9 +38,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   /// Encodes CIDS for "graphsync/do-not-send-cids" extension
   Extension encodeDontSendCids(const std::vector<CID> &dont_send_cids);
-
-  /// Decodes CID subset not to be included into response
-  IPFS::outcome::result<std::set<CID>> decodeDontSendCids(const Extension &extension);
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 
