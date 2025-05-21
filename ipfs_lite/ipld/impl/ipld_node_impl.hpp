@@ -4,7 +4,6 @@
 
 #include <map>
 #include <memory>
-#include <string_view>
 #include <vector>
 
 #include <boost/optional.hpp>

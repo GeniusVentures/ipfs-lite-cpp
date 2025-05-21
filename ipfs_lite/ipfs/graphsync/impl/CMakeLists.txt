@@ -11,7 +11,6 @@ add_library(graphsync
     network/message_queue.cpp
     network/outbound_endpoint.cpp
     network/inbound_endpoint.cpp
-    network/marshalling/serialize.cpp
     network/marshalling/message_parser.cpp
     network/marshalling/message_builder.cpp
     network/marshalling/request_builder.cpp

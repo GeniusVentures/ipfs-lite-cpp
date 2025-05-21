@@ -1,8 +1,8 @@
 #include "ipfs_lite/ipfs/graphsync/extension.hpp"
 
+#include "common.hpp"
 #include "codec/cbor/cbor_decode_stream.hpp"
 #include "codec/cbor/cbor_encode_stream.hpp"
-#include "common.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
@@ -10,11 +10,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   using codec::cbor::CborEncodeStream;
 
   namespace {
-
     const std::string link("link");
     const std::string blockPresent("blockPresent");
 
-    // encodes metadata item, {"link":CID, "blockPresent":bool}
+    // Encodes metadata item {"link": CID, "blockPresent": bool}
     std::map<std::string, CborEncodeStream> encodeMetadataItem(
         const std::pair<CID, bool> &item) {
       std::map<std::string, CborEncodeStream> m;
@@ -27,12 +26,15 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     IPFS::outcome::result<bool> decodeBool(uint8_t byte) {
       constexpr uint8_t kCborFalse = 0xF4;
       constexpr uint8_t kCborTrue = 0xF5;
+
       if (byte == kCborFalse) {
         return false;
-      } else if (byte == kCborTrue) {
+      }
+      if (byte == kCborTrue) {
         return true;
       }
-      logger()->warn("{}: wrong cbor encoding: bool expected", __FUNCTION__);
+
+      logger()->error("{}: wrong cbor encoding: bool expected", __FUNCTION__);
       return Error::MESSAGE_PARSE_ERROR;
     }
 
@@ -42,7 +44,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       if (s.size() == 1) {
         return decodeBool((uint8_t)s[0]);
       }
-      logger()->warn("{}: wrong cbor encoding: single byte expected",
+      logger()->error("{}: wrong cbor encoding: single byte expected",
                      __FUNCTION__);
       return Error::MESSAGE_PARSE_ERROR;
     }
@@ -52,12 +54,15 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   Extension encodeResponseMetadata(const ResponseMetadata &metadata) {
     Extension e;
     e.name = kResponseMetadataProtocol;
+
     auto l = CborEncodeStream::list();
     for (const auto &item : metadata) {
       l << encodeMetadataItem(item);
     }
+
     CborEncodeStream encoder;
     encoder << l;
+    
     e.data = std::move(encoder.data());
     return e;
   }

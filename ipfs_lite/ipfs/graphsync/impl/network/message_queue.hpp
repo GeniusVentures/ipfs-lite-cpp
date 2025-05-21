@@ -3,6 +3,7 @@
 #define CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_QUEUE_HPP
 
 #include "network_fwd.hpp"
+#include <deque>
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 

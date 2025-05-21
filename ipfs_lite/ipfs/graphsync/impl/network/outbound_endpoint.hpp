@@ -3,6 +3,7 @@
 #define CPP_IPFS_LITE_GRAPHSYNC_OUTBOUND_ENDPOINT_HPP
 
 #include "network_fwd.hpp"
+#include <deque>
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 

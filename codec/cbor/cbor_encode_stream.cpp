@@ -40,10 +40,12 @@ namespace sgns::codec::cbor {
     if (maybe_cid_bytes.has_error()) {
       IPFS::outcome::raise(CborEncodeError::INVALID_CID);
     }
+    
     auto cid_bytes = maybe_cid_bytes.value();
     cid_bytes.insert(cid_bytes.begin(), 0);
 
     std::array<uint8_t, 9> encoded{0};
+    
     CborEncoder encoder;
     cbor_encoder_init(&encoder, encoded.data(), encoded.size(), 0);
     cbor_encode_tag(&encoder, kCidTag);
@@ -51,6 +53,7 @@ namespace sgns::codec::cbor {
                  encoded.begin(),
                  encoded.begin()
                      + cbor_encoder_get_buffer_size(&encoder, encoded.data()));
+
     *this << cid_bytes;
     return *this;
   }

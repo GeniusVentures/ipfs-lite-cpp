@@ -79,9 +79,10 @@ namespace sgns::ipfs_lite::ipld {
   IPFS::outcome::result<std::shared_ptr<IPLDNode>> IPLDNodeImpl::createFromRawBytes(
       gsl::span<const uint8_t> input) {
     IPLDNodeDecoderPB decoder;
-    if (auto result = decoder.decode(input); result.has_error()) {
-      return result.error();
+    if (auto result = decoder.pb_node_.ParseFromArray(input.data(), input.size()); !result) {
+      return IPLDNodeDecoderPBError::INVALID_RAW_BYTES;
     }
+
     auto node = createFromString(decoder.getContent());
     for (size_t i = 0; i < decoder.getLinksCount(); ++i) {
       std::vector<uint8_t> link_cid_bytes{decoder.getLinkCID(i).begin(),
