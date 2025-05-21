@@ -16,6 +16,26 @@ OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::ipfs_lite::ipfs::graphsync, GraphsyncImpl::
     return "Unknown error";
 }
 namespace sgns::ipfs_lite::ipfs::graphsync {
+  IPFS::outcome::result<size_t> MerkleDagBridge::select(
+      const CID &root_cid,
+      gsl::span<const uint8_t> selector,
+      std::function<bool(const CID &, const common::Buffer &)> handler) const {
+    auto internal_handler =
+        [&handler](std::shared_ptr<const ipld::IPLDNode> node) -> bool {
+      return handler(node->getCID(), node->getRawBytes());
+    };
+
+    if (selector.empty()) {
+      OUTCOME_TRY((auto &&, node), service_->getNode(root_cid));
+      internal_handler(node);
+      return 1;
+    }
+
+    // TODO(???): change MerkleDAG service to accept CID instead of bytes
+    OUTCOME_TRY((auto &&, cid_encoded), root_cid.toBytes());
+    return service_->select(cid_encoded, selector, internal_handler);
+  }
+
   /// Selector that matches current node
   common::Buffer kSelectorMatcher{0xa1, 0x61, 0x2e, 0xa0};
 

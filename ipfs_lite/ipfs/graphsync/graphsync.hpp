@@ -12,6 +12,7 @@
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
 #include "ipfs_lite/ipfs/graphsync/extension.hpp"
+#include "ipfs_lite/ipfs/merkledag/merkledag_service.hpp"
 
 namespace sgns::ipfs_lite::ipfs::merkledag {
   class MerkleDagService;
@@ -23,13 +24,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   /// Graphsync -> MerkleDagService bridge
   struct MerkleDagBridge {
-    /// Creates a default bridge
-    /// \param service Existing MerkleDAG service
-    /// \return Bridge object
-    static std::shared_ptr<MerkleDagBridge> create(
-        std::shared_ptr<merkledag::MerkleDagService> service);
+    MerkleDagBridge(std::shared_ptr<merkledag::MerkleDagService> service):
+        service_(std::move(service)) {}
 
-    virtual ~MerkleDagBridge() = default;
+    ~MerkleDagBridge() = default;
 
     /// Forwards select call to the service or other backend
     /// \param cid Root CID
@@ -37,11 +35,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param handler Data handler, returns false if further search is no
     /// longer required
     /// \return Count of data blocks passed through handler or error
-    virtual IPFS::outcome::result<size_t> select(
-        const CID &cid,
+    IPFS::outcome::result<size_t> select(
+        const CID& cid,
         gsl::span<const uint8_t> selector,
-        std::function<bool(const CID &cid, const common::Buffer &data)> handler)
-        const = 0;
+        std::function<bool(const CID& cid, const common::Buffer& data)> handler
+    ) const;
+
+  private:
+    std::shared_ptr<merkledag::MerkleDagService> service_;
   };
 
   /// Response status codes. Positive values are received from wire,
@@ -102,6 +103,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       COMPLETED,
       FAILED
     };
+
     virtual ~Graphsync() = default;
 
     /// New nodes received go through this callback

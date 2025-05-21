@@ -21,7 +21,7 @@ namespace sgns::data_transfer {
     std::string voucher_type;
     TransferId transfer_id;
 
-    inline bool operator==(const DataTransferRequest &other) const {
+    bool operator==(const DataTransferRequest &other) const {
       return base_cid == other.base_cid && is_cancel == other.is_cancel
              && pid == other.pid && is_part == other.is_part
              && is_pull == other.is_pull && selector == other.selector
@@ -37,7 +37,7 @@ namespace sgns::data_transfer {
     bool is_accepted;
     TransferId transfer_id;
 
-    inline bool operator==(const DataTransferResponse &other) const {
+    bool operator==(const DataTransferResponse &other) const {
       return is_accepted == other.is_accepted
              && transfer_id == other.transfer_id;
     }
