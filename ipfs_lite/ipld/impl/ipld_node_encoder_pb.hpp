@@ -9,7 +9,7 @@
 #include <gsl/span>
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
-#include "ipfs_lite/ipld/impl/ipld_link_impl.hpp"
+#include "ipfs_lite/ipld/ipld_link.hpp"
 #include "ipfs_lite/ipld/ipld_node.hpp"
 
 namespace sgns::ipfs_lite::ipld {
@@ -28,8 +28,10 @@ namespace sgns::ipfs_lite::ipld {
      * @param links - references for child Nodes
      * @return Protobuf-encoded data
      */
-    static std::vector<uint8_t> encode(const common::Buffer &content,
-                                 const std::map<std::string, IPLDLinkImpl> &links);
+     static std::vector<uint8_t> encode(
+         const common::Buffer& content,
+         const std::map<std::string, IPLDLink>& links
+     );
 
    private:
     using PBTag = uint8_t;
@@ -57,7 +59,7 @@ namespace sgns::ipfs_lite::ipld {
      * @param link - child link
      * @return Number of bytes
      */
-    static size_t getLinkLengthPB(const std::string &name, const IPLDLinkImpl &link);
+    static size_t getLinkLengthPB(const std::string& name, const IPLDLink& link);
 
     /**
      * @brief Calculate length of the serialized content
@@ -71,8 +73,7 @@ namespace sgns::ipfs_lite::ipld {
      * @param links - Node's children
      * @return Raw bytes
      */
-    static std::vector<uint8_t> serializeLinks(
-        const std::map<std::string, IPLDLinkImpl> &links);
+    static std::vector<uint8_t> serializeLinks(const std::map<std::string, IPLDLink>& links);
 
     /**
      * @brief Serialized Node's content

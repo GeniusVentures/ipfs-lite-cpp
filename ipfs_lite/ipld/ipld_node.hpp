@@ -8,7 +8,7 @@
 
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
-#include "ipfs_lite/ipld/ipld_block.hpp"
+
 #include "ipfs_lite/ipld/ipld_link.hpp"
 
 namespace sgns::ipfs_lite::ipld {
@@ -83,7 +83,7 @@ namespace sgns::ipfs_lite::ipld {
      * @brief Insert link to the child node
      * @param link - object to add
      */
-    virtual void addLink(const IPLDLink &link) = 0;
+    virtual void addLink(IPLDLink link) = 0;
 
     /**
      * @brief Get links to first-level child nodes

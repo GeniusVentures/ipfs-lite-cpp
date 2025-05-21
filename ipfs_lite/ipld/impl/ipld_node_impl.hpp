@@ -8,7 +8,8 @@
 #include <vector>
 
 #include <boost/optional.hpp>
-#include "ipfs_lite/ipld/impl/ipld_link_impl.hpp"
+#include "ipfs_lite/ipld/ipld_link.hpp"
+#include "ipfs_lite/ipld/ipld_block.hpp"
 #include "ipfs_lite/ipld/impl/ipld_node_encoder_pb.hpp"
 #include "ipfs_lite/ipld/ipld_node.hpp"
 
@@ -33,7 +34,9 @@ namespace sgns::ipfs_lite::ipld {
 
     void removeLink(const std::string &name) override;
 
-    void addLink(const IPLDLink &link) override;
+    void addLink(IPLDLink link) override {
+        links_.emplace(link.getName(), link);
+    }
 
     std::vector<std::reference_wrapper<const IPLDLink>> getLinks()
         const override;
@@ -50,7 +53,7 @@ namespace sgns::ipfs_lite::ipld {
 
    private:
     common::Buffer content_;
-    std::map<std::string, IPLDLinkImpl> links_;
+    std::map<std::string, IPLDLink> links_;
     IPLDNodeEncoderPB pb_node_codec_;
     size_t child_nodes_size_{};
     mutable boost::optional<IPLDBlock> ipld_block_;

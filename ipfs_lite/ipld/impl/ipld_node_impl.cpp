@@ -33,12 +33,11 @@ namespace sgns::ipfs_lite::ipld {
 
   IPFS::outcome::result<void> IPLDNodeImpl::addChild(
       const std::string &name, std::shared_ptr<const IPLDNode> node) {
-    IPLDLinkImpl link{node->getCID(), name, node->size()};
-    links_.emplace(name, std::move(link));
-    ipld_block_ =
-        boost::none;  // Need to recalculate CID after adding link to child node
-    child_nodes_size_ += node->size();
-    return IPFS::outcome::success();
+      IPLDLink link{node->getCID(), name, node->size()};
+      links_.emplace(name, std::move(link));
+      ipld_block_ = boost::none; // Need to recalculate CID after adding link to child node
+      child_nodes_size_ += node->size();
+      return IPFS::outcome::success();
   }
 
   IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLink(
@@ -54,11 +53,6 @@ namespace sgns::ipfs_lite::ipld {
       child_nodes_size_ -= index->second.getSize();
       links_.erase(index);
     }
-  }
-
-  void IPLDNodeImpl::addLink(const IPLDLink &link) {
-    auto &link_impl = dynamic_cast<const IPLDLinkImpl &>(link);
-    links_.emplace(link.getName(), link_impl);
   }
 
   std::vector<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLinks()
@@ -93,8 +87,7 @@ namespace sgns::ipfs_lite::ipld {
       std::vector<uint8_t> link_cid_bytes{decoder.getLinkCID(i).begin(),
                                           decoder.getLinkCID(i).end()};
       OUTCOME_TRY((auto &&, link_cid), CID::fromBytes(link_cid_bytes));
-      IPLDLinkImpl link{
-          std::move(link_cid), decoder.getLinkName(i), decoder.getLinkSize(i)};
+      IPLDLink link{std::move(link_cid), decoder.getLinkName(i), decoder.getLinkSize(i)};
       node->addLink(link);
     }
     return node;

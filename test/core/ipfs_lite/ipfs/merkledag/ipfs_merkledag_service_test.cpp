@@ -140,17 +140,16 @@ TEST_P(CommonFeaturesTest, LinkOperationsConsistency) {
         node->getLinks();
     std::string primary_cid = cidToString(node);
     for (const auto &link : links) {
-      IPLDLinkImpl link_impl{
-          link.get().getCID(), link.get().getName(), link.get().getSize()};
-      EXPECT_OUTCOME_TRUE(received_link, node->getLink(link.get().getName()));
-      std::ignore = received_link;
-      std::string link_name = link.get().getName();
-      node->removeLink(link_name);
-      EXPECT_OUTCOME_FALSE(null_result, node->getLink(link_name));
-      std::ignore = null_result;
-      node->addLink(link_impl);
-      EXPECT_OUTCOME_TRUE(restored_link, node->getLink(link_name));
-      std::ignore = restored_link;
+        IPLDLink link_impl{link.get().getCID(), link.get().getName(), link.get().getSize()};
+        EXPECT_OUTCOME_TRUE(received_link, node->getLink(link.get().getName()));
+        std::ignore = received_link;
+        std::string link_name = link.get().getName();
+        node->removeLink(link_name);
+        EXPECT_OUTCOME_FALSE(null_result, node->getLink(link_name));
+        std::ignore = null_result;
+        node->addLink(link_impl);
+        EXPECT_OUTCOME_TRUE(restored_link, node->getLink(link_name));
+        std::ignore = restored_link;
     }
     std::string secondary_cid = cidToString(node);
     ASSERT_EQ(primary_cid, secondary_cid);

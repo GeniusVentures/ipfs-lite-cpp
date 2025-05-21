@@ -1,12 +1,8 @@
 
-#include "primitives/cid/json_codec.hpp"
-
-#include <strstream>
+#include "json_codec.hpp"
 
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-
-#include "codec/cbor/cbor.hpp"
 
 namespace sgns::codec::json {
   using boost::property_tree::ptree;
