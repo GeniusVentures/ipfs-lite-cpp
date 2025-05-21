@@ -2,7 +2,7 @@
 #ifndef CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_BUILDER_HPP
 #define CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_BUILDER_HPP
 
-#include "message.hpp"
+#include "ipfs_lite/ipfs/graphsync/impl/common.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
@@ -15,13 +15,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   class MessageBuilder {
    public:
     MessageBuilder();
+
     virtual ~MessageBuilder();
 
     /// Returns if there is nothing to send
-    bool empty() const;
+    [[nodiscard]] bool empty() const {
+        return empty_;
+    }
 
     /// Returns serialized size of protobuf message
-    size_t getSerializedSize() const;
+    [[nodiscard]] size_t getSerializedSize() const;
 
     /// Serializes message to shared byte buffer
     IPFS::outcome::result<SharedData> serialize();
