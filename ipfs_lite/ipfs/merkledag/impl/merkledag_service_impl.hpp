@@ -65,10 +65,11 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
      */
     static IPFS::outcome::result<void> buildGraph(
         std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
-        const std::shared_ptr<Leaf> &root,
-        const std::vector<std::reference_wrapper<const IPLDLink>> &links,
+        Leaf& root,
+        const std::vector<std::reference_wrapper<const IPLDLink>>& links,
         std::optional<size_t> max_depth,
-        size_t current_depth = 0);
+        size_t current_depth = 0
+    );
   };
 }  // namespace sgns::ipfs_lite::ipfs::merkledag
 

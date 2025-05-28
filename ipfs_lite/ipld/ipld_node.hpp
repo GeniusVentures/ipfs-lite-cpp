@@ -5,10 +5,13 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
 
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
 
+#include "ipfs_lite/ipld/impl/ipld_node_encoder_pb.hpp"
+#include "ipfs_lite/ipld/ipld_block.hpp"
 #include "ipfs_lite/ipld/ipld_link.hpp"
 
 namespace sgns::ipfs_lite::ipld {
@@ -20,13 +23,13 @@ namespace sgns::ipfs_lite::ipld {
     using Buffer = common::Buffer;
 
    public:
-    virtual ~IPLDNode() = default;
+    ~IPLDNode() = default;
 
     /**
      * @brief Get node's CID
      * @return node's CID
      */
-    virtual const CID &getCID() const = 0;
+    const CID &getCID() const;
 
     /**
      * @brief Get serialized node's content
@@ -34,26 +37,28 @@ namespace sgns::ipfs_lite::ipld {
      * cache for each query
      * @return node raw bytes
      */
-    virtual const Buffer &getRawBytes() const = 0;
+    const Buffer &getRawBytes() const;
 
     /**
      * @brief Total size of the data including the total sizes of references
      * @return Cumulative size in bytes
      */
-    virtual size_t size() const = 0;
+    size_t size() const;
 
     /**
      * @brief Assign Node's content
      * @param input - data bytes
      * @return operation result
      */
-    virtual void assign(Buffer input) = 0;
+    void assign(Buffer input);
 
     /**
      * @brief Get Node data
      * @return content bytes
      */
-    virtual const Buffer &content() const = 0;
+    const Buffer &content() const {
+        return content_;
+    }
 
     /**
      * @brief Add link to the child node
@@ -61,48 +66,76 @@ namespace sgns::ipfs_lite::ipld {
      * @param node - child object to link
      * @return operation result
      */
-    virtual IPFS::outcome::result<void> addChild(
-        const std::string &name, std::shared_ptr<const IPLDNode> node) = 0;
+    IPFS::outcome::result<void> addChild(
+        const std::string &name, const IPLDNode& node);
 
     /**
      * @brief Get particular link to the child node
      * @param name - id of the link
      * @return Requested link of error, if link not found
      */
-    virtual IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
-        const std::string &name) const = 0;
+    IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
+        const std::string &name) const;
 
     /**
      * @brief Remove link to the child node
      * @param name - name of the child node
      * @return operation result
      */
-    virtual void removeLink(const std::string &name) = 0;
+    void removeLink(const std::string &name);
 
     /**
      * @brief Insert link to the child node
      * @param link - object to add
      */
-    virtual void addLink(IPLDLink link) = 0;
+    void addLink(IPLDLink link);
 
     /**
      * @brief Get links to first-level child nodes
      * @return References to node links
      */
-    virtual std::vector<std::reference_wrapper<const IPLDLink>> getLinks()
-        const = 0;
+    std::vector<std::reference_wrapper<const IPLDLink>> getLinks()
+        const;
 
     /**
      * @brief Serialize Node
      * @return raw bytes
      */
-    virtual Buffer serialize() const = 0;
+    Buffer serialize() const;
+
+    static std::shared_ptr<IPLDNode> createFromString(
+        const std::string &content);
+
+    static IPFS::outcome::result<std::shared_ptr<IPLDNode>> createFromRawBytes(
+        gsl::span<const uint8_t> input);
+
+    const IPLDBlock &getIPLDBlock() const;
+
+   private:
+    common::Buffer content_;
+    std::map<std::string, IPLDLink> links_;
+    IPLDNodeEncoderPB pb_node_codec_;
+    size_t child_nodes_size_{};
+    mutable std::optional<IPLDBlock> ipld_block_;
   };
 
   /**
    * @class Possible Node errors
    */
   enum class IPLDNodeError { LINK_NOT_FOUND = 1, INVALID_RAW_DATA };
+
+  template <>
+  inline IPLDType IPLDBlock::getType<IPLDNode>() {
+    return {IPLDType::Version::V0,
+            IPLDType::Content::DAG_PB,
+            IPLDType::Hash::sha256};
+  }
+
+  template <>
+  inline common::Buffer IPLDBlock::serialize<IPLDNode>(
+      const IPLDNode &entity) {
+    return entity.serialize();
+  }
 }  // namespace sgns::ipfs_lite::ipld
 
 OUTCOME_HPP_DECLARE_ERROR_2(sgns::ipfs_lite::ipld, IPLDNodeError)

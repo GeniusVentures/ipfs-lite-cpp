@@ -2,17 +2,16 @@
 
 #include <boost/assert.hpp>
 
-#include "ipfs_lite/ipld/impl/ipld_node_impl.hpp"
+#include "ipfs_lite/ipld/ipld_node.hpp"
 
 namespace sgns::ipfs_lite::ipfs::merkledag {
-  using ipld::IPLDNodeImpl;
+using ipld::IPLDNode;
 
-  MerkleDagServiceImpl::MerkleDagServiceImpl(
-      std::shared_ptr<IpfsDatastore> service)
-      : block_service_{std::move(service)} {
+MerkleDagServiceImpl::MerkleDagServiceImpl(std::shared_ptr<IpfsDatastore> service):
+    block_service_{std::move(service)} {
     BOOST_ASSERT_MSG(block_service_ != nullptr,
                      "MerkleDAG service: Block service not connected");
-  }
+}
 
   IPFS::outcome::result<void> MerkleDagServiceImpl::addNode(
       std::shared_ptr<const IPLDNode> node) {
@@ -22,8 +21,8 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
 
   IPFS::outcome::result<std::shared_ptr<IPLDNode>> MerkleDagServiceImpl::getNode(
       const CID &cid) const {
-    OUTCOME_TRY((auto &&, content), block_service_->get(cid));
-    return IPLDNodeImpl::createFromRawBytes(content);
+      BOOST_OUTCOME_TRY(auto&& content, block_service_->get(cid));
+      return IPLDNode::createFromRawBytes(content);
   }
 
   IPFS::outcome::result<void> MerkleDagServiceImpl::removeNode(const CID &cid) {
@@ -35,20 +34,26 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
       gsl::span<const uint8_t> selector,
       std::function<bool(std::shared_ptr<const IPLDNode>)> handler) const {
     std::ignore = selector;
-    OUTCOME_TRY((auto &&, cid), CID::fromBytes(root_cid));
-    OUTCOME_TRY((auto &&, root_node), getNode(cid));
+    BOOST_OUTCOME_TRY(auto&& cid, CID::fromBytes(root_cid));
+    BOOST_OUTCOME_TRY(auto&& root_node, getNode(cid));
     std::vector<std::shared_ptr<const IPLDNode>> node_set{};
     node_set.emplace_back(std::move(root_node));
+
     const auto &links = node_set.front()->getLinks();
     for (const auto &link : links) {
       auto request = getNode(link.get().getCID());
-      if (request.has_error()) return ServiceError::UNRESOLVED_LINK;
+      if (request.has_error()) {
+          return ServiceError::UNRESOLVED_LINK;
+      }
       node_set.emplace_back(std::move(request.value()));
     }
+
     size_t sent_count{};
     for (const auto &node : node_set) {
       ++sent_count;
-      if (!handler(node)) break;
+      if (!handler(node)) {
+          break;
+      }
     }
     return sent_count;
   }
@@ -68,42 +73,48 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
       std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
       const CID& cid, std::optional<uint64_t> depth)
   {
-      OUTCOME_TRY((auto &&, node), nodeGetter(cid));
+      BOOST_OUTCOME_TRY(auto&& node, nodeGetter(cid));
       auto leaf = std::make_shared<Leaf>(node->content());
-      auto result = buildGraph(nodeGetter, leaf, node->getLinks(), depth, 0);
-      if (result.has_error()) return result.error();
+      auto result = buildGraph(nodeGetter, *leaf, node->getLinks(), depth, 0);
+      if (result.has_error()) {
+          return result.error();
+      }
       return leaf;
   }
 
   IPFS::outcome::result<void> MerkleDagServiceImpl::buildGraph(
       std::function<IPFS::outcome::result<std::shared_ptr<IPLDNode>>(const CID& cid)> nodeGetter,
-      const std::shared_ptr<Leaf> &root,
-      const std::vector<std::reference_wrapper<const IPLDLink>> &links,
+      Leaf& root,
+      const std::vector<std::reference_wrapper<const IPLDLink>>& links,
       std::optional<size_t> max_depth,
-      size_t current_depth) {
-    if (max_depth && current_depth == *max_depth) {
+      size_t current_depth
+  ) {
+      if (max_depth && current_depth == *max_depth) {
+          return IPFS::outcome::success();
+      }
+
+      for (const auto& link : links) {
+          auto request = nodeGetter(link.get().getCID());
+          if (request.has_error()) {
+              return ServiceError::UNRESOLVED_LINK;
+          }
+
+          auto node = request.value();
+          auto child_leaf = std::make_shared<Leaf>(node->content());
+          auto build_result =
+              buildGraph(nodeGetter, *child_leaf, node->getLinks(), max_depth, current_depth + 1);
+
+          if (build_result.has_error()) {
+              return build_result;
+          }
+          
+          auto insert_result = root.insertSubLeaf(link.get().getName(), *child_leaf);
+          if (insert_result.has_error()) {
+              return insert_result;
+          }
+      }
+
       return IPFS::outcome::success();
-    }
-    for (const auto &link : links) {
-      auto request = nodeGetter(link.get().getCID());
-      if (request.has_error()) return ServiceError::UNRESOLVED_LINK;
-      std::shared_ptr<IPLDNode> node = request.value();
-      auto child_leaf = std::make_shared<Leaf>(node->content());
-      auto build_result = buildGraph(nodeGetter,
-                                     child_leaf,
-                                     node->getLinks(),
-                                     max_depth,
-                                     current_depth + 1);
-      if (build_result.has_error()) {
-        return build_result;
-      }
-      auto insert_result =
-          root->insertSubLeaf(link.get().getName(), std::move(*child_leaf));
-      if (insert_result.has_error()) {
-        return insert_result;
-      }
-    }
-    return IPFS::outcome::success();
   }
 }  // namespace sgns::ipfs_lite::ipfs::merkledag
 
