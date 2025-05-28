@@ -5,13 +5,13 @@ add_library(ipld_block INTERFACE)
 target_link_libraries(ipld_block INTERFACE
     cid
     ipfs_lite_hasher
-    )
+)
 
 add_library(ipld_node
     ipld_node.cpp
     impl/ipld_node_encoder_pb.cpp
     impl/ipld_node_decoder_pb.cpp
-    )
+)
 
 target_link_libraries(ipld_node
     ipld_node_protobuf
@@ -20,13 +20,3 @@ target_link_libraries(ipld_node
     cid
     cbor
 )
-
-add_library(ipld_walker
-    walker.cpp
-    )
-
-target_link_libraries(ipld_walker
-    ipld_node_protobuf
-    cbor
-    logger
-    )
