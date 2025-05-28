@@ -1,8 +1,6 @@
 #ifndef IPFS_LITE_IPLD_BLOCK_HPP
 #define IPFS_LITE_IPLD_BLOCK_HPP
 
-#include <vector>
-
 #include "codec/cbor/cbor.hpp"
 #include "common/buffer.hpp"
 #include "crypto/hasher/hasher.hpp"

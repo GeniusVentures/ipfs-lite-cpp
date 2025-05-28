@@ -3,8 +3,8 @@
 
 #include <cassert>
 
+#include "ipfs_lite/ipfs/graphsync/impl/network/marshalling/message_parser.hpp"
 #include "length_delimited_message_reader.hpp"
-#include "marshalling/message_parser.hpp"
 #include "peer_context.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
@@ -34,7 +34,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   void MessageReader::onMessageRead(const StreamPtr &stream,
                                     IPFS::outcome::result<ByteArray> res) {
     if (!res) {
-      return feedback_.onReaderEvent(stream, res.error());
+      feedback_.onReaderEvent(stream, res.error());
+      return;
     }
 
     auto msg_res = parseMessage(res.value());

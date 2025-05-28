@@ -3,7 +3,6 @@
 #define IPFS_LITE_IPLD_NODE_ENCODER_PB
 
 #include <map>
-#include <memory>
 #include <string>
 
 #include <gsl/span>
@@ -11,7 +10,6 @@
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
 #include "ipfs_lite/ipld/ipld_link.hpp"
-#include "ipfs_lite/ipld/ipld_node.hpp"
 
 namespace sgns::ipfs_lite::ipld {
   /**

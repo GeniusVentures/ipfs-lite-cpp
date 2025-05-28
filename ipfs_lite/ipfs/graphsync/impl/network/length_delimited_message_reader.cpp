@@ -67,12 +67,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     if (length == 0) {
       reading_ = false;
-      return feedback_(stream_, Error::STREAM_NOT_READABLE);
+      feedback_(stream_, Error::STREAM_NOT_READABLE);
+      return;
     }
 
     if (length > max_message_size_) {
       reading_ = false;
-      return feedback_(stream_, Error::MESSAGE_SIZE_OUT_OF_BOUNDS);
+      feedback_(stream_, Error::MESSAGE_SIZE_OUT_OF_BOUNDS);
+      return;
     }
 
     buffer_->resize(length);
