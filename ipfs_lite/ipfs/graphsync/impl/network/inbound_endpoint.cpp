@@ -1,23 +1,22 @@
 
 #include "inbound_endpoint.hpp"
+#include "network_fwd.hpp"
 
 #include "message_queue.hpp"
 #include "peer_context.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
-  InboundEndpoint::InboundEndpoint(std::shared_ptr<MessageQueue> queue)
-      : max_pending_bytes_(kMaxPendingBytes), queue_(std::move(queue)) {
+InboundEndpoint::InboundEndpoint(std::shared_ptr<MessageQueue> queue): queue_(std::move(queue)) {
     assert(queue_);
-  }
+}
 
   IPFS::outcome::result<void> InboundEndpoint::addBlockToResponse(
       int request_id, const CID &cid, const common::Buffer &data) {
     auto serialized_size = response_builder_.getSerializedSize();
 
-    if (queue_->getState().pending_bytes + serialized_size + data.size()
-        > max_pending_bytes_) {
-      return Error::WRITE_QUEUE_OVERFLOW;
+    if (queue_->getState().pending_bytes + serialized_size + data.size() > kMaxPendingBytes) {
+        return Error::WRITE_QUEUE_OVERFLOW;
     }
 
     if (serialized_size + data.size() > kMaxMessageSize) {
@@ -42,8 +41,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return res.error();
     }
 
-    if (queue_->getState().pending_bytes > max_pending_bytes_) {
-      return Error::WRITE_QUEUE_OVERFLOW;
+    if (queue_->getState().pending_bytes > kMaxPendingBytes) {
+        return Error::WRITE_QUEUE_OVERFLOW;
     }
 
     queue_->enqueue(std::move(res.value()));

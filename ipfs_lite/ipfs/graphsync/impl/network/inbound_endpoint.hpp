@@ -3,7 +3,6 @@
 #define CPP_IPFS_LITE_GRAPHSYNC_INBOUND_ENDPOINT_HPP
 
 #include "marshalling/response_builder.hpp"
-#include "network_fwd.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
@@ -41,9 +40,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param request_id request id
     /// \return result of queue operation
     IPFS::outcome::result<void> sendPartialResponse(RequestId request_id);
-
-    /// Max pending bytes in message queue.
-    const size_t max_pending_bytes_;
 
     /// Queues of network messages
     std::shared_ptr<MessageQueue> queue_;
