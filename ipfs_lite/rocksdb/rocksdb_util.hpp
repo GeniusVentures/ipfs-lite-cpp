@@ -11,7 +11,7 @@
 namespace sgns::ipfs_lite {
 
   template <typename T>
-  inline IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s) {
+  IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s) {
     if (s.IsNotFound()) {
       return rocksdbError::NOT_FOUND;
     }
@@ -36,7 +36,7 @@ namespace sgns::ipfs_lite {
   }
 
   template <typename T>
-  inline IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
+  IPFS::outcome::result<T> error_as_result(const ::ROCKSDB_NAMESPACE::Status &s,
                                             const common::Logger &logger) {
     // if we are checking if it exists, don't log as an error
     if (s.IsNotFound()) {
@@ -64,7 +64,7 @@ namespace sgns::ipfs_lite {
     // NOLINTNEXTLINE(cppcoreguidelines-pro-type-reinterpret-cast)
     const auto *ptr = reinterpret_cast<const uint8_t *>(s.data());
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
-    return common::Buffer(ptr, ptr + s.size());
+    return {ptr, ptr + s.size()};
   }
 
 }  // namespace sgns::ipfs_lite

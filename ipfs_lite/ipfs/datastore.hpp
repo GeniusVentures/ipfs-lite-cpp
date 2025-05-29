@@ -2,14 +2,10 @@
 #ifndef CPP_IPFS_LITE_IPFS_DATASTORE_HPP
 #define CPP_IPFS_LITE_IPFS_DATASTORE_HPP
 
-#include <vector>
-
 #include "codec/cbor/cbor.hpp"
 #include "common/buffer.hpp"
-#include "common/logger.hpp"
 #include "common/outcome.hpp"
 #include "primitives/cid/cid.hpp"
-#include "ipfs_lite/ipfs/ipfs_datastore_error.hpp"
 
 namespace sgns::ipfs_lite::ipfs {
 

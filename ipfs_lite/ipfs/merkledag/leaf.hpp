@@ -59,7 +59,6 @@ class Leaf {
     [[nodiscard]] IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
         std::string_view name
     ) const {
-
         if (auto iter = children_.find(name); iter != children_.end()) {
             return iter->second;
         }

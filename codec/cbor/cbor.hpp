@@ -3,7 +3,6 @@
 
 #include "codec/cbor/cbor_decode_stream.hpp"
 #include "codec/cbor/cbor_encode_stream.hpp"
-#include "codec/cbor/cbor_resolve.hpp"
 #include "common/buffer.hpp"
 
 namespace sgns::codec::cbor {

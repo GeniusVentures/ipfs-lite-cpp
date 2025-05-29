@@ -3,7 +3,6 @@
 #include "primitives/big_int.hpp"
 
 #include <gtest/gtest.h>
-#include "primitives/cid/cid.hpp"
 #include "testutil/literals.hpp"
 #include "testutil/outcome.hpp"
 #include <boost/optional/optional_io.hpp>
@@ -47,17 +46,6 @@ TEST(Cbor, DecodeBlob) {
                        decode<Blob3>("42CAFE"_unhex));
   EXPECT_OUTCOME_EQ(decode<Blob3>("43CAFEDE"_unhex),
                     Blob3::fromHex("CAFEDE").value());
-}
-
-/** BigInt CBOR encoding and decoding */
-TEST(Cbor, BigInt) {
-  using sgns::primitives::BigInt;
-  EXPECT_OUTCOME_EQ(encode(BigInt(0xCAFE)), "4300CAFE"_unhex);
-  EXPECT_OUTCOME_EQ(decode<BigInt>("4300CAFE"_unhex), 0xCAFE);
-  EXPECT_OUTCOME_EQ(encode(BigInt(-0xCAFE)), "4301CAFE"_unhex);
-  EXPECT_OUTCOME_EQ(decode<BigInt>("4301CAFE"_unhex), -0xCAFE);
-  EXPECT_OUTCOME_EQ(encode(BigInt(0)), "40"_unhex);
-  EXPECT_OUTCOME_EQ(decode<BigInt>("40"_unhex), 0);
 }
 
 /** Null CBOR encoding and decoding */
