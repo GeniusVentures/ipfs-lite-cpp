@@ -165,8 +165,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     std::lock_guard<std::mutex> lock(requested_cids_mutex_);
     if (tracked_requests_.find(root_cid) == tracked_requests_.end()) {
-        logger()->error("Got a block, but we're not waiting for this root cid {} to cid{}", 
+        logger()->debug("Got a block, but we're not waiting for this root cid {} to cid{}", 
                      root_cid.toString().value(), cid.toString().value());
+        //this is not an error, it's because the request grabs other blocks as well
         return;
     }
     logger()->trace("Block callback for CID {}", cid.toString().value());
