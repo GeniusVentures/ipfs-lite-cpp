@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipld/impl/ipld_node_impl.hpp"
 
 #include "ipfs_lite/ipld/impl/ipld_node_decoder_pb.hpp"
@@ -71,7 +70,27 @@ namespace sgns::ipfs_lite::ipld {
   }
 
   IPLDNode::Buffer IPLDNodeImpl::serialize() const {
-    return Buffer{IPLDNodeEncoderPB::encode(content_, links_)};
+    return Buffer{IPLDNodeEncoderPB::encode(content_, links_, destinations_)};
+  }
+
+  void IPLDNodeImpl::addDestination(const std::string &destination) {
+    destinations_.insert(destination);
+  }
+
+  void IPLDNodeImpl::removeDestination(const std::string &destination) {
+    destinations_.erase(destination);
+  }
+
+  bool IPLDNodeImpl::hasDestination(const std::string &destination) const {
+    return destinations_.find(destination) != destinations_.end();
+  }
+
+  const std::set<std::string> &IPLDNodeImpl::getDestinations() const {
+    return destinations_;
+  }
+
+  void IPLDNodeImpl::clearDestinations() {
+    destinations_.clear();
   }
 
   std::shared_ptr<IPLDNode> IPLDNodeImpl::createFromString(
@@ -89,14 +108,23 @@ namespace sgns::ipfs_lite::ipld {
       return result.error();
     }
     auto node = createFromString(decoder.getContent());
+    auto node_impl = std::dynamic_pointer_cast<IPLDNodeImpl>(node);
+    
+    // Add links
     for (size_t i = 0; i < decoder.getLinksCount(); ++i) {
       std::vector<uint8_t> link_cid_bytes{decoder.getLinkCID(i).begin(),
                                           decoder.getLinkCID(i).end()};
       OUTCOME_TRY((auto &&, link_cid), CID::fromBytes(link_cid_bytes));
       IPLDLinkImpl link{
           std::move(link_cid), decoder.getLinkName(i), decoder.getLinkSize(i)};
-      node->addLink(link);
+      node_impl->addLink(link);
     }
+    
+    // Add destinations
+    for (size_t i = 0; i < decoder.getDestinationsCount(); ++i) {
+      node_impl->destinations_.insert(decoder.getDestination(i));
+    }
+    
     return node;
   }
 

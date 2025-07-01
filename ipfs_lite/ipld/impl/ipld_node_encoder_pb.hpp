@@ -1,9 +1,9 @@
-
 #ifndef IPFS_LITE_IPLD_NODE_ENCODER_PB
 #define IPFS_LITE_IPLD_NODE_ENCODER_PB
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 
 #include <gsl/span>
@@ -26,10 +26,12 @@ namespace sgns::ipfs_lite::ipld {
      * @brief Serialize Node
      * @param content - Node data
      * @param links - references for child Nodes
+     * @param destinations - destination identifiers
      * @return Protobuf-encoded data
      */
     static std::vector<uint8_t> encode(const common::Buffer &content,
-                                 const std::map<std::string, IPLDLinkImpl> &links);
+                                 const std::map<std::string, IPLDLinkImpl> &links,
+                                 const std::set<std::string> &destinations);
 
    private:
     using PBTag = uint8_t;
@@ -46,7 +48,7 @@ namespace sgns::ipfs_lite::ipld {
 
     enum class PBLinkOrder : uint8_t { HASH = 1, NAME, SIZE };
 
-    enum class PBNodeOrder : uint8_t { DATA = 1, LINKS };
+    enum class PBNodeOrder : uint8_t { DATA = 1, LINKS, DESTINATIONS };
 
     // Serialized content
     common::Buffer data_;
@@ -67,6 +69,13 @@ namespace sgns::ipfs_lite::ipld {
     static size_t getContentLengthPB(const common::Buffer &content);
 
     /**
+     * @brief Calculate length of the serialized destinations
+     * @param destinations - Set of destination strings
+     * @return Number of bytes
+     */
+    static size_t getDestinationsLengthPB(const std::set<std::string> &destinations);
+
+    /**
      * @brief Serialized Node's links
      * @param links - Node's children
      * @return Raw bytes
@@ -80,6 +89,14 @@ namespace sgns::ipfs_lite::ipld {
      * @return Raw bytes
      */
     static std::vector<uint8_t> serializeContent(const common::Buffer &content);
+
+    /**
+     * @brief Serialize Node's destinations
+     * @param destinations - Node's destination identifiers
+     * @return Raw bytes
+     */
+    static std::vector<uint8_t> serializeDestinations(
+        const std::set<std::string> &destinations);
 
     /**
      * @brief Create Protobuf filed header

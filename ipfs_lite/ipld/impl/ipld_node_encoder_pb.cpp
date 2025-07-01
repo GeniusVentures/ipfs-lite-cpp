@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipld/impl/ipld_node_encoder_pb.hpp"
 
 #include <google/protobuf/io/coded_stream.h>
@@ -13,9 +12,11 @@ using protobuf::ipld::node::PBNode;
 namespace sgns::ipfs_lite::ipld {
   std::vector<uint8_t> IPLDNodeEncoderPB::encode(
       const common::Buffer &content,
-      const std::map<std::string, IPLDLinkImpl> &links) {
+      const std::map<std::string, IPLDLinkImpl> &links,
+      const std::set<std::string> &destinations) {
     std::vector<uint8_t> links_pb = serializeLinks(links);
     std::vector<uint8_t> content_pb = serializeContent(content);
+    std::vector<uint8_t> destinations_pb = serializeDestinations(destinations);
     std::vector<uint8_t> result;
     result.insert(result.end(),
                   std::move_iterator(links_pb.begin()),
@@ -23,6 +24,9 @@ namespace sgns::ipfs_lite::ipld {
     result.insert(result.end(),
                   std::move_iterator(content_pb.begin()),
                   std::move_iterator(content_pb.end()));
+    result.insert(result.end(),
+                  std::move_iterator(destinations_pb.begin()),
+                  std::move_iterator(destinations_pb.end()));
     return result;
   }
 
@@ -102,12 +106,42 @@ namespace sgns::ipfs_lite::ipld {
     return buffer;
   }
 
+  std::vector<uint8_t> IPLDNodeEncoderPB::serializeDestinations(
+      const std::set<std::string> &destinations) {
+    size_t pb_length = getDestinationsLengthPB(destinations);
+    std::vector<uint8_t> buffer(pb_length);
+    if (pb_length > 0) {
+      ArrayOutputStream array_output_stream(buffer.data(), buffer.size());
+      CodedOutputStream coded_stream{&array_output_stream};
+      
+      for (const auto &destination : destinations) {
+        PBTag dest_tag = createTag(PBFieldType::LENGTH_DELEMITED,
+                                   static_cast<uint8_t>(PBNodeOrder::DESTINATIONS));
+        coded_stream.WriteTag(dest_tag);
+        coded_stream.WriteVarint64(destination.size());
+        coded_stream.WriteRaw(destination.data(), destination.size());
+      }
+    }
+    return buffer;
+  }
+
   size_t IPLDNodeEncoderPB::getContentLengthPB(const common::Buffer &content) {
     size_t length{};
     if (!content.empty()) {
       length += sizeof(PBTag);
       length += CodedOutputStream::VarintSize64(content.size());
       length += content.size();
+    }
+    return length;
+  }
+
+  size_t IPLDNodeEncoderPB::getDestinationsLengthPB(
+      const std::set<std::string> &destinations) {
+    size_t length{};
+    for (const auto &destination : destinations) {
+      length += sizeof(PBTag);
+      length += CodedOutputStream::VarintSize64(destination.size());
+      length += destination.size();
     }
     return length;
   }
