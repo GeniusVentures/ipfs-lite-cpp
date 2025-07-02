@@ -52,12 +52,14 @@ namespace sgns::ipfs_lite::ipld {
     if (auto index = links_.find(link_name); index != links_.end()) {
       child_nodes_size_ -= index->second.getSize();
       links_.erase(index);
+      ipld_block_ = boost::none;  // Need to recalculate CID after removing link
     }
   }
 
   void IPLDNodeImpl::addLink(const IPLDLink &link) {
     auto &link_impl = dynamic_cast<const IPLDLinkImpl &>(link);
     links_.emplace(link.getName(), link_impl);
+    ipld_block_ = boost::none;  // Need to recalculate CID after adding link
   }
 
   std::vector<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLinks()
@@ -75,10 +77,12 @@ namespace sgns::ipfs_lite::ipld {
 
   void IPLDNodeImpl::addDestination(const std::string &destination) {
     destinations_.insert(destination);
+    ipld_block_ = boost::none;  // Need to recalculate CID after adding destination
   }
 
   void IPLDNodeImpl::removeDestination(const std::string &destination) {
     destinations_.erase(destination);
+    ipld_block_ = boost::none;  // Need to recalculate CID after removing destination
   }
 
   bool IPLDNodeImpl::hasDestination(const std::string &destination) const {
@@ -91,6 +95,7 @@ namespace sgns::ipfs_lite::ipld {
 
   void IPLDNodeImpl::clearDestinations() {
     destinations_.clear();
+    ipld_block_ = boost::none;  // Need to recalculate CID after clearing destinations
   }
 
   std::shared_ptr<IPLDNode> IPLDNodeImpl::createFromString(
