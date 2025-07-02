@@ -108,7 +108,6 @@ namespace sgns::ipfs_lite::ipld {
       return result.error();
     }
     auto node = createFromString(decoder.getContent());
-    auto node_impl = std::dynamic_pointer_cast<IPLDNodeImpl>(node);
     
     // Add links
     for (size_t i = 0; i < decoder.getLinksCount(); ++i) {
@@ -117,12 +116,12 @@ namespace sgns::ipfs_lite::ipld {
       OUTCOME_TRY((auto &&, link_cid), CID::fromBytes(link_cid_bytes));
       IPLDLinkImpl link{
           std::move(link_cid), decoder.getLinkName(i), decoder.getLinkSize(i)};
-      node_impl->addLink(link);
+      node->addLink(link);
     }
     
     // Add destinations
     for (size_t i = 0; i < decoder.getDestinationsCount(); ++i) {
-      node_impl->destinations_.insert(decoder.getDestination(i));
+      node->addDestination(decoder.getDestination(i));
     }
     
     return node;
