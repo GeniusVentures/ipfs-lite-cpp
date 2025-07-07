@@ -443,8 +443,6 @@ void PeerContext::onResponse(Message::Response &response) {
       onRequest(stream, item);
     }
 
-
-
     for (auto &item : msg.responses) {
       onResponse(item);
     }
@@ -463,7 +461,12 @@ void PeerContext::onResponse(Message::Response &response) {
       }
     }
     
-    shiftExpireTime(it->second);
+    // Check if stream still exists after processing - it might have been closed
+    // during request/response processing
+    auto final_it = streams_.find(stream);
+    if (final_it != streams_.end()) {
+      shiftExpireTime(final_it->second);
+    }
   }
 
   void PeerContext::onWriterEvent(const StreamPtr &stream,
@@ -479,7 +482,11 @@ void PeerContext::onResponse(Message::Response &response) {
       return;
     }
 
-    shiftExpireTime(stream);
+    // Check if stream still exists - it might have been closed during close()
+    auto it = streams_.find(stream);
+    if (it != streams_.end()) {
+      shiftExpireTime(it->second);
+    }
   }
 
   void PeerContext::shiftExpireTime(PeerContext::StreamCtx &ctx) {
@@ -487,6 +494,10 @@ void PeerContext::onResponse(Message::Response &response) {
   }
 
   void PeerContext::shiftExpireTime(const StreamPtr &stream) {
+    if (closed_) {
+      return;
+    }
+    
     auto it = streams_.find(stream);
     if (it != streams_.end()) {
       shiftExpireTime(it->second);
