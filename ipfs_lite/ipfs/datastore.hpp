@@ -35,6 +35,20 @@ namespace sgns::ipfs_lite::ipfs {
     virtual IPFS::outcome::result<void> set(const CID &key, Value value) = 0;
 
     /**
+     * @brief       Seals a branch that starts with the informed CID
+     * @param[in]   key CID to seal the branch (prune)
+     * @return      Success if able to seal, error otherwise
+     */
+    virtual IPFS::outcome::result<void> seal(const CID &key) = 0;
+
+    /**
+     * @brief       Checks if the informed CID is sealed
+     * @param[in]   key CID to check if sealed
+     * @return      true if sealed, false otherwise
+     */
+    virtual IPFS::outcome::result<bool> is_sealed(const CID &key) const = 0;
+
+    /**
      * @brief searches for a key in data store
      * @param key key to find
      * @return value associated with key or error
