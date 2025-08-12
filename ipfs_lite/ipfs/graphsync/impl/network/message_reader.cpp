@@ -10,7 +10,7 @@
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
   MessageReader::MessageReader(StreamPtr stream,
-                               EndpointToPeerFeedback &feedback)
+                               std::shared_ptr<EndpointToPeerFeedback> feedback)
       : feedback_(feedback) {
     assert(stream);
     assert(!stream->isClosedForRead());
@@ -33,13 +33,19 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void MessageReader::onMessageRead(const StreamPtr &stream,
                                     IPFS::outcome::result<ByteArray> res) {
+    // Check if feedback target is still alive
+    auto feedback = feedback_.lock();
+    if (!feedback) {
+      // PeerContext has been destroyed, safely exit
+      return;
+    }
     if (!res) {
-      return feedback_.onReaderEvent(stream, res.error());
+      return feedback->onReaderEvent(stream, res.error());
     }
 
     auto msg_res = parseMessage(res.value());
 
-    feedback_.onReaderEvent(stream, std::move(msg_res));
+    feedback->onReaderEvent(stream, std::move(msg_res));
   }
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

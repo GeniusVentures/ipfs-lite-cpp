@@ -130,7 +130,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void PeerContext::finishStreamConfig(StreamPtr stream) {
     StreamCtx stream_ctx;
-    stream_ctx.reader = std::make_unique<MessageReader>(stream, *this);
+    stream_ctx.reader = std::make_unique<MessageReader>(stream, shared_from_this());
 
     if (getState() == is_connecting) {
       assert(requests_endpoint_);
@@ -404,6 +404,11 @@ void PeerContext::onResponse(Message::Response &response) {
 
   void PeerContext::onReaderEvent(const StreamPtr &stream,
                                   IPFS::outcome::result<Message> msg_res) {
+    if (!stream) {
+        logger()->error(
+        "stream read error: this stream is null");
+        return;
+    }
     if (closed_) {
       logger()->info(
         "stream read error: this stream is closed closed");
@@ -441,10 +446,18 @@ void PeerContext::onResponse(Message::Response &response) {
 
     for (auto &item : msg.requests) {
       onRequest(stream, item);
+      if (!stream) {
+          logger()->error("Stream became invalid during request processing, peer={}", str);
+          return;
+      }
     }
 
     for (auto &item : msg.responses) {
       onResponse(item);
+      if (!stream) {
+          logger()->error("Stream became invalid during response processing, peer={}", str);
+          return;
+      }
     }
 
     CID root_cid;
@@ -461,6 +474,10 @@ void PeerContext::onResponse(Message::Response &response) {
       }
     }
     
+    if (!stream) {
+        logger()->error("Stream became invalid before final processing, peer={}", str);
+        return;
+    }
     // Check if stream still exists after processing - it might have been closed
     // during request/response processing
     auto final_it = streams_.find(stream);
