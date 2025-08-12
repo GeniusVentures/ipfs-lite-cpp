@@ -12,6 +12,15 @@ using Value = sgns::ipfs_lite::ipfs::IpfsDatastore::Value;
     storage_[key] = value;
     return sgns::IPFS::outcome::success();
     }
+    sgns::IPFS::outcome::result<void> InMemoryDatastore::seal(const CID &key) {
+    Value value;
+    seals_[key] = value;
+    return sgns::IPFS::outcome::success();
+    }
+
+    sgns::IPFS::outcome::result<bool> InMemoryDatastore::is_sealed(const CID &key) const {
+    return seals_.find(key) != seals_.end();
+    }
 
     sgns::IPFS::outcome::result<Value> InMemoryDatastore::get(const CID &key) const {
     OUTCOME_TRY((auto &&, found), contains(key));

@@ -16,6 +16,13 @@ namespace sgns::ipfs_lite::ipfs {
     if (result.has_error()) return result.error();
     return IPFS::outcome::success();
   }
+  IPFS::outcome::result<void> IpfsBlockService::seal(const CID &key) {
+    return local_storage_->seal(key);
+  }
+
+  IPFS::outcome::result<bool> IpfsBlockService::is_sealed(const CID &key) const {
+    return local_storage_->is_sealed(key);
+  }
 
   IPFS::outcome::result<IpfsBlockService::Value> IpfsBlockService::get(
       const CID &key) const {
