@@ -60,8 +60,23 @@ namespace sgns {
 
     static IPFS::outcome::result<CID> read(gsl::span<const uint8_t> &input,
                                      bool prefix = false);
+    
   };
 }  // namespace sgns
+
+namespace std {
+  template <>
+  struct hash<sgns::CID> {
+    size_t operator()(const sgns::CID &cid) const {
+      auto result = cid.toBytes();
+      if (!result) return 0;
+
+      const auto &bytes = result.value();
+      return std::hash<std::string_view>{}(
+          std::string_view(reinterpret_cast<const char *>(bytes.data()), bytes.size()));
+    }
+  };
+}
 
 namespace sgns::common {
   /// Compute CID from bytes

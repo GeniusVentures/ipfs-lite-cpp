@@ -43,6 +43,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         stream_,
         [wptr{weak_from_this()}]
             (IPFS::outcome::result<libp2p::multi::UVarint> varint_opt) {
+          if(!varint_opt)
+          {
+            logger()->error(
+              "Varint Error msg={}", varint_opt.error().message());
+          }
           auto self = wptr.lock();
           if (self && self->reading_) {
             size_t length = varint_opt ? varint_opt.value().toUInt64() : 0;

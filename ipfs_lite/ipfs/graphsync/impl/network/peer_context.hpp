@@ -32,7 +32,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param network_feedback feedback interface of network module
     /// \param scheduler libp2p scheduler
     PeerContext(PeerId peer_id,
-                PeerToGraphsyncFeedback &graphsync_feedback,
+                std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                 PeerToNetworkFeedback &network_feedback,
                 libp2p::protocol::Scheduler &scheduler);
 
@@ -152,6 +152,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param stream libp2p stream
     void onNewStream(StreamPtr stream);
 
+    /**
+     * @brief       Finishes the configuration of the stream
+     * @param[in]   stream: new stream
+     */
+    void finishStreamConfig(StreamPtr stream);
+
     /// Closes a stream
     /// \param stream libp2p stream
     /// \param status close reason
@@ -198,7 +204,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     Streams::iterator findResponseSink(RequestId request_id);
 
     /// Feedback to GraphsyncImpl module
-    PeerToGraphsyncFeedback &graphsync_feedback_;
+    //PeerToGraphsyncFeedback &graphsync_feedback_;
+    std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> graphsync_feedbacks_;
 
     /// Feedback to Network module
     PeerToNetworkFeedback &network_feedback_;
@@ -230,6 +237,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Response status code stored to be forwarded asynchronously
     /// in the next cycle
     ResponseStatusCode close_status_ = RS_INTERNAL_ERROR;
+
+    static constexpr size_t GRAHPSYNC_WINDOW_SIZE = 64 * 1024 * 1024; 
   };
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

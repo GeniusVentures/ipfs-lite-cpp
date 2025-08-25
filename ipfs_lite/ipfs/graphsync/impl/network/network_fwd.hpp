@@ -36,7 +36,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param from originating peer ID
     /// \param cid root CID
     /// \param data block data, raw bytes
-    virtual void onBlock(const PeerId &from, CID cid, common::Buffer data) = 0;
+    virtual void onBlock(const PeerId &from, const CID &root_cid, const CID &cid, common::Buffer data) = 0;
 
     /// Called on new request from the network
     /// \param from originating peer ID

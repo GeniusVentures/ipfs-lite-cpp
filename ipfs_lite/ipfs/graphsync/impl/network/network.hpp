@@ -29,7 +29,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void start(std::shared_ptr<PeerToGraphsyncFeedback> feedback);
 
     /// Stops all network operations gracefully
-    void stop();
+    void stop(const std::shared_ptr<PeerToGraphsyncFeedback>& feedback);
 
     /// Called by core graphsync module to know if peer is requestable at the
     /// moment. Creates a peer context in the background, if needed
@@ -118,7 +118,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     libp2p::peer::Protocol protocol_id_;
 
     /// Feedback to graphsync core module (owning object)
-    std::shared_ptr<PeerToGraphsyncFeedback> feedback_;
+    std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> feedbacks_;
 
     /// Peer set, where item can be found by const PeerID& (see operators <)
     using PeerSet = std::set<PeerContextPtr, std::less<>>;

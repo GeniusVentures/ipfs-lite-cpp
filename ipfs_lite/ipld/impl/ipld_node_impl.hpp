@@ -1,9 +1,9 @@
-
 #ifndef IPFS_LITE_IPLD_NODE_IMPL_HPP
 #define IPFS_LITE_IPLD_NODE_IMPL_HPP
 
 #include <map>
 #include <memory>
+#include <set>
 #include <string_view>
 #include <vector>
 
@@ -48,12 +48,24 @@ namespace sgns::ipfs_lite::ipld {
 
     const IPLDBlock &getIPLDBlock() const;
 
+    // Methods for managing destinations
+    void addDestination(const std::string &destination) override;
+
+    void removeDestination(const std::string &destination) override;
+
+    bool hasDestination(const std::string &destination) const override;
+
+    const std::set<std::string> &getDestinations() const override;
+
+    void clearDestinations() override;
+
    private:
     common::Buffer content_;
     std::map<std::string, IPLDLinkImpl> links_;
     IPLDNodeEncoderPB pb_node_codec_;
     size_t child_nodes_size_{};
     mutable boost::optional<IPLDBlock> ipld_block_;
+    std::set<std::string> destinations_;
   };
 
   template <>

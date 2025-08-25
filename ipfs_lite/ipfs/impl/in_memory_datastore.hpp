@@ -18,6 +18,12 @@ namespace sgns::ipfs_lite::ipfs {
     /** @copydoc IpfsDatastore::set() */
     IPFS::outcome::result<void> set(const CID &key, Value value) override;
 
+    /** @copydoc IpfsDatastore::seal() */
+    IPFS::outcome::result<void> seal(const CID &key) override;
+
+    /** @copydoc IpfsDatastore::is_sealed() */
+    IPFS::outcome::result<bool> is_sealed(const CID &key) const override;
+
     /** @copydoc IpfsDatastore::get() */
     IPFS::outcome::result<Value> get(const CID &key) const override;
 
@@ -26,6 +32,7 @@ namespace sgns::ipfs_lite::ipfs {
 
    private:
     std::map<CID, Value> storage_;
+    std::map<CID, Value> seals_;
   };
 
 }  // namespace sgns::ipfs_lite::ipfs

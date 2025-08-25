@@ -1,8 +1,8 @@
-
 #ifndef IPFS_LITE_IPLD_NODE_PB_DECODER
 #define IPFS_LITE_IPLD_NODE_PB_DECODER
 
 #include <string>
+#include <vector>
 
 #include <gsl/span>
 #include "common/buffer.hpp"
@@ -54,6 +54,25 @@ namespace sgns::ipfs_lite::ipld {
      * @return operation result
      */
     size_t getLinkSize(size_t index) const;
+
+    /**
+     * @brief Get count of destinations
+     * @return Number of destinations
+     */
+    size_t getDestinationsCount() const;
+
+    /**
+     * @brief Get destination at index
+     * @param index - destination index
+     * @return Destination string
+     */
+    const std::string &getDestination(size_t index) const;
+
+    /**
+     * @brief Get all destinations as a vector
+     * @return Vector of destination strings
+     */
+    std::vector<std::string> getDestinations() const;
 
    private:
     ::protobuf::ipld::node::PBNode pb_node_;

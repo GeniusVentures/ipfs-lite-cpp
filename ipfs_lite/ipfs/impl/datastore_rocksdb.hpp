@@ -36,6 +36,10 @@ namespace sgns::ipfs_lite::ipfs {
     IPFS::outcome::result<bool> contains(const CID &key) const override;
 
     IPFS::outcome::result<void> set(const CID &key, Value value) override;
+    
+    IPFS::outcome::result<void> seal(const CID &key) override;
+
+    IPFS::outcome::result<bool> is_sealed(const CID &key) const override;
 
     IPFS::outcome::result<Value> get(const CID &key) const override;
 

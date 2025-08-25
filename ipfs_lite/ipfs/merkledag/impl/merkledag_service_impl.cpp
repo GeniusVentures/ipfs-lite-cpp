@@ -20,10 +20,20 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     return block_service_->set(node->getCID(), raw_bytes);
   }
 
+  IPFS::outcome::result<void> MerkleDagServiceImpl::markResolved(const CID &cid)
+  {
+    return block_service_->seal(cid);
+  }
+
   IPFS::outcome::result<std::shared_ptr<IPLDNode>> MerkleDagServiceImpl::getNode(
       const CID &cid) const {
     OUTCOME_TRY((auto &&, content), block_service_->get(cid));
     return IPLDNodeImpl::createFromRawBytes(content);
+  }
+
+  IPFS::outcome::result<bool> MerkleDagServiceImpl::isResolved(const CID &cid) const
+  {
+    return block_service_->is_sealed(cid);
   }
 
   IPFS::outcome::result<void> MerkleDagServiceImpl::removeNode(const CID &cid) {
@@ -93,7 +103,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
                                      child_leaf,
                                      node->getLinks(),
                                      max_depth,
-                                     ++current_depth);
+                                     current_depth + 1);
       if (build_result.has_error()) {
         return build_result;
       }

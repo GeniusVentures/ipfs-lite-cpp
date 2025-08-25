@@ -23,32 +23,38 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void Network::start(std::shared_ptr<PeerToGraphsyncFeedback> feedback) {
-    feedback_ = std::move(feedback);
-    assert(feedback_);
+    assert(feedback);
+  
+    bool first_feedback = feedbacks_.empty();
+    feedbacks_.emplace_back(feedback);
+  
+    if (first_feedback) {
+      host_->setProtocolHandler(
+          protocol_id_,
+          [wptr = weak_from_this()] (StreamPtr rstream) {
+            if (auto self = wptr.lock()) {
+              self->onStreamAccepted(std::move(rstream));
+            }
+          }
+      );
+      started_ = true;
+    }
+  }  
 
-    // clang-format off
-    // host_->setProtocolHandler(
-    //     protocol_id_,
-    //     [wptr = weak_from_this()] (IPFS::outcome::result<StreamPtr> rstream) {
-    //       auto self = wptr.lock();
-    //       if (self) { self->onStreamAccepted(std::move(rstream)); }
-    //     }
-    // );
-    host_->setProtocolHandler(
-        protocol_id_,
-        [wptr = weak_from_this()] (StreamPtr rstream) {
-          auto self = wptr.lock();
-          // auto param = std::move(rstream);
-          if (self) { self->onStreamAccepted(std::move(rstream)); }
-        }
+  void Network::stop(const std::shared_ptr<PeerToGraphsyncFeedback>& feedback) {
+    feedbacks_.erase(
+      std::remove_if(feedbacks_.begin(), feedbacks_.end(),
+        [&](const std::weak_ptr<PeerToGraphsyncFeedback>& f) {
+          auto s = f.lock();
+          return !s || s == feedback;
+        }),
+      feedbacks_.end()
     );
-    // clang-format on
-    started_ = true;
-  }
-
-  void Network::stop() {
-    started_ = false;
-    closeAllPeers();
+    if(feedbacks_.empty())
+    {
+      started_ = false;
+      closeAllPeers();
+    }
   }
 
   bool Network::canSendRequest(const PeerId &peer) {
@@ -76,7 +82,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     auto ctx = findContext(peer, false);
     assert(ctx);
 
-    logger()->trace("makeRequest: {} has state {}", ctx->str, ctx->getState());
+    logger()->trace("makeRequest: {} has state {}", ctx->str, fmt::underlying(ctx->getState()));
 
     ctx->setOutboundAddress(std::move(address));
     if (ctx->needToConnect()) {
@@ -86,22 +92,22 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     ctx->enqueueRequest(request_id, std::move(request_body));
   }
 
-  void Network::asyncFeedback(const PeerId &peer,
-                              RequestId request_id,
-                              ResponseStatusCode status) {
-    scheduler_
-        ->schedule(
-            [wptr{weak_from_this()}, p = peer, id = request_id, s = status]() {
-              auto self = wptr.lock();
-              if (self && self->started_) {
-                if (isTerminal(s)) {
-                  self->active_requests_per_peer_.erase(id);
-                }
-                self->feedback_->onResponse(p, id, s, {});
-              }
-            })
-        .detach();
-  }
+  // void Network::asyncFeedback(const PeerId &peer,
+  //                             RequestId request_id,
+  //                             ResponseStatusCode status) {
+  //   scheduler_
+  //       ->schedule(
+  //           [wptr{weak_from_this()}, p = peer, id = request_id, s = status]() {
+  //             auto self = wptr.lock();
+  //             if (self && self->started_) {
+  //               if (isTerminal(s)) {
+  //                 self->active_requests_per_peer_.erase(id);
+  //               }
+  //               self->feedback_->onResponse(p, id, s, {});
+  //             }
+  //           })
+  //       .detach();
+  // }
 
   void Network::cancelRequest(RequestId request_id, SharedData request_body) {
     if (!started_) {
@@ -159,7 +165,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   PeerContextPtr Network::findContext(const PeerId &peer,
                                       bool create_if_not_found) {
-    assert(started_ && feedback_);
+    assert(started_);
 
     PeerContextPtr ctx;
 
@@ -173,7 +179,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     if (!ctx && create_if_not_found) {
-      ctx = std::make_shared<PeerContext>(peer, *feedback_, *this, *scheduler_);
+      ctx = std::make_shared<PeerContext>(peer, feedbacks_, *this, *scheduler_);
       peers_.insert(ctx);
     }
 

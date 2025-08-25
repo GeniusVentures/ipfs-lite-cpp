@@ -1,11 +1,4 @@
 cmake_minimum_required(VERSION 3.22)
-set(
-    CMAKE_TOOLCHAIN_FILE
-    "${CMAKE_SOURCE_DIR}/cmake/toolchain/cxx17.cmake"
-    CACHE
-    FILEPATH
-    "Default toolchain"
-)
 
 # Project
 project(ipfs-lite-cpp LANGUAGES C CXX)
@@ -38,7 +31,6 @@ option(TESTING "Build tests" ON)
 
 add_subdirectory(deps)
 add_subdirectory(primitives)
-add_subdirectory(clock)
 add_subdirectory(codec)
 add_subdirectory(common)
 add_subdirectory(crypto)
@@ -50,10 +42,10 @@ install_hfile(ipfs-lite)
 if(TESTING)
     find_package(GTest CONFIG REQUIRED)
 
-    SET(WIN_CRYPT_LIBRARY)
+    set(WIN_CRYPT_LIBRARY)
 
     if(NOT UNIX)
-        SET(WIN_CRYPT_LIBRARY crypt32)
+        set(WIN_CRYPT_LIBRARY crypt32)
     endif()
 
     enable_testing()
@@ -94,7 +86,6 @@ install_hfile(deps)
 install_hfile(platform)
 install_hfile(primitives)
 install_hfile(ipfs_lite)
-install_hfile(clock)
 install_hfile(deps/tinycbor/src)
 
 # install protobuf header files

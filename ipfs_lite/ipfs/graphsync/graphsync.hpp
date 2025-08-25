@@ -16,7 +16,6 @@
 namespace sgns::ipfs_lite::ipfs::merkledag {
   class MerkleDagService;
 }
-
 namespace sgns::ipfs_lite::ipfs::graphsync {
 
   /// Subscription to any data stream, borrowed from libp2p
@@ -56,6 +55,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     RS_INTERNAL_ERROR = -5,    // internal error (due to local components)
     RS_REJECTED_LOCALLY = -6,  // request was rejected by local side
     RS_SLOW_STREAM = -7,       // slow stream: outbound buffers overflow
+    RS_AWAITING_STATUS = -8,   // Temporary status while we decide
 
     // Other response codes are received from the network
 
@@ -97,6 +97,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   /// Graphsync protocol interface
   class Graphsync {
    public:
+    enum class RequestState {
+      IN_PROGRESS,
+      COMPLETED,
+      FAILED
+    };
     virtual ~Graphsync() = default;
 
     /// New nodes received go through this callback
@@ -112,6 +117,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Stops the instance. Active requests will be cancelled and return
     /// RS_REJECTED_LOCALLY to their callbacks
     virtual void stop() = 0;
+
+    virtual IPFS::outcome::result<Graphsync::RequestState> getRequestState(const CID &root_cid) const = 0;
 
     /// Request progress subscription data
     using RequestProgressCallback = std::function<void(

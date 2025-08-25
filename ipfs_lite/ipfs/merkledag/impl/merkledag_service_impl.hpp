@@ -21,8 +21,13 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
 
     IPFS::outcome::result<void> addNode(
         std::shared_ptr<const IPLDNode> node) override;
+    
+    IPFS::outcome::result<void> markResolved(const CID &cid) override;
 
     IPFS::outcome::result<std::shared_ptr<IPLDNode>> getNode(
+        const CID &cid) const override;
+
+    IPFS::outcome::result<bool> isResolved(
         const CID &cid) const override;
 
     IPFS::outcome::result<void> removeNode(const CID &cid) override;

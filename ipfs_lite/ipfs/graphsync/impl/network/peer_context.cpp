@@ -24,12 +24,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }  // namespace
 
   PeerContext::PeerContext(PeerId peer_id,
-                           PeerToGraphsyncFeedback &graphsync_feedback,
+                           std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                            PeerToNetworkFeedback &network_feedback,
                            libp2p::protocol::Scheduler &scheduler)
       : peer(std::move(peer_id)),
         str(makeStringRepr(peer)),
-        graphsync_feedback_(graphsync_feedback),
+        graphsync_feedbacks_(graphsync_feedbacks),
         network_feedback_(network_feedback),
         scheduler_(scheduler) {}
 
@@ -113,8 +113,24 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return;
     }
 
+    stream->adjustWindowSize(GRAHPSYNC_WINDOW_SIZE, [wptr{weak_from_this()}, stream](IPFS::outcome::result<void> res) {
+      auto self = wptr.lock();
+        if (self) {
+          if (res) {
+            self->finishStreamConfig(stream);
+          } else {
+            logger()->error( "cannot adjustWindowSize, peer={} with size {}", self->str, GRAHPSYNC_WINDOW_SIZE );
+            if (self->getState() == is_connecting) {
+              self->closeLocalRequests(RS_CANNOT_CONNECT);
+            }
+          }
+        }
+    });
+  }
+
+  void PeerContext::finishStreamConfig(StreamPtr stream) {
     StreamCtx stream_ctx;
-    stream_ctx.reader = std::make_unique<MessageReader>(stream, *this);
+    stream_ctx.reader = std::make_unique<MessageReader>(stream, shared_from_this());
 
     if (getState() == is_connecting) {
       assert(requests_endpoint_);
@@ -166,6 +182,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   void PeerContext::enqueueRequest(RequestId request_id,
                                    SharedData request_body) {
     if (!requests_endpoint_) {
+      logger()->error("enqueueRequest: Internal error");
       close(RS_INTERNAL_ERROR);
     }
     auto res = requests_endpoint_->enqueue(std::move(request_body));
@@ -303,7 +320,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!local_request_ids_.empty()) {
       std::set<RequestId> ids = std::move(local_request_ids_);
       for (auto id : ids) {
-        graphsync_feedback_.onResponse(peer, id, close_status_, {});
+        for (const auto &wfb : graphsync_feedbacks_) {
+          if (auto fb = wfb.lock()) {
+            fb->onResponse(peer, id, close_status_, {});
+          }
+        }
       }
     }
     requests_endpoint_.reset();
@@ -322,9 +343,11 @@ void PeerContext::onResponse(Message::Response &response) {
     if (isTerminal(response.status)) {
         local_request_ids_.erase(it);
     }
-    
-    graphsync_feedback_.onResponse(
-        peer, response.id, response.status, std::move(response.extensions));
+    for (const auto &wfb : graphsync_feedbacks_) {
+      if (auto fb = wfb.lock()) {
+        fb->onResponse(peer, response.id, response.status, response.extensions);
+      }
+    }
 }
 
   void PeerContext::onRequest(const StreamPtr &stream,
@@ -341,16 +364,22 @@ void PeerContext::onResponse(Message::Response &response) {
       remote_requests_streams_.erase(request.id);
       logger()->debug(
           "onRequest: peer {} cancelled request {}", str, request.id);
-    } else {
+    } 
+    else {
       createResponseEndpoint(stream, ctx);
       if (remote_requests_streams_.count(request.id)) {
         sendResponse(request.id, RS_REJECTED, {});
-      } else {
+      } 
+      else {
         remote_requests_streams_.emplace(request.id, stream);
         ctx.remote_request_ids.insert(request.id);
         logger()->debug(
-            "onRequest: peer {} created request {}", str, request.id);
-        graphsync_feedback_.onRemoteRequest(peer, std::move(request));
+            "onRequest: peer {} created request {} sending to {} feedbacks", str, request.id, graphsync_feedbacks_.size());
+        for (const auto &wfb : graphsync_feedbacks_) {
+          if (auto fb = wfb.lock()) {
+            fb->onRemoteRequest(peer, request);
+          }
+        }
       }
     }
   }
@@ -375,7 +404,14 @@ void PeerContext::onResponse(Message::Response &response) {
 
   void PeerContext::onReaderEvent(const StreamPtr &stream,
                                   IPFS::outcome::result<Message> msg_res) {
+    if (!stream) {
+        logger()->error(
+        "stream read error: this stream is null");
+        return;
+    }
     if (closed_) {
+      logger()->info(
+        "stream read error: this stream is closed closed");
       return;
     }
 
@@ -410,20 +446,44 @@ void PeerContext::onResponse(Message::Response &response) {
 
     for (auto &item : msg.requests) {
       onRequest(stream, item);
+      if (!stream) {
+          logger()->error("Stream became invalid during request processing, peer={}", str);
+          return;
+      }
     }
-
-
 
     for (auto &item : msg.responses) {
       onResponse(item);
+      if (!stream) {
+          logger()->error("Stream became invalid during response processing, peer={}", str);
+          return;
+      }
     }
 
+    CID root_cid;
+    bool root_set = false;
     for (auto &item : msg.data) {
-      graphsync_feedback_.onBlock(
-          peer, std::move(item.first), std::move(item.second));
+      if (!root_set) {
+        root_cid = item.first;
+        root_set = true;
+      }
+      for (const auto &wfb : graphsync_feedbacks_) {
+        if (auto fb = wfb.lock()) {
+          fb->onBlock(peer, root_cid, item.first, item.second);
+        }
+      }
     }
     
-    shiftExpireTime(it->second);
+    if (!stream) {
+        logger()->error("Stream became invalid before final processing, peer={}", str);
+        return;
+    }
+    // Check if stream still exists after processing - it might have been closed
+    // during request/response processing
+    auto final_it = streams_.find(stream);
+    if (final_it != streams_.end()) {
+      shiftExpireTime(final_it->second);
+    }
   }
 
   void PeerContext::onWriterEvent(const StreamPtr &stream,
@@ -439,7 +499,11 @@ void PeerContext::onResponse(Message::Response &response) {
       return;
     }
 
-    shiftExpireTime(stream);
+    // Check if stream still exists - it might have been closed during close()
+    auto it = streams_.find(stream);
+    if (it != streams_.end()) {
+      shiftExpireTime(it->second);
+    }
   }
 
   void PeerContext::shiftExpireTime(PeerContext::StreamCtx &ctx) {
@@ -447,6 +511,10 @@ void PeerContext::onResponse(Message::Response &response) {
   }
 
   void PeerContext::shiftExpireTime(const StreamPtr &stream) {
+    if (closed_) {
+      return;
+    }
+    
     auto it = streams_.find(stream);
     if (it != streams_.end()) {
       shiftExpireTime(it->second);
