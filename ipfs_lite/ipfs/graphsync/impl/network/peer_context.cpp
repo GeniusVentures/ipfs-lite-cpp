@@ -130,7 +130,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void PeerContext::finishStreamConfig(StreamPtr stream) {
     StreamCtx stream_ctx;
-    stream_ctx.reader = std::make_unique<MessageReader>(stream, *this);
+    stream_ctx.reader = std::make_unique<MessageReader>(stream, shared_from_this());
 
     if (getState() == is_connecting) {
       assert(requests_endpoint_);
@@ -404,6 +404,11 @@ void PeerContext::onResponse(Message::Response &response) {
 
   void PeerContext::onReaderEvent(const StreamPtr &stream,
                                   IPFS::outcome::result<Message> msg_res) {
+    if (!stream) {
+        logger()->error(
+        "stream read error: this stream is null");
+        return;
+    }
     if (closed_) {
       logger()->info(
         "stream read error: this stream is closed closed");
@@ -441,12 +446,18 @@ void PeerContext::onResponse(Message::Response &response) {
 
     for (auto &item : msg.requests) {
       onRequest(stream, item);
+      if (!stream) {
+          logger()->error("Stream became invalid during request processing, peer={}", str);
+          return;
+      }
     }
-
-
 
     for (auto &item : msg.responses) {
       onResponse(item);
+      if (!stream) {
+          logger()->error("Stream became invalid during response processing, peer={}", str);
+          return;
+      }
     }
 
     CID root_cid;
@@ -463,7 +474,16 @@ void PeerContext::onResponse(Message::Response &response) {
       }
     }
     
-    shiftExpireTime(it->second);
+    if (!stream) {
+        logger()->error("Stream became invalid before final processing, peer={}", str);
+        return;
+    }
+    // Check if stream still exists after processing - it might have been closed
+    // during request/response processing
+    auto final_it = streams_.find(stream);
+    if (final_it != streams_.end()) {
+      shiftExpireTime(final_it->second);
+    }
   }
 
   void PeerContext::onWriterEvent(const StreamPtr &stream,
@@ -479,7 +499,11 @@ void PeerContext::onResponse(Message::Response &response) {
       return;
     }
 
-    shiftExpireTime(stream);
+    // Check if stream still exists - it might have been closed during close()
+    auto it = streams_.find(stream);
+    if (it != streams_.end()) {
+      shiftExpireTime(it->second);
+    }
   }
 
   void PeerContext::shiftExpireTime(PeerContext::StreamCtx &ctx) {
@@ -487,6 +511,10 @@ void PeerContext::onResponse(Message::Response &response) {
   }
 
   void PeerContext::shiftExpireTime(const StreamPtr &stream) {
+    if (closed_) {
+      return;
+    }
+    
     auto it = streams_.find(stream);
     if (it != streams_.end()) {
       shiftExpireTime(it->second);

@@ -15,7 +15,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// \param stream libp2p stream
     /// \param feedback Owner's feedback interface
     MessageReader(StreamPtr stream,
-                  EndpointToPeerFeedback &feedback);
+                  std::shared_ptr<EndpointToPeerFeedback> feedback);
 
     ~MessageReader();
 
@@ -26,7 +26,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     void onMessageRead(const StreamPtr &stream, IPFS::outcome::result<ByteArray> res);
 
     /// Owner's feedback interface
-    EndpointToPeerFeedback &feedback_;
+    std::weak_ptr<EndpointToPeerFeedback> feedback_;
 
     /// Stream reader, not graphsync specific
     std::shared_ptr<LengthDelimitedMessageReader> stream_reader_;

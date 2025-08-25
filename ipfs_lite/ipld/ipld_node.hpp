@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -97,6 +98,36 @@ namespace sgns::ipfs_lite::ipld {
      * @return raw bytes
      */
     virtual Buffer serialize() const = 0;
+
+    /**
+     * @brief Add a destination identifier
+     * @param destination - destination string to add
+     */
+    virtual void addDestination(const std::string &destination) = 0;
+
+    /**
+     * @brief Remove a destination identifier
+     * @param destination - destination string to remove
+     */
+    virtual void removeDestination(const std::string &destination) = 0;
+
+    /**
+     * @brief Check if a destination exists
+     * @param destination - destination string to check
+     * @return true if destination exists, false otherwise
+     */
+    virtual bool hasDestination(const std::string &destination) const = 0;
+
+    /**
+     * @brief Get all destination identifiers
+     * @return Set of destination strings
+     */
+    virtual const std::set<std::string> &getDestinations() const = 0;
+
+    /**
+     * @brief Clear all destinations
+     */
+    virtual void clearDestinations() = 0;
   };
 
   /**

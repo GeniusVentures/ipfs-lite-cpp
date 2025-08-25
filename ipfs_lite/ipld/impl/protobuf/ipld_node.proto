@@ -23,4 +23,7 @@ message PBNode {
 
   // opaque user data
   optional bytes Data = 1;
+  
+  // destination identifiers
+  repeated string Destinations = 3;
 }

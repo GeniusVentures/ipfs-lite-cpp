@@ -25,12 +25,25 @@ namespace sgns::ipfs_lite::ipfs::merkledag {
     virtual IPFS::outcome::result<void> addNode(std::shared_ptr<const IPLDNode> node) = 0;
 
     /**
+     * @brief       Mark that a node (CID) had all its children added
+     * @param[in]   node The node to mark for resolved
+     * @return      Success if marked, error otherwise
+     */
+    virtual IPFS::outcome::result<void> markResolved(const CID &cid) = 0;
+    /**
      * @brief Get node by id
      * @param cid - node id
      * @return operation result
      */
     virtual IPFS::outcome::result<std::shared_ptr<IPLDNode>> getNode(
         const CID &cid) const = 0;
+
+    /**
+     * @brief       Check if a CID was already resolved (no need to traverse it)
+     * @param[in]   cid Node CID to check
+     * @return      True if resolved, false otherwise
+     */
+    virtual IPFS::outcome::result<bool> isResolved(const CID &cid) const = 0;
 
     /**
      * @brief Remove node by id

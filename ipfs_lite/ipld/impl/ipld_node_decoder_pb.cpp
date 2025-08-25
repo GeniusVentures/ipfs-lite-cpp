@@ -30,6 +30,23 @@ namespace sgns::ipfs_lite::ipld {
     int size = pb_node_.links(index).tsize();
     return size < 0 ? 0 : static_cast<size_t>(size);
   }
+
+  size_t IPLDNodeDecoderPB::getDestinationsCount() const {
+    return pb_node_.destinations_size();
+  }
+
+  const std::string &IPLDNodeDecoderPB::getDestination(size_t index) const {
+    return pb_node_.destinations(index);
+  }
+
+  std::vector<std::string> IPLDNodeDecoderPB::getDestinations() const {
+    std::vector<std::string> destinations;
+    destinations.reserve(pb_node_.destinations_size());
+    for (int i = 0; i < pb_node_.destinations_size(); ++i) {
+      destinations.push_back(pb_node_.destinations(i));
+    }
+    return destinations;
+  }
 }  // namespace sgns::ipfs_lite::ipld
 
 OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::ipfs_lite::ipld, IPLDNodeDecoderPBError, error) {

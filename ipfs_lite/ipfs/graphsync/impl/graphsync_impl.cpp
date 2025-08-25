@@ -87,9 +87,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return local_requests_->newRejectedRequest(std::move(callback));
     }
 
-    if (selector.empty()) {
-      selector = kSelectorMatcher;
-    }
+    //if (selector.empty()) {
+    //  selector = kSelectorMatcher;
+    //}
 
     std::lock_guard<std::mutex> lock(requested_cids_mutex_);
     auto it = tracked_requests_.find(root_cid);

@@ -38,6 +38,23 @@ namespace sgns::ipfs_lite::ipfs {
     return rocksdb_->put(encoded_key, common::Buffer(std::move(value)));
   }
 
+  IPFS::outcome::result<void> RocksdbDatastore::seal(const CID &key) {
+    OUTCOME_TRY((auto &&, cid_string), key.toString());
+    cid_string+= "sealed";
+    common::Buffer key_buf;
+    key_buf.put(cid_string);
+    common::Buffer value_buf;
+    return rocksdb_->put(std::move(key_buf), std::move(value_buf));
+  }
+
+  IPFS::outcome::result<bool> RocksdbDatastore::is_sealed(const CID &key) const {
+    OUTCOME_TRY((auto &&, cid_string), key.toString());
+    cid_string+= "sealed";
+    common::Buffer key_buf;
+    key_buf.put(cid_string);
+    return rocksdb_->contains(std::move(key_buf));
+  }
+
   IPFS::outcome::result<RocksdbDatastore::Value> RocksdbDatastore::get(
       const CID &key) const {
     OUTCOME_TRY((auto &&, encoded_key), encode(key));
