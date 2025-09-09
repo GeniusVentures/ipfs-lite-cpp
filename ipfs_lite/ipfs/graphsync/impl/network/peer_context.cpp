@@ -140,7 +140,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     if (streams_.empty()) {
-      timer_ = scheduler_.schedule(kStreamCloseDelayMsec,
+      timer_ = scheduler_.schedule(kPeerCloseDelayMsec,  // Changed from kStreamCloseDelayMsec
                                    [wptr{weak_from_this()}]() {
                                      auto self = wptr.lock();
                                      if (self) {
@@ -150,6 +150,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
 
     shiftExpireTime(stream_ctx);
+
+    // Reset peer timeout when new stream is established (connection activity)
+    resetPeerTimeout();
 
     streams_.emplace(std::move(stream), std::move(stream_ctx));
   }
@@ -424,6 +427,9 @@ void PeerContext::onResponse(Message::Response &response) {
 
     Message &msg = msg_res.value();
 
+    // Reset peer timeout when data activity occurs (message received)
+    resetPeerTimeout();
+
     logger()->trace(
         "message from peer={}, {} blocks, {} requests, {} responses",
         str,
@@ -499,6 +505,9 @@ void PeerContext::onResponse(Message::Response &response) {
       return;
     }
 
+    // Reset peer timeout when data activity occurs (write completed)
+    resetPeerTimeout();
+
     // Check if stream still exists - it might have been closed during close()
     auto it = streams_.find(stream);
     if (it != streams_.end()) {
@@ -519,6 +528,15 @@ void PeerContext::onResponse(Message::Response &response) {
     if (it != streams_.end()) {
       shiftExpireTime(it->second);
     }
+  }
+
+  void PeerContext::resetPeerTimeout() {
+    if (closed_) {
+      return;
+    }
+    
+    // Reset the peer-level timeout when data activity occurs
+    timer_.reschedule(kPeerCloseDelayMsec);
   }
 
   void PeerContext::onStreamCleanupTimer() {
