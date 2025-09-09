@@ -1,4 +1,3 @@
-
 #ifndef CPP_IPFS_LITE_GRAPHSYNC_PEER_CONTEXT_HPP
 #define CPP_IPFS_LITE_GRAPHSYNC_PEER_CONTEXT_HPP
 
@@ -190,6 +189,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     /// Finds context by stream and shifts stream expiration time
     /// \param stream stream
     void shiftExpireTime(const StreamPtr &stream);
+
+    /// Resets peer timeout due to data activity (receiving or sending data)
+    void resetPeerTimeout();
 
     /// Closes all local (i.e. outbound)  requests
     /// \param status status code to be forwarded to callbacks
