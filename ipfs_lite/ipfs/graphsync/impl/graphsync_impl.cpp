@@ -104,8 +104,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     auto newRequest = local_requests_->newRequest(
         root_cid, selector, extensions, std::move(callback));
 
-    // Update or insert the tracking info
-    tracked_requests_[root_cid] = {RequestState::IN_PROGRESS, newRequest.request_id};
+    // Update or insert the tracking info with timestamps
+    auto now = scheduler_->now();
+    tracked_requests_[root_cid] = {RequestState::IN_PROGRESS, newRequest.request_id, now, now};
 
     if (newRequest.request_id > 0) {
       assert(newRequest.body);
@@ -138,13 +139,27 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
             std::lock_guard<std::mutex> lock(requested_cids_mutex_);
             auto it = tracked_requests_.find(root_cid.value());
             if (it != tracked_requests_.end()) {
-                // Update the state based on status
+                // Update activity time and state based on status
+                it->second.last_activity_time = scheduler_->now();
                 if (status == RS_FULL_CONTENT) {
                     it->second.state = RequestState::COMPLETED;
                 } else {
                     it->second.state = RequestState::FAILED;
                 }
                 logger()->trace("Request {} for CID {} completed with status {}", 
+                          request_id, root_cid.value().toString().value(), 
+                          statusCodeToString(status));
+            }
+        }
+    } else {
+        // Non-terminal status - update activity time to show progress
+        auto root_cid = local_requests_->getRequestRootCid(request_id);
+        if (root_cid) {
+            std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+            auto it = tracked_requests_.find(root_cid.value());
+            if (it != tracked_requests_.end()) {
+                it->second.last_activity_time = scheduler_->now();
+                logger()->trace("Request {} for CID {} received non-terminal status {}", 
                           request_id, root_cid.value().toString().value(), 
                           statusCodeToString(status));
             }
@@ -164,12 +179,19 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       return;
     }
     std::lock_guard<std::mutex> lock(requested_cids_mutex_);
-    if (tracked_requests_.find(root_cid) == tracked_requests_.end()) {
+    auto it = tracked_requests_.find(root_cid);
+    if (it == tracked_requests_.end()) {
         logger()->debug("Got a block, but we're not waiting for this root cid {} to cid{}", 
                      root_cid.toString().value(), cid.toString().value());
         //this is not an error, it's because the request grabs other blocks as well
         return;
     }
+    
+    // Update activity time since we received a block (actual data progress)
+    it->second.last_activity_time = scheduler_->now();
+    logger()->trace("Block received for CID {} (root: {}), activity updated", 
+                   cid.toString().value(), root_cid.toString().value());
+    
     logger()->trace("Block callback for CID {}", cid.toString().value());
     block_cb_(std::move(cid), std::move(data));
   }
@@ -275,9 +297,43 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void GraphsyncImpl::cleanupOldRequests() {
     std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+    auto now = scheduler_->now();
+    
     for (auto it = tracked_requests_.begin(); it != tracked_requests_.end();) {
-        // Only remove COMPLETED or FAILED requests
+        bool should_remove = false;
+        
+        // Remove COMPLETED or FAILED requests
         if (it->second.state != RequestState::IN_PROGRESS) {
+            should_remove = true;
+        } 
+        // Check for stalled IN_PROGRESS requests
+        else if (it->second.state == RequestState::IN_PROGRESS) {
+            auto time_since_activity = now - it->second.last_activity_time;
+            auto time_since_start = now - it->second.start_time;
+            
+            if (time_since_activity > kRequestActivityTimeoutMs) {
+                logger()->error("Request for CID {} has been stalled for {}ms (total: {}ms) - marking as FAILED", 
+                              it->first.toString().value(), time_since_activity, time_since_start);
+                it->second.state = RequestState::FAILED;
+                
+                // Cancel the request in local_requests to trigger callback
+                local_requests_->onResponse(it->second.request_id, RS_TIMEOUT, {});
+                
+                should_remove = true;
+            } else if (time_since_start > (kRequestActivityTimeoutMs * 2)) {
+                // Absolute timeout - request has been running too long regardless of activity
+                logger()->error("Request for CID {} has exceeded maximum duration {}ms - marking as FAILED", 
+                              it->first.toString().value(), time_since_start);
+                it->second.state = RequestState::FAILED;
+                
+                // Cancel the request in local_requests to trigger callback
+                local_requests_->onResponse(it->second.request_id, RS_TIMEOUT, {});
+                
+                should_remove = true;
+            }
+        }
+        
+        if (should_remove) {
             it = tracked_requests_.erase(it);
         } else {
             ++it;
@@ -302,6 +358,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     
     return it->second.state;
+  }
+
+  boost::optional<GraphsyncImpl::RequestInfo> GraphsyncImpl::getRequestInfo(const CID &root_cid) const {
+    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+    
+    auto it = tracked_requests_.find(root_cid);
+    if (it == tracked_requests_.end()) {
+      return boost::none;
+    }
+    
+    auto now = scheduler_->now();
+    return RequestInfo{
+      it->second.state,
+      it->second.request_id,
+      now - it->second.start_time,
+      now - it->second.last_activity_time
+    };
   }
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync

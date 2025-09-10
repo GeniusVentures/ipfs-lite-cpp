@@ -103,6 +103,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   /// Cleanup delay for stream, msec
   constexpr unsigned kStreamCloseDelayMsec = 60000;
 
+  /// Multiplier for timeout extension when window exhaustion is detected
+  constexpr unsigned kWindowExhaustionTimeoutMultiplier = 3;
+
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 
 #endif  // CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
