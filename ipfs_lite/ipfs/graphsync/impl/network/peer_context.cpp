@@ -535,8 +535,29 @@ void PeerContext::onResponse(Message::Response &response) {
       return;
     }
     
-    // Reset the peer-level timeout when data activity occurs
-    timer_.reschedule(kPeerCloseDelayMsec);
+    // Check if any streams have pending data that might indicate window exhaustion
+    bool has_window_exhaustion = false;
+    for (const auto &[stream, ctx] : streams_) {
+      if (ctx.queue) {
+        auto queue_state = ctx.queue->getState();
+        if (queue_state.pending_bytes > 0 && queue_state.writing_bytes == 0) {
+          has_window_exhaustion = true;
+          break;
+        }
+      }
+    }
+    
+    // Use extended timeout if window exhaustion is detected
+    unsigned timeout_ms = has_window_exhaustion ? 
+                         (kPeerCloseDelayMsec * kWindowExhaustionTimeoutMultiplier) : 
+                         kPeerCloseDelayMsec;
+    
+    timer_.reschedule(timeout_ms);
+    
+    if (has_window_exhaustion) {
+      logger()->trace("Peer timeout reset with window exhaustion extension: {}ms for peer {}", 
+                     timeout_ms, str);
+    }
   }
 
   void PeerContext::onStreamCleanupTimer() {
@@ -552,9 +573,28 @@ void PeerContext::onResponse(Message::Response &response) {
     std::vector<StreamPtr> timed_out;
 
     for (auto &[stream, ctx] : streams_) {
-      if (ctx.queue && ctx.queue->getState().writing_bytes > 0) {
-        continue;
+      if (ctx.queue) {
+        auto queue_state = ctx.queue->getState();
+        
+        // If actively writing, don't timeout
+        if (queue_state.writing_bytes > 0) {
+          continue;
+        }
+        
+        // If we have pending bytes but not actively writing, this could indicate
+        // window exhaustion - extend the timeout significantly to allow recovery
+        if (queue_state.pending_bytes > 0) {
+          // Extend timeout for window exhaustion scenarios
+          ctx.expire_time = std::max(ctx.expire_time, now + (kStreamCloseDelayMsec * kWindowExhaustionTimeoutMultiplier));
+          if (ctx.expire_time > max_expire_time) {
+            max_expire_time = ctx.expire_time;
+          }
+          logger()->trace("Window exhaustion detected for peer {}: {} pending bytes, extending timeout", 
+                         str, queue_state.pending_bytes);
+          continue;
+        }
       }
+      
       if (ctx.expire_time <= now) {
         timed_out.push_back(stream);
       } else if (ctx.expire_time > max_expire_time) {
