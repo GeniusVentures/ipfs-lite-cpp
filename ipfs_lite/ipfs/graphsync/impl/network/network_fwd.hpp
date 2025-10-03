@@ -1,4 +1,3 @@
-
 #ifndef CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
 #define CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
 #include <deque>
@@ -99,10 +98,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   constexpr size_t kMaxPendingBytes = 64 * 1024 * 1024;
 
   /// Cleanup delay for PeerContext, msec
-  constexpr unsigned kPeerCloseDelayMsec = 30000;
+  constexpr unsigned kPeerCloseDelayMsec = 60000;  // Changed from 30000 to match stream timeout
 
   /// Cleanup delay for stream, msec
   constexpr unsigned kStreamCloseDelayMsec = 60000;
+
+  /// Multiplier for timeout extension when window exhaustion is detected
+  constexpr unsigned kWindowExhaustionTimeoutMultiplier = 3;
 
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 

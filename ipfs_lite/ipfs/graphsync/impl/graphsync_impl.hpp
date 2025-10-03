@@ -34,6 +34,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     struct RequestTrackingInfo {
       RequestState state;
       RequestId request_id;
+      uint64_t last_activity_time;  // Last time we received data or response for this request
+      uint64_t start_time;          // When the request was initiated
     };
     /// Ctor.
     /// \param host libp2p host object
@@ -47,6 +49,15 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     ~GraphsyncImpl() override;
 
     IPFS::outcome::result<Graphsync::RequestState> getRequestState(const CID &root_cid) const override;
+
+    /// Get detailed request information for debugging
+    struct RequestInfo {
+      RequestState state;
+      RequestId request_id;
+      uint64_t time_since_start;
+      uint64_t time_since_activity;
+    };
+    boost::optional<RequestInfo> getRequestInfo(const CID &root_cid) const;
 
    private:
     /// Callback from LocalRequests module. Cancels a request made by this host
@@ -111,6 +122,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   };
   constexpr unsigned kCleanupIntervalMs = 120000;
+  
+  /// Maximum time a request can be stalled without activity before being considered failed
+  constexpr unsigned kRequestActivityTimeoutMs = 180000;  // 3 minutes
 }  // namespace sgns::ipfs_lite::ipfs::graphsync
 
 #endif  // CPP_IPFS_LITE_GRAPHSYNC_IMPL_HPP
