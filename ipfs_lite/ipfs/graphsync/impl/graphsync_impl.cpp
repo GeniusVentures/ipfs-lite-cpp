@@ -283,8 +283,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           status = RS_FULL_CONTENT;
           status_holder->status = RS_FULL_CONTENT;
           
-          // Send the positive response immediately
-          self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+          // Verify we're still started and can send responses before attempting
+          if (self->started_) {
+            // Send the positive response immediately
+            self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+          } else {
+            logger()->debug("Skipping response send - GraphSync no longer started for request {}", request_copy.id);
+          }
           
           // Remove all tracking for this request
           self->reqgenerator_->removeRequest(request_copy.id);
@@ -296,8 +301,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           
           // Check if all other instances also reported NOT_FOUND
           if (self->reqgenerator_->allStatusesNotFound(request_copy.id)) {
-            // All instances reported NOT_FOUND, safe to send the response
-            self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+            // Verify we're still started before attempting to send
+            if (self->started_) {
+              // All instances reported NOT_FOUND, safe to send the response
+              self->network_->sendResponse(peer_copy, request_copy.id, status, request_copy.extensions);
+            } else {
+              logger()->debug("Skipping NOT_FOUND response send - GraphSync no longer started for request {}", request_copy.id);
+            }
             
             // Remove all tracking for this request
             self->reqgenerator_->removeRequest(request_copy.id);

@@ -61,8 +61,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void MessageQueue::beginWrite(SharedData buffer) {
-    assert(buffer);
-    assert(state_.stream);
+    if (!buffer) {
+      logger()->error("beginWrite: null buffer provided");
+      feedback_(state_.stream, Error::MESSAGE_WRITE_ERROR);
+      return;
+    }
+
+    if (!state_.stream) {
+      logger()->error("beginWrite: stream is null - peer likely disconnected");
+      feedback_(nullptr, Error::MESSAGE_WRITE_ERROR);
+      return;
+    }
+
+    if (state_.stream->isClosedForWrite()) {
+      logger()->error("beginWrite: stream is closed for write - peer likely disconnected");
+      feedback_(state_.stream, Error::MESSAGE_WRITE_ERROR);
+      return;
+    }
 
     state_.writing_bytes = buffer->size();
 
