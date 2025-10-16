@@ -133,33 +133,36 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     if (!started_) {
       return;
     }
-    if (isTerminal(status)) {
-        auto root_cid = local_requests_->getRequestRootCid(request_id);
-        if (root_cid) {
-            std::lock_guard<std::mutex> lock(requested_cids_mutex_);
-            auto it = tracked_requests_.find(root_cid.value());
-            if (it != tracked_requests_.end()) {
-                // Update activity time and state based on status
-                it->second.last_activity_time = scheduler_->now();
+    
+    auto root_cid = local_requests_->getRequestRootCid(request_id);
+    if (root_cid) {
+        std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+        auto it = tracked_requests_.find(root_cid.value());
+        if (it != tracked_requests_.end()) {
+            // Update activity time for any response
+            it->second.last_activity_time = scheduler_->now();
+            
+            if (isTerminal(status)) {
                 if (status == RS_FULL_CONTENT) {
-                    it->second.state = RequestState::COMPLETED;
+                    // Only mark as completed if we actually received blocks
+                    // (the state might already be COMPLETED from onBlock)
+                    if (it->second.state == RequestState::IN_PROGRESS) {
+                        // We got success response but no blocks yet - this shouldn't normally happen
+                        logger()->warn("Request {} for CID {} got RS_FULL_CONTENT but no blocks received yet", 
+                                      request_id, root_cid.value().toString().value());
+                    } else if (it->second.state == RequestState::COMPLETED) {
+                        logger()->trace("Request {} for CID {} confirmed completed with RS_FULL_CONTENT", 
+                                      request_id, root_cid.value().toString().value());
+                    }
                 } else {
+                    // Error cases
                     it->second.state = RequestState::FAILED;
+                    logger()->trace("Request {} for CID {} failed with status {}", 
+                              request_id, root_cid.value().toString().value(), 
+                              statusCodeToString(status));
                 }
-                logger()->trace("Request {} for CID {} completed with status {}", 
-                          request_id, root_cid.value().toString().value(), 
-                          statusCodeToString(status));
-            }
-        }
-    } else {
-        // Non-terminal status - update activity time to show progress
-        auto root_cid = local_requests_->getRequestRootCid(request_id);
-        if (root_cid) {
-            std::lock_guard<std::mutex> lock(requested_cids_mutex_);
-            auto it = tracked_requests_.find(root_cid.value());
-            if (it != tracked_requests_.end()) {
-                it->second.last_activity_time = scheduler_->now();
-                logger()->trace("Request {} for CID {} received non-terminal status {}", 
+            } else {
+                logger()->trace("Request {} for CID {} received status {}", 
                           request_id, root_cid.value().toString().value(), 
                           statusCodeToString(status));
             }
@@ -178,22 +181,40 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       logger()->error("Got a block, but Graphsync Not Started");
       return;
     }
-    std::lock_guard<std::mutex> lock(requested_cids_mutex_);
-    auto it = tracked_requests_.find(root_cid);
-    if (it == tracked_requests_.end()) {
-        logger()->debug("Got a block, but we're not waiting for this root cid {} to cid{}", 
-                     root_cid.toString().value(), cid.toString().value());
-        //this is not an error, it's because the request grabs other blocks as well
-        return;
+    
+    // Check if this is a tracked request before processing
+    bool should_mark_completed = false;
+    {
+      std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+      auto it = tracked_requests_.find(root_cid);
+      if (it == tracked_requests_.end()) {
+          logger()->debug("Got a block, but we're not waiting for this root cid {} to cid{}", 
+                       root_cid.toString().value(), cid.toString().value());
+          //this is not an error, it's because the request grabs other blocks as well
+          return;
+      }
+      
+      // Update activity time since we received a block (actual data progress)
+      it->second.last_activity_time = scheduler_->now();
+      
+      // Check if we should mark as completed after the callback
+      should_mark_completed = (it->second.state == RequestState::IN_PROGRESS);
     }
     
-    // Update activity time since we received a block (actual data progress)
-    it->second.last_activity_time = scheduler_->now();
-    logger()->trace("Block received for CID {} (root: {}), activity updated", 
-                   cid.toString().value(), root_cid.toString().value());
-    
+    // Call the block callback first - this processes the actual data
     logger()->trace("Block callback for CID {}", cid.toString().value());
     block_cb_(std::move(cid), std::move(data));
+    
+    // Only mark as completed AFTER the block has been successfully processed
+    if (should_mark_completed) {
+        std::lock_guard<std::mutex> lock(requested_cids_mutex_);
+        auto it = tracked_requests_.find(root_cid);
+        if (it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS) {
+            it->second.state = RequestState::COMPLETED;
+            logger()->trace("Request {} for root CID {} marked as COMPLETED (block processed for CID {})", 
+                           it->second.request_id, root_cid.toString().value(), cid.toString().value());
+        }
+    }
   }
 
   void GraphsyncImpl::onRemoteRequest(const PeerId &from, Message::Request request) {
