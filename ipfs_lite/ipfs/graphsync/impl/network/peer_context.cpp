@@ -184,9 +184,21 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void PeerContext::enqueueRequest(RequestId request_id,
                                    SharedData request_body) {
+    if (closed_) {
+      logger()->warn("enqueueRequest: PeerContext is already closed for peer {}", str);
+      // Immediately notify failure for this request since the context is closed
+      for (const auto &wfb : graphsync_feedbacks_) {
+        if (auto fb = wfb.lock()) {
+          fb->onResponse(peer, request_id, RS_INTERNAL_ERROR, {});
+        }
+      }
+      return;
+    }
+    
     if (!requests_endpoint_) {
       logger()->error("enqueueRequest: Internal error");
       close(RS_INTERNAL_ERROR);
+      return;
     }
     auto res = requests_endpoint_->enqueue(std::move(request_body));
     if (res) {
@@ -200,6 +212,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
   void PeerContext::cancelRequest(RequestId request_id,
                                   SharedData request_body) {
+    if (closed_) {
+      logger()->trace("cancelRequest: PeerContext is already closed for peer {}", str);
+      return;
+    }
+    
     local_request_ids_.erase(request_id);
     if (requests_endpoint_) {
       if (requests_endpoint_->enqueue(std::move(request_body))) {
@@ -317,6 +334,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
 
     stream->close(
         [stream](IPFS::outcome::result<void>) { logger()->trace("stream closed"); });
+    
+    // If this was the last stream and we're closing due to an error,
+    // close the entire PeerContext to prevent new requests from being queued to a broken peer
+    // Only do this if not already closing (to avoid recursion)
+    if (!closed_ && streams_.empty() && isError(status)) {
+      close(status);
+    }
   }
 
   void PeerContext::closeLocalRequests(ResponseStatusCode status) {
@@ -325,7 +349,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       for (auto id : ids) {
         for (const auto &wfb : graphsync_feedbacks_) {
           if (auto fb = wfb.lock()) {
-            fb->onResponse(peer, id, close_status_, {});
+            fb->onResponse(peer, id, status, {});  // Use the status parameter, not close_status_
           }
         }
       }
