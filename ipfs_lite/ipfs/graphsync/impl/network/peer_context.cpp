@@ -121,7 +121,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           } else {
             logger()->error( "cannot adjustWindowSize, peer={} with size {}", self->str, GRAHPSYNC_WINDOW_SIZE );
             if (self->getState() == is_connecting) {
-              self->closeLocalRequests(RS_CANNOT_CONNECT);
+              // Close the entire PeerContext, not just local requests
+              self->close(RS_CANNOT_CONNECT);
             }
           }
         }
@@ -168,7 +169,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       logger()->error(
           "cannot connect, peer={}, msg='{}'", str, rstream.error().message());
       if (getState() == is_connecting) {
-        closeLocalRequests(RS_CANNOT_CONNECT);
+        // Close the entire PeerContext, not just local requests
+        // This prevents the PeerContext from being reused in a broken state
+        close(RS_CANNOT_CONNECT);
       }
     }
    
