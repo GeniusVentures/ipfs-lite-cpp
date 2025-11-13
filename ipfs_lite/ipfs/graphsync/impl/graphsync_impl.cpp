@@ -157,7 +157,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                 } else {
                     // Error cases
                     it->second.state = RequestState::FAILED;
-                    logger()->trace("Request {} for CID {} failed with status {}", 
+                    logger()->debug("Request {} for CID {} failed with status {}", 
                               request_id, root_cid.value().toString().value(), 
                               statusCodeToString(status));
                 }
@@ -166,7 +166,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                           request_id, root_cid.value().toString().value(), 
                           statusCodeToString(status));
             }
+        } else {
+            logger()->warn("onResponse for request_id {} (CID {}) but not found in tracked_requests_", 
+                          request_id, root_cid.value().toString().value());
         }
+    } else {
+        logger()->warn("onResponse for request_id {} but could not find root CID", request_id);
     }
     local_requests_->onResponse(request_id, status, std::move(extensions));
   }
