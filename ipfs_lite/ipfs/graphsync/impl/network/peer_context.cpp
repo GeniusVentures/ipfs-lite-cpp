@@ -167,7 +167,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       onNewStream(std::move(rstream.value()));
     } else {
       logger()->error(
-          "cannot connect, peer={}, msg='{}'", str, rstream.error().message());
+          "cannot connect, peer={}, msg='{}' state={}", str, rstream.error().message(), getState());
       if (getState() == is_connecting) {
         // Close the entire PeerContext, not just local requests
         // This prevents the PeerContext from being reused in a broken state
@@ -188,7 +188,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   void PeerContext::enqueueRequest(RequestId request_id,
                                    SharedData request_body) {
     if (closed_) {
-      logger()->warn("enqueueRequest: PeerContext is already closed for peer {}", str);
+      logger()->warn("enqueueRequest: PeerContext is already closed for peer {}, calling onResponse with RS_INTERNAL_ERROR", str);
       // Immediately notify failure for this request since the context is closed
       for (const auto &wfb : graphsync_feedbacks_) {
         if (auto fb = wfb.lock()) {
@@ -199,15 +199,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
     
     if (!requests_endpoint_) {
-      logger()->error("enqueueRequest: Internal error");
+      logger()->error("enqueueRequest: Internal error, calling close()");
       close(RS_INTERNAL_ERROR);
       return;
     }
     auto res = requests_endpoint_->enqueue(std::move(request_body));
     if (res) {
       local_request_ids_.insert(request_id);
+      logger()->debug("enqueueRequest: request_id {} added to local_request_ids_ for peer {}", request_id, str);
     } else {
-      logger()->error("enqueueRequest: outbound buffers overflow for peer {}",
+      logger()->error("enqueueRequest: outbound buffers overflow for peer {}, calling close()",
                       str);
       close(RS_SLOW_STREAM);
     }
@@ -347,9 +348,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
   }
 
   void PeerContext::closeLocalRequests(ResponseStatusCode status) {
+    logger()->debug("closeLocalRequests: peer={} status={} num_requests={}", 
+                   str, statusCodeToString(status), local_request_ids_.size());
     if (!local_request_ids_.empty()) {
       std::set<RequestId> ids = std::move(local_request_ids_);
       for (auto id : ids) {
+        logger()->debug("closeLocalRequests: calling onResponse for request_id {} with status {}", 
+                       id, statusCodeToString(status));
         for (const auto &wfb : graphsync_feedbacks_) {
           if (auto fb = wfb.lock()) {
             fb->onResponse(peer, id, status, {});  // Use the status parameter, not close_status_
