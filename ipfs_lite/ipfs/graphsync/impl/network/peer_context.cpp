@@ -307,6 +307,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       closeStream(s, status);
     }
 
+    if (requests_endpoint_) {
+      closeLocalRequests(status);
+    }
+    
     if (status != RS_REJECTED_LOCALLY) {
       timer_ = scheduler_.schedule(0, [wptr{weak_from_this()}]() {
         auto self = wptr.lock();
