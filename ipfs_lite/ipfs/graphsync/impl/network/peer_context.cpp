@@ -644,6 +644,12 @@ void PeerContext::onResponse(Message::Response &response) {
       closeStream(std::move(stream), RS_TIMEOUT);
     }
 
+    // If closeStream closed the peer and cleared streams_, don't reschedule
+    // the timer with a stale handle (avoids scheduler assert on reschedule).
+    if (closed_ || streams_.empty()) {
+      return;
+    }
+
     if (!streams_.empty() && max_expire_time > now) {
       timer_.reschedule(max_expire_time - now);
     } else {
