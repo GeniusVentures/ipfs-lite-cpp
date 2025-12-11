@@ -113,14 +113,16 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
     {
-        std::cout << "Schedule next provide event" << std::endl;
-        //Set the timer to expire in 5 minutes
-        timer_.expires_after(std::chrono::seconds(30000));
+        std::cout << "Schedule next provide event in 22 hours" << std::endl;
+        // Re-provide every 22 hours (before 24h TTL expires) to maintain DHT presence
+        // This ensures continuous discoverability for long-running nodes
+        timer_.expires_after(std::chrono::hours(8));
 
         //Start an asynchronous wait
         timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
             if (!ec) {
-                //re-call ProvideCID
+                std::cout << "Re-providing CID to maintain DHT presence" << std::endl;
+                //re-call ProvideCID to refresh our presence in the DHT
                 ProvideCID(key, need_err);
             }
             
