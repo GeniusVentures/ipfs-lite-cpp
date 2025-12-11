@@ -75,6 +75,11 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                       ResponseStatusCode status,
                       const std::vector<Extension> &extensions);
 
+    /// Keeps peer connection alive by resetting timeout
+    /// Should be called during long-running operations to prevent timeout
+    /// \param peer peer ID
+    void keepPeerAlive(const PeerId &peer);
+
    private:
     /// Callback from peer context that it's closed
     /// \param peer peer ID
