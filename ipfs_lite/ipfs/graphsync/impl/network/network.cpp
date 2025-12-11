@@ -156,6 +156,19 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     ctx->sendResponse(request_id, status, extensions);
   }
 
+  void Network::keepPeerAlive(const PeerId &peer) {
+    if (!started_) {
+      return;
+    }
+
+    auto ctx = findContext(peer, false);
+    if (!ctx) {
+      return;
+    }
+
+    ctx->keepAlive();
+  }
+
   void Network::peerClosed(const PeerId &peer, ResponseStatusCode status) {
     auto it = peers_.find(peer);
     if (it != peers_.end()) {

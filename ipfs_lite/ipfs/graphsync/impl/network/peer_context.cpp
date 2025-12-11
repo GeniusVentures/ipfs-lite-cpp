@@ -292,6 +292,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
     }
   }
 
+  void PeerContext::keepAlive() {
+    resetPeerTimeout();
+  }
+
   void PeerContext::close(ResponseStatusCode status) {
     if (closed_) {
       return;

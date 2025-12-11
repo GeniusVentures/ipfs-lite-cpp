@@ -101,6 +101,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
                       ResponseStatusCode status,
                       const std::vector<Extension> &extensions);
 
+    /// Keeps this peer connection alive by resetting timeout
+    /// Should be called during long-running operations
+    void keepAlive();
+
     /// Closes all streams to/from this peer
     /// \param status close reason to be forwarded to local request callback,
     /// where RS_REJECTED_LOCALLY indicates that peer was closed by the owning
