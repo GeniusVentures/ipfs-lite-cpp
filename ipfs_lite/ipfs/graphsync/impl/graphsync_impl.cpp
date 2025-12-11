@@ -255,6 +255,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         return;
       }
       
+      // Keep peer alive at the start of processing
+      self->network_->keepPeerAlive(peer_copy);
+      
       bool send_response = true;
       ResponseStatusCode status = RS_REQUEST_FAILED;
       
@@ -262,6 +265,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
         bool data_present = !data.empty();
         
         if (data_present) {
+          // Keep peer alive during block processing
+          self->network_->keepPeerAlive(peer_copy);
+          
           // Use the original shared_ptr directly
           if (!self->network_->addBlockToResponse(peer_copy, request_copy.id, cid, data)) {
             send_response = false;
@@ -288,6 +294,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           status = RS_FULL_CONTENT;
           status_holder->status = RS_FULL_CONTENT;
           
+          // Keep peer alive before sending response
+          self->network_->keepPeerAlive(peer_copy);
+          
           // Verify we're still started and can send responses before attempting
           if (self->started_) {
             // Send the positive response immediately
@@ -306,6 +315,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           
           // Check if all other instances also reported NOT_FOUND
           if (self->reqgenerator_->allStatusesNotFound(request_copy.id)) {
+            // Keep peer alive before sending response
+            self->network_->keepPeerAlive(peer_copy);
+            
             // Verify we're still started before attempting to send
             if (self->started_) {
               // All instances reported NOT_FOUND, safe to send the response
