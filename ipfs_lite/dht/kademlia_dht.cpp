@@ -21,6 +21,8 @@ namespace sgns::ipfs_lite::ipfs::dht
         }
         
         kademlia_->start();
+        // Bootstrap once at startup to populate routing table
+        kademlia_->bootstrap();
     }
 
     void IpfsDHT::bootstrap()
@@ -45,7 +47,6 @@ namespace sgns::ipfs_lite::ipfs::dht
         else
         {
             std::cout << "actually find providers" << std::endl;
-            kademlia_->bootstrap();
             [[maybe_unused]] auto res = kademlia_->findProviders(
                 kadCID.value(), 0, onProvidersFound);
             return true;
@@ -57,7 +58,6 @@ namespace sgns::ipfs_lite::ipfs::dht
         std::function<void(libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound)> onProvidersFound)
     {
         //std::cout << "actually find providers" << std::endl;
-        kademlia_->bootstrap();
         [[maybe_unused]] auto res = kademlia_->findProviders(
             key, 0, onProvidersFound);
         return true;
@@ -102,7 +102,6 @@ namespace sgns::ipfs_lite::ipfs::dht
     )
     {
         std::cout << "Provide CID:" << force << std::endl;
-        kademlia_->bootstrap();
         kademlia_->provide(key, need_error);
         //Schedule next provide if not a force
         if(!force)
@@ -113,9 +112,9 @@ namespace sgns::ipfs_lite::ipfs::dht
 
     void IpfsDHT::ScheduleProvideCID(libp2p::protocol::kademlia::ContentId key, bool need_err)
     {
-        std::cout << "Schedule next provide event in 22 hours" << std::endl;
-        // Re-provide every 22 hours (before 24h TTL expires) to maintain DHT presence
-        // This ensures continuous discoverability for long-running nodes
+        std::cout << "Schedule next provide event in 8 hours" << std::endl;
+        // Re-provide every 8 hours to maintain DHT presence
+        // With Kubo's 48h TTL, this provides multiple refresh opportunities
         timer_.expires_after(std::chrono::hours(8));
 
         //Start an asynchronous wait
