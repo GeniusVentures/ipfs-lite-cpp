@@ -115,7 +115,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         std::cout << "Schedule next provide event in 8 hours" << std::endl;
         // Re-provide every 8 hours to maintain DHT presence
         // With Kubo's 48h TTL, this provides multiple refresh opportunities
-        timer_.expires_after(std::chrono::hours(8));
+        timer_.expires_after(std::chrono::hours(1));
 
         //Start an asynchronous wait
         timer_.async_wait([this, key, need_err](const boost::system::error_code& ec) {
