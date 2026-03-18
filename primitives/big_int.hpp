@@ -6,33 +6,42 @@
 
 #include "codec/cbor/streams_annotation.hpp"
 
-namespace sgns::primitives {
-  using BigInt = boost::multiprecision::cpp_int;
-}  // namespace sgns::primitives
+namespace sgns::primitives
+{
+    using BigInt = boost::multiprecision::cpp_int;
+}
 
-namespace boost::multiprecision {
-  CBOR_ENCODE(cpp_int, big_int) {
-    std::vector<uint8_t> bytes;
-    if (big_int != 0) {
-      bytes.push_back(big_int < 0 ? 1 : 0);
-      export_bits(big_int, std::back_inserter(bytes), 8);
+namespace boost::multiprecision
+{
+    CBOR_ENCODE( cpp_int, big_int )
+    {
+        std::vector<uint8_t> bytes;
+        if ( big_int != 0 )
+        {
+            bytes.push_back( big_int < 0 ? 1 : 0 );
+            export_bits( big_int, std::back_inserter( bytes ), 8 );
+        }
+        return s << bytes;
     }
-    return s << bytes;
-  }
 
-  CBOR_DECODE(cpp_int, big_int) {
-    std::vector<uint8_t> bytes;
-    s >> bytes;
-    if (bytes.empty()) {
-      big_int = 0;
-    } else {
-      import_bits(big_int, bytes.begin() + 1, bytes.end());
-      if (bytes[0] == 1) {
-        big_int = -big_int;
-      }
+    CBOR_DECODE( cpp_int, big_int )
+    {
+        std::vector<uint8_t> bytes;
+        s >> bytes;
+        if ( bytes.empty() )
+        {
+            big_int = 0;
+        }
+        else
+        {
+            import_bits( big_int, bytes.begin() + 1, bytes.end() );
+            if ( bytes[0] == 1 )
+            {
+                big_int = -big_int;
+            }
+        }
+        return s;
     }
-    return s;
-  }
-}  // namespace boost::multiprecision
+}
 
-#endif  // CPP_IPFS_LITE_PRIMITIVES_BIG_INT_HPP
+#endif // CPP_IPFS_LITE_PRIMITIVES_BIG_INT_HPP

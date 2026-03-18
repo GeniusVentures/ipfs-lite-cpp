@@ -8,31 +8,33 @@
 
 using libp2p::peer::PeerId;
 
-namespace sgns::codec::cbor {
-  /// Default value of PeerId for CBOR stream decoder
-  template <>
-  inline PeerId kDefaultT<PeerId>() {
-    return PeerId::fromHash(
-               libp2p::multi::Multihash::create(libp2p::multi::sha256, {})
-                   .value())
-        .value();
-  }
-}  // namespace sgns::codec::cbor
+namespace sgns::codec::cbor
+{
+    /// Default value of PeerId for CBOR stream decoder
+    template <>
+    inline PeerId kDefaultT<PeerId>()
+    {
+        return PeerId::fromHash( libp2p::multi::Multihash::create( libp2p::multi::sha256, {} ).value() ).value();
+    }
+}
 
-namespace libp2p::peer {
+namespace libp2p::peer
+{
 
-  CBOR_ENCODE(PeerId, peer) {
-    return s << peer.toVector();
-  }
+    CBOR_ENCODE( PeerId, peer )
+    {
+        return s << peer.toVector();
+    }
 
-  CBOR_DECODE(PeerId, peer) {
-    std::vector<uint8_t> bytes;
-    s >> bytes;
-    _OUTCOME_EXCEPT_2(_UNIQUE_NAME(_r), peer_id, PeerId::fromBytes(bytes));
-    peer = std::move(peer_id);
-    return s;
-  }
+    CBOR_DECODE( PeerId, peer )
+    {
+        std::vector<uint8_t> bytes;
+        s >> bytes;
+        _OUTCOME_EXCEPT_2( _UNIQUE_NAME( _r ), peer_id, PeerId::fromBytes( bytes ) );
+        peer = std::move( peer_id );
+        return s;
+    }
 
-}  // namespace libp2p::peer
+}
 
-#endif  // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_ID_HPP
+#endif // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_ID_HPP

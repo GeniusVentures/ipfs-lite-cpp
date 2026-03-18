@@ -5,37 +5,40 @@
 // #include "common/logger.hpp"
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
 #include "common/logger.hpp"
-namespace sgns::ipfs_lite::ipfs::graphsync {
 
-  /// Graphsync internal error codes
-  enum class Error {
-    MESSAGE_SIZE_OUT_OF_BOUNDS = 1,
-    MESSAGE_PARSE_ERROR,
-    MESSAGE_VALIDATION_FAILED,
-    MESSAGE_SERIALIZE_ERROR,
-    STREAM_NOT_READABLE,
-    MESSAGE_READ_ERROR,
-    STREAM_NOT_WRITABLE,
-    WRITE_QUEUE_OVERFLOW,
-    MESSAGE_WRITE_ERROR,
-  };
+namespace sgns::ipfs_lite::ipfs::graphsync
+{
 
-  /// Request ID defined as int32 by graphsync protocol, unfortunately
-  using RequestId = int32_t;
+    /// Graphsync internal error codes
+    enum class Error
+    {
+        MESSAGE_SIZE_OUT_OF_BOUNDS = 1,
+        MESSAGE_PARSE_ERROR,
+        MESSAGE_VALIDATION_FAILED,
+        MESSAGE_SERIALIZE_ERROR,
+        STREAM_NOT_READABLE,
+        MESSAGE_READ_ERROR,
+        STREAM_NOT_WRITABLE,
+        WRITE_QUEUE_OVERFLOW,
+        MESSAGE_WRITE_ERROR,
+    };
 
-  /// Reusing ByteArray from libp2p
-  using libp2p::common::ByteArray;
+    /// Request ID defined as int32 by graphsync protocol, unfortunately
+    using RequestId = int32_t;
 
-  /// Using shared ptrs for outgoing raw messages
-  using SharedData = std::shared_ptr<const ByteArray>;
+    /// Reusing ByteArray from libp2p
+    using libp2p::common::ByteArray;
 
-  /// Using libp2p and its peer Ids
-  using libp2p::peer::PeerId;
+    /// Using shared ptrs for outgoing raw messages
+    using SharedData = std::shared_ptr<const ByteArray>;
 
-  /// Returns shared logger for graphsync modules
-  common::Logger logger();
-}  // namespace sgns::ipfs_lite::ipfs::graphsync
+    /// Using libp2p and its peer Ids
+    using libp2p::peer::PeerId;
 
-OUTCOME_HPP_DECLARE_ERROR_2(sgns::ipfs_lite::ipfs::graphsync, Error);
+    /// Returns shared logger for graphsync modules
+    common::Logger logger();
+}
 
-#endif  // CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP
+OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipfs::graphsync, Error );
+
+#endif // CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP

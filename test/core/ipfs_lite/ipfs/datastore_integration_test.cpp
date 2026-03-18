@@ -9,59 +9,59 @@
 #include "testutil/literals.hpp"
 #include "testutil/outcome.hpp"
 
+using libp2p::multi::HashType;
+using libp2p::multi::MulticodecType;
+using libp2p::multi::Multihash;
 using sgns::CID;
 using sgns::common::Buffer;
 using sgns::ipfs_lite::ipfs::IpfsDatastore;
 using sgns::ipfs_lite::ipfs::IpfsDatastoreError;
 using sgns::ipfs_lite::ipfs::RocksdbDatastore;
-using libp2p::multi::HashType;
-using libp2p::multi::MulticodecType;
-using libp2p::multi::Multihash;
 
-struct DatastoreIntegrationTest : public ::testing::Test {
-  using Options = rocksdb::Options;
+struct DatastoreIntegrationTest : public ::testing::Test
+{
+    using Options = rocksdb::Options;
 
-  Options options{};
+    Options options{};
 
-  CID cid1{
-      CID::Version::V1,
-      MulticodecType::Code::SHA2_256,
-      Multihash::create(HashType::sha256,
-                        "0123456789ABCDEF0123456789ABCDEF"_unhex)
-          .value()};
-  CID cid2{
-      CID::Version::V1,
-      MulticodecType::Code::SHA2_256,
-      Multihash::create(HashType::sha256,
-                        "FEDCBA9876543210FEDCBA9876543210"_unhex)
-          .value()};
+    CID cid1{ CID::Version::V1,
+              MulticodecType::Code::SHA2_256,
+              Multihash::create( HashType::sha256, "0123456789ABCDEF0123456789ABCDEF"_unhex ).value() };
+    CID cid2{ CID::Version::V1,
+              MulticodecType::Code::SHA2_256,
+              Multihash::create( HashType::sha256, "FEDCBA9876543210FEDCBA9876543210"_unhex ).value() };
 
-  Buffer value{"0123456789ABCDEF0123456789ABCDEF"_unhex};
+    Buffer value{ "0123456789ABCDEF0123456789ABCDEF"_unhex };
 
-  static boost::filesystem::path makeTempPath() {
-    boost::filesystem::path global_temp_dir =
-        boost::filesystem::temp_directory_path();
-    return boost::filesystem::unique_path(
-        global_temp_dir.append("%%%%%-%%%%%-%%%%%"));
-  }
-
-  void SetUp() override {
-    rocksdb_path = makeTempPath();
-    options.create_if_missing = true;
-    auto result = RocksdbDatastore::create(rocksdb_path.string(), options);
-    if (!result) boost::throw_exception(std::system_error(result.error()));
-    datastore = result.value();
-  }
-
-  void TearDown() override {
-    datastore.reset();
-    if (boost::filesystem::exists(rocksdb_path)) {
-      boost::filesystem::remove_all(rocksdb_path);
+    static boost::filesystem::path makeTempPath()
+    {
+        boost::filesystem::path global_temp_dir = boost::filesystem::temp_directory_path();
+        return boost::filesystem::unique_path( global_temp_dir.append( "%%%%%-%%%%%-%%%%%" ) );
     }
-  }
 
-  boost::filesystem::path rocksdb_path;
-  std::shared_ptr<RocksdbDatastore> datastore;
+    void SetUp() override
+    {
+        rocksdb_path              = makeTempPath();
+        options.create_if_missing = true;
+        auto result               = RocksdbDatastore::create( rocksdb_path.string(), options );
+        if ( !result )
+        {
+            boost::throw_exception( std::system_error( result.error() ) );
+        }
+        datastore = result.value();
+    }
+
+    void TearDown() override
+    {
+        datastore.reset();
+        if ( boost::filesystem::exists( rocksdb_path ) )
+        {
+            boost::filesystem::remove_all( rocksdb_path );
+        }
+    }
+
+    boost::filesystem::path           rocksdb_path;
+    std::shared_ptr<RocksdbDatastore> datastore;
 };
 
 /**
@@ -70,9 +70,10 @@ struct DatastoreIntegrationTest : public ::testing::Test {
  * cid
  * @then all operation succeeded, obtained value is equal to original value
  */
-TEST_F(DatastoreIntegrationTest, ContainsExistingTrueSuccess) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_EQ(datastore->contains(cid1), true);
+TEST_F( DatastoreIntegrationTest, ContainsExistingTrueSuccess )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_EQ( datastore->contains( cid1 ), true );
 }
 
 /**
@@ -80,9 +81,10 @@ TEST_F(DatastoreIntegrationTest, ContainsExistingTrueSuccess) {
  * @when put cid1 with value into datastore and check if datastore contains cid2
  * @then all operations succeed and datastore doesn't contains cid2
  */
-TEST_F(DatastoreIntegrationTest, ContainsNotExistingFalseSuccess) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_EQ(datastore->contains(cid2), false);
+TEST_F( DatastoreIntegrationTest, ContainsNotExistingFalseSuccess )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_EQ( datastore->contains( cid2 ), false );
 }
 
 /**
@@ -90,9 +92,10 @@ TEST_F(DatastoreIntegrationTest, ContainsNotExistingFalseSuccess) {
  * @when put cid with value into datastore @and then get value by cid
  * @then all operations succeed
  */
-TEST_F(DatastoreIntegrationTest, GetExistingSuccess) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_EQ(datastore->get(cid1), value);
+TEST_F( DatastoreIntegrationTest, GetExistingSuccess )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_EQ( datastore->get( cid1 ), value );
 }
 
 /**
@@ -100,9 +103,10 @@ TEST_F(DatastoreIntegrationTest, GetExistingSuccess) {
  * @when put cid1 with value into datastore @and then get value by cid2
  * @then put operation succeeds, get operation fails
  */
-TEST_F(DatastoreIntegrationTest, GetNotExistingFailure) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_ERROR(IpfsDatastoreError::NOT_FOUND, datastore->get(cid2));
+TEST_F( DatastoreIntegrationTest, GetNotExistingFailure )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_ERROR( IpfsDatastoreError::NOT_FOUND, datastore->get( cid2 ) );
 }
 
 /**
@@ -110,10 +114,11 @@ TEST_F(DatastoreIntegrationTest, GetNotExistingFailure) {
  * @when put cid with value into datastore @and remove cid from datastore
  * @then all operations succeed and datastore doesn't contain cid anymore
  */
-TEST_F(DatastoreIntegrationTest, RemoveSuccess) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_TRUE_1(datastore->remove(cid1));
-  EXPECT_OUTCOME_EQ(datastore->contains(cid1), false);
+TEST_F( DatastoreIntegrationTest, RemoveSuccess )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_TRUE_1( datastore->remove( cid1 ) );
+    EXPECT_OUTCOME_EQ( datastore->contains( cid1 ), false );
 }
 
 /**
@@ -121,16 +126,18 @@ TEST_F(DatastoreIntegrationTest, RemoveSuccess) {
  * @when put cid1 with value into datastore @and remove cid2 from datastore
  * @then all operations succeed and datastore still contains cid1
  */
-TEST_F(DatastoreIntegrationTest, RemoveNotExistingSuccess) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_TRUE_1(datastore->remove(cid2));
-  EXPECT_OUTCOME_EQ(datastore->contains(cid1), true);
+TEST_F( DatastoreIntegrationTest, RemoveNotExistingSuccess )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_TRUE_1( datastore->remove( cid2 ) );
+    EXPECT_OUTCOME_EQ( datastore->contains( cid1 ), true );
 }
 
 /** Setting same key twice succeeds */
-TEST_F(DatastoreIntegrationTest, SetTwice) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
+TEST_F( DatastoreIntegrationTest, SetTwice )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
 }
 
 /**
@@ -138,11 +145,11 @@ TEST_F(DatastoreIntegrationTest, SetTwice) {
  * @when close datastore and open again
  * @then values are stored persistently
  */
-TEST_F(DatastoreIntegrationTest, PersistentStorage) {
-  EXPECT_OUTCOME_TRUE_1(datastore->set(cid1, value));
-  datastore.reset();
+TEST_F( DatastoreIntegrationTest, PersistentStorage )
+{
+    EXPECT_OUTCOME_TRUE_1( datastore->set( cid1, value ) );
+    datastore.reset();
 
-  EXPECT_OUTCOME_TRUE(open_again,
-                      RocksdbDatastore::create(rocksdb_path.string(), options));
-  EXPECT_OUTCOME_EQ(open_again->contains(cid1), true);
+    EXPECT_OUTCOME_TRUE( open_again, RocksdbDatastore::create( rocksdb_path.string(), options ) );
+    EXPECT_OUTCOME_EQ( open_again->contains( cid1 ), true );
 }

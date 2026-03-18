@@ -6,36 +6,37 @@
 #include <map>
 #include <string>
 
-namespace sgns::ipfs_lite::ipfs::merkledag {
-  class LeafImpl : public Leaf {
-   public:
-    /**
+namespace sgns::ipfs_lite::ipfs::merkledag
+{
+    class LeafImpl : public Leaf
+    {
+    public:
+        /**
      * @brief Construct leaf
      * @param data - leaf content
      */
-    explicit LeafImpl(common::Buffer data);
+        explicit LeafImpl( common::Buffer data );
 
-    const common::Buffer &content() const override;
+        const common::Buffer &content() const override;
 
-    size_t count() const override;
+        size_t count() const override;
 
-    IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf(
-        std::string_view name) const override;
+        IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf( std::string_view name ) const override;
 
-    std::vector<std::string_view> getSubLeafNames() const override;
+        std::vector<std::string_view> getSubLeafNames() const override;
 
-    /**
+        /**
      * @brief Insert children leaf
      * @param name - id of the leaf
      * @param children - leaf to insert
      * @return operation result
      */
-    IPFS::outcome::result<void> insertSubLeaf(std::string name, LeafImpl children);
+        IPFS::outcome::result<void> insertSubLeaf( std::string name, LeafImpl children );
 
-   private:
-    common::Buffer content_;
-    std::map<std::string, LeafImpl, std::less<>> children_;
-  };
-}  // namespace sgns::ipfs_lite::ipfs::merkledag
+    private:
+        common::Buffer                               content_;
+        std::map<std::string, LeafImpl, std::less<>> children_;
+    };
+}
 
 #endif

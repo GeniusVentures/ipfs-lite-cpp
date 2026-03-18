@@ -11,70 +11,72 @@
 // intentionally here, so users can use fs shortcut
 namespace fs = boost::filesystem;
 
-namespace test {
+namespace test
+{
 
-  /**
+    /**
    * @brief Base test, which involves filesystem. Can be created with given
    * path. Clears path before test and after test.
    */
-  struct BaseFS_Test : public ::testing::Test {
-    // not explicit, intentionally
-    explicit BaseFS_Test(const fs::path &path);
+    struct BaseFS_Test : public ::testing::Test
+    {
+        // not explicit, intentionally
+        explicit BaseFS_Test( const fs::path &path );
 
-    ~BaseFS_Test() override;
+        ~BaseFS_Test() override;
 
-    /**
+        /**
      * @brief Delete directory and all containing files
      */
-    void clear();
+        void clear();
 
-    /**
+        /**
      * @brief Create testing directory
      */
-    void mkdir();
+        void mkdir();
 
-    /**
+        /**
      * @brief Get test directory path
      * @return path to test directory
      */
-    std::string getPathString() const;
+        std::string getPathString() const;
 
-    /**
+        /**
      * @brief Create subdirectory in test directory
      * @param dirname is a new subdirectory name
      * @return full pathname to the new subdirectory
      */
-    fs::path createDir(const fs::path &dirname) const;
+        fs::path createDir( const fs::path &dirname ) const;
 
-    /**
+        /**
      * @brief create file in test directory
      * @param filename is a name of created file
      * @return full pathname to the new file
      */
-    fs::path createFile(const fs::path &filename) const;
+        fs::path createFile( const fs::path &filename ) const;
 
-    /**
+        /**
      * @brief path exists
      * @param entity - file or directory to check
      * @return
      */
-    bool exists(const fs::path &entity) const;
+        bool exists( const fs::path &entity ) const;
 
-    /**
+        /**
      * @brief Create and clear directory before tests
      */
-    void SetUp() override;
+        void SetUp() override;
 
-    /**
+        /**
      * @brief Clear directory after tests
      */
-    void TearDown() override;
+        void TearDown() override;
 
-   protected:
-    fs::path base_path;
-    sgns::common::Logger logger_;
-  };
+    protected:
+        fs::path             base_path;
+        sgns::common::Logger logger_;
+    };
 
-}  // namespace test
+}
 
-#endif  // CPP_IPFS_LITE_BASE_FS_TEST_HPP
+#endif // CPP_IPFS_LITE_BASE_FS_TEST_HPP

@@ -9,17 +9,20 @@
 using libp2p::peer::PeerId;
 using libp2p::peer::PeerInfo;
 
-namespace sgns::codec::cbor {
-  template <>
-  inline PeerInfo kDefaultT<PeerInfo>() {
-    return PeerInfo{.id = kDefaultT<PeerId>(), .addresses = {}};
-  }
-}  // namespace sgns::codec::cbor
+namespace sgns::codec::cbor
+{
+    template <>
+    inline PeerInfo kDefaultT<PeerInfo>()
+    {
+        return PeerInfo{ .id = kDefaultT<PeerId>(), .addresses = {} };
+    }
+}
 
-namespace libp2p::peer {
+namespace libp2p::peer
+{
 
-  CBOR_TUPLE(PeerInfo, id, addresses);
+    CBOR_TUPLE( PeerInfo, id, addresses );
 
-}  // namespace libp2p::peer
+}
 
-#endif  // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_INFO_HPP
+#endif // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_INFO_HPP

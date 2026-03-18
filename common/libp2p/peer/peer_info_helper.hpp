@@ -12,12 +12,14 @@ using libp2p::peer::PeerInfo;
  * @param peer_info to prettify
  * @return string
  */
-static std::string peerInfoToPrettyString(const PeerInfo &peer_info) {
-  std::stringstream ss;
-  for (const auto &address : peer_info.addresses) {
-    ss << std::string(address.getStringAddress()) << " ";
-  }
-  return ss.str();
+static std::string peerInfoToPrettyString( const PeerInfo &peer_info )
+{
+    std::stringstream ss;
+    for ( const auto &address : peer_info.addresses )
+    {
+        ss << std::string( address.getStringAddress() ) << " ";
+    }
+    return ss.str();
 }
 
-#endif  // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_PEER_INFO_HELPER_HPP
+#endif // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_PEER_INFO_HELPER_HPP

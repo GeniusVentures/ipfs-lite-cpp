@@ -10,138 +10,159 @@
 
 #include "codec/cbor/streams_annotation.hpp"
 
-namespace sgns::codec::cbor {
-  /** Decodes CBOR */
-  class CborDecodeStream {
-   public:
-    static constexpr auto is_cbor_decoder_stream = true;
+namespace sgns::codec::cbor
+{
+    /** Decodes CBOR */
+    class CborDecodeStream
+    {
+    public:
+        static constexpr auto is_cbor_decoder_stream = true;
 
-    explicit CborDecodeStream(gsl::span<const uint8_t> data);
+        explicit CborDecodeStream( gsl::span<const uint8_t> data );
 
-    /** Decodes integer or bool */
-    template <
-        typename T,
-        typename = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>>
-    CborDecodeStream &operator>>(T &num) {
-      if constexpr (std::is_enum_v<T>) {
-        std::underlying_type_t<T> value;
-        *this >> value;
-        num = T{value};
-        return *this;
-      }
-      if constexpr (std::is_same_v<T, bool>) {
-        if (!cbor_value_is_boolean(&value_)) {
-          IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
+        /** Decodes integer or bool */
+        template <typename T, typename = std::enable_if_t<std::is_integral_v<T> || std::is_enum_v<T>>>
+        CborDecodeStream &operator>>( T &num )
+        {
+            if constexpr ( std::is_enum_v<T> )
+            {
+                std::underlying_type_t<T> value;
+                *this >> value;
+                num = T{ value };
+                return *this;
+            }
+            if constexpr ( std::is_same_v<T, bool> )
+            {
+                if ( !cbor_value_is_boolean( &value_ ) )
+                {
+                    IPFS::outcome::raise( CborDecodeError::WRONG_TYPE );
+                }
+                bool bool_value;
+                cbor_value_get_boolean( &value_, &bool_value );
+                num = bool_value;
+            }
+            else
+            {
+                if ( !cbor_value_is_integer( &value_ ) )
+                {
+                    IPFS::outcome::raise( CborDecodeError::WRONG_TYPE );
+                }
+                if constexpr ( std::is_unsigned_v<T> )
+                {
+                    if ( !cbor_value_is_unsigned_integer( &value_ ) )
+                    {
+                        IPFS::outcome::raise( CborDecodeError::INT_OVERFLOW );
+                    }
+                    uint64_t num64;
+                    cbor_value_get_uint64( &value_, &num64 );
+                    if ( num64 > std::numeric_limits<T>::max() )
+                    {
+                        IPFS::outcome::raise( CborDecodeError::INT_OVERFLOW );
+                    }
+                    num = static_cast<T>( num64 );
+                }
+                else
+                {
+                    int64_t num64;
+                    cbor_value_get_int64( &value_, &num64 );
+                    if ( num64 > static_cast<int64_t>( std::numeric_limits<T>::max() ) ||
+                         num64 < static_cast<int64_t>( std::numeric_limits<T>::min() ) )
+                    {
+                        IPFS::outcome::raise( CborDecodeError::INT_OVERFLOW );
+                    }
+                    num = static_cast<T>( num64 );
+                }
+            }
+            next();
+            return *this;
         }
-        bool bool_value;
-        cbor_value_get_boolean(&value_, &bool_value);
-        num = bool_value;
-      } else {
-        if (!cbor_value_is_integer(&value_)) {
-          IPFS::outcome::raise(CborDecodeError::WRONG_TYPE);
+
+        /// Decodes nullable optional value
+        template <typename T>
+        CborDecodeStream &operator>>( boost::optional<T> &optional )
+        {
+            if ( isNull() )
+            {
+                optional = boost::none;
+                next();
+            }
+            else
+            {
+                T value{ kDefaultT<T>() };
+                *this >> value;
+                optional = value;
+            }
+            return *this;
         }
-        if constexpr (std::is_unsigned_v<T>) {
-          if (!cbor_value_is_unsigned_integer(&value_)) {
-            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
-          }
-          uint64_t num64;
-          cbor_value_get_uint64(&value_, &num64);
-          if (num64 > std::numeric_limits<T>::max()) {
-            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
-          }
-          num = static_cast<T>(num64);
-        } else {
-          int64_t num64;
-          cbor_value_get_int64(&value_, &num64);
-          if (num64 > static_cast<int64_t>(std::numeric_limits<T>::max())
-              || num64 < static_cast<int64_t>(std::numeric_limits<T>::min())) {
-            IPFS::outcome::raise(CborDecodeError::INT_OVERFLOW);
-          }
-          num = static_cast<T>(num64);
+
+        /// Decodes list elements into vector
+        template <typename T>
+        CborDecodeStream &operator>>( std::vector<T> &values )
+        {
+            auto n = listLength();
+            auto l = list();
+            values.clear();
+            values.reserve( n );
+            for ( auto i = 0u; i < n; ++i )
+            {
+                T value{ kDefaultT<T>() };
+                l >> value;
+                values.push_back( value );
+            }
+            return *this;
         }
-      }
-      next();
-      return *this;
-    }
 
-    /// Decodes nullable optional value
-    template <typename T>
-    CborDecodeStream &operator>>(boost::optional<T> &optional) {
-      if (isNull()) {
-        optional = boost::none;
-        next();
-      } else {
-        T value{kDefaultT<T>()};
-        *this >> value;
-        optional = value;
-      }
-      return *this;
-    }
+        /// Decodes elements to map
+        template <typename T>
+        CborDecodeStream &operator>>( std::map<std::string, T> &items )
+        {
+            for ( auto &m : map() )
+            {
+                m.second >> items[m.first];
+            }
+            return *this;
+        }
 
-    /// Decodes list elements into vector
-    template <typename T>
-    CborDecodeStream &operator>>(std::vector<T> &values) {
-      auto n = listLength();
-      auto l = list();
-      values.clear();
-      values.reserve(n);
-      for (auto i = 0u; i < n; ++i) {
-        T value{kDefaultT<T>()};
-        l >> value;
-        values.push_back(value);
-      }
-      return *this;
-    }
-
-    /// Decodes elements to map
-    template <typename T>
-    CborDecodeStream &operator>>(std::map<std::string, T> &items) {
-      for (auto &m : map()) {
-        m.second >> items[m.first];
-      }
-      return *this;
-    }
-
-    /// Decodes bytes
-    CborDecodeStream &operator>>(gsl::span<uint8_t> bytes);
-    /** Decodes bytes */
-    CborDecodeStream &operator>>(std::vector<uint8_t> &bytes);
-    /** Decodes string */
-    CborDecodeStream &operator>>(std::string &str);
-    /** Decodes CID */
-    CborDecodeStream &operator>>(CID &cid);
-    /** Creates list container decode substream */
-    CborDecodeStream list();
-    /** Skips current element */
-    void next();
-    /** Checks if current element is CID */
-    bool isCid() const;
-    /** Checks if current element is list container */
-    bool isList() const;
-    /** Checks if current element is map container */
-    bool isMap() const;
-    bool isNull() const;
-    bool isBool() const;
-    bool isInt() const;
-    bool isStr() const;
-    bool isBytes() const;
-    /** Returns count of items in current element list container */
-    size_t listLength() const;
-    /** Reads CBOR bytes of current element (and advances to the next element)
+        /// Decodes bytes
+        CborDecodeStream &operator>>( gsl::span<uint8_t> bytes );
+        /** Decodes bytes */
+        CborDecodeStream &operator>>( std::vector<uint8_t> &bytes );
+        /** Decodes string */
+        CborDecodeStream &operator>>( std::string &str );
+        /** Decodes CID */
+        CborDecodeStream &operator>>( CID &cid );
+        /** Creates list container decode substream */
+        CborDecodeStream list();
+        /** Skips current element */
+        void next();
+        /** Checks if current element is CID */
+        bool isCid() const;
+        /** Checks if current element is list container */
+        bool isList() const;
+        /** Checks if current element is map container */
+        bool isMap() const;
+        bool isNull() const;
+        bool isBool() const;
+        bool isInt() const;
+        bool isStr() const;
+        bool isBytes() const;
+        /** Returns count of items in current element list container */
+        size_t listLength() const;
+        /** Reads CBOR bytes of current element (and advances to the next element)
      */
-    std::vector<uint8_t> raw();
-    /** Creates map container decode substream map */
-    std::map<std::string, CborDecodeStream> map();
-    /// Returns bytestring length
-    size_t bytesLength() const;
+        std::vector<uint8_t> raw();
+        /** Creates map container decode substream map */
+        std::map<std::string, CborDecodeStream> map();
+        /// Returns bytestring length
+        size_t bytesLength() const;
 
-   private:
-    CborDecodeStream container() const;
+    private:
+        CborDecodeStream container() const;
 
-    std::shared_ptr<std::vector<uint8_t>> data_;
-    std::shared_ptr<CborParser> parser_;
-    CborValue value_{};
-  };
-}  // namespace sgns::codec::cbor
+        std::shared_ptr<std::vector<uint8_t>> data_;
+        std::shared_ptr<CborParser>           parser_;
+        CborValue                             value_{};
+    };
+}
 
-#endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP
+#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_DECODE_STREAM_HPP

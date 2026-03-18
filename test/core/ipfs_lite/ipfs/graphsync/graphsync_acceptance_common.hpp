@@ -5,63 +5,69 @@
 
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
 
-namespace sgns::ipfs_lite::ipfs::graphsync::test {
+namespace sgns::ipfs_lite::ipfs::graphsync::test
+{
 
-  /// runs event loop for max_milliseconds or until SIGINT or SIGTERM
-  void runEventLoop(const std::shared_ptr<boost::asio::io_context> &io,
-                    size_t max_milliseconds);
+    /// runs event loop for max_milliseconds or until SIGINT or SIGTERM
+    void runEventLoop( const std::shared_ptr<boost::asio::io_context> &io, size_t max_milliseconds );
 
-  // Creates per-node objects using libp2p hos injector
-  std::pair<std::shared_ptr<Graphsync>, std::shared_ptr<libp2p::Host>>
-  createNodeObjects(std::shared_ptr<boost::asio::io_context> io);
+    // Creates per-node objects using libp2p hos injector
+    std::pair<std::shared_ptr<Graphsync>, std::shared_ptr<libp2p::Host>> createNodeObjects(
+        std::shared_ptr<boost::asio::io_context> io );
 
-  inline std::ostream& operator << (std::ostream& os, const CID& cid) {
-    os << cid.toString().value();
-    return os;
-  }
-
-  // MerkleDAG bridge interface for test purposes
-  class TestDataService : public MerkleDagBridge {
-   public:
-    using Storage = std::map<CID, common::Buffer>;
-
-    TestDataService &addData(const std::string &s) {
-      insertNode(data_, s);
-      return *this;
+    inline std::ostream &operator<<( std::ostream &os, const CID &cid )
+    {
+        os << cid.toString().value();
+        return os;
     }
 
-    TestDataService &addExpected(const std::string &s) {
-      insertNode(expected_, s);
-      return *this;
-    }
+    // MerkleDAG bridge interface for test purposes
+    class TestDataService : public MerkleDagBridge
+    {
+    public:
+        using Storage = std::map<CID, common::Buffer>;
 
-    const Storage &getData() const {
-      return data_;
-    }
+        TestDataService &addData( const std::string &s )
+        {
+            insertNode( data_, s );
+            return *this;
+        }
 
-    const Storage &getExpected() const {
-      return expected_;
-    }
+        TestDataService &addExpected( const std::string &s )
+        {
+            insertNode( expected_, s );
+            return *this;
+        }
 
-    const Storage &getReceived() const {
-      return received_;
-    }
+        const Storage &getData() const
+        {
+            return data_;
+        }
 
-    // places into data_, returns true if expected
-    bool onDataBlock(CID cid, common::Buffer data);
+        const Storage &getExpected() const
+        {
+            return expected_;
+        }
 
-   private:
-    static void insertNode(Storage &dst, const std::string &data_str);
+        const Storage &getReceived() const
+        {
+            return received_;
+        }
 
-    IPFS::outcome::result<size_t> select(
-        const CID &cid,
-        gsl::span<const uint8_t> selector,
-        std::function<bool(const CID &cid, const common::Buffer &data)> handler)
-    const override;
+        // places into data_, returns true if expected
+        bool onDataBlock( CID cid, common::Buffer data );
 
-    Storage data_;
-    Storage expected_;
-    Storage received_;
-  };
+    private:
+        static void insertNode( Storage &dst, const std::string &data_str );
 
-}  // namespace sgns::ipfs_lite::ipfs::graphsync::test
+        IPFS::outcome::result<size_t> select(
+            const CID                                                        &cid,
+            gsl::span<const uint8_t>                                          selector,
+            std::function<bool( const CID &cid, const common::Buffer &data )> handler ) const override;
+
+        Storage data_;
+        Storage expected_;
+        Storage received_;
+    };
+
+}

@@ -3,169 +3,193 @@
 
 #include "local_requests.hpp"
 
-namespace sgns::ipfs_lite::ipfs::graphsync {
+namespace sgns::ipfs_lite::ipfs::graphsync
+{
 
-  LocalRequests::LocalRequests(
-      std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-      CancelRequestFn cancel_fn,
-      std::shared_ptr<RequestIdGenerator> generator)
-      : scheduler_(std::move(scheduler)), 
-      cancel_fn_(std::move(cancel_fn)),
-      id_generator_(std::move(generator)) {
-    assert(scheduler_);
-    assert(cancel_fn_);
-  }
-
-  LocalRequests::NewRequest LocalRequests::newRequest(
-      const CID &root_cid,
-      gsl::span<const uint8_t> selector,
-      const std::vector<Extension> &extensions,
-      Graphsync::RequestProgressCallback callback) {
-    NewRequest ctx;
-    ctx.request_id = nextRequestId();
-    if (ctx.request_id == 0) {
-      // Will likely not get here, possible iff INT_MAX simultaneous requests
-      logger()->error("{}: request ids exhausted", __FUNCTION__);
-      ctx.subscription = newRejectedRequest(std::move(callback));
-      ctx.request_id = current_rejected_request_id_;
-      return ctx;
+    LocalRequests::LocalRequests( std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
+                                  CancelRequestFn                              cancel_fn,
+                                  std::shared_ptr<RequestIdGenerator>          generator ) :
+        scheduler_( std::move( scheduler ) ),
+        cancel_fn_( std::move( cancel_fn ) ),
+        id_generator_( std::move( generator ) )
+    {
+        assert( scheduler_ );
+        assert( cancel_fn_ );
     }
 
-    request_builder_.addRequest(ctx.request_id, root_cid, selector, extensions);
-    auto serialize_res = request_builder_.serialize();
-    request_builder_.clear();
-    if (!serialize_res) {
-      logger()->error("{}: serialize failed", __FUNCTION__);
-      ctx.subscription = newRejectedRequest(std::move(callback));
-      ctx.request_id = current_rejected_request_id_;
-      return ctx;
+    LocalRequests::NewRequest LocalRequests::newRequest( const CID                         &root_cid,
+                                                         gsl::span<const uint8_t>           selector,
+                                                         const std::vector<Extension>      &extensions,
+                                                         Graphsync::RequestProgressCallback callback )
+    {
+        NewRequest ctx;
+        ctx.request_id = nextRequestId();
+        if ( ctx.request_id == 0 )
+        {
+            // Will likely not get here, possible iff INT_MAX simultaneous requests
+            logger()->error( "{}: request ids exhausted", __FUNCTION__ );
+            ctx.subscription = newRejectedRequest( std::move( callback ) );
+            ctx.request_id   = current_rejected_request_id_;
+            return ctx;
+        }
+
+        request_builder_.addRequest( ctx.request_id, root_cid, selector, extensions );
+        auto serialize_res = request_builder_.serialize();
+        request_builder_.clear();
+        if ( !serialize_res )
+        {
+            logger()->error( "{}: serialize failed", __FUNCTION__ );
+            ctx.subscription = newRejectedRequest( std::move( callback ) );
+            ctx.request_id   = current_rejected_request_id_;
+            return ctx;
+        }
+
+        ctx.subscription                 = Subscription( ctx.request_id, weak_from_this() );
+        ctx.body                         = std::move( serialize_res.value() );
+        active_requests_[ctx.request_id] = std::move( callback );
+
+        request_to_cid_[ctx.request_id] = root_cid;
+
+        logger()->trace( "{}: id={}", __FUNCTION__, ctx.request_id );
+
+        return ctx;
     }
 
-    ctx.subscription = Subscription(ctx.request_id, weak_from_this());
-    ctx.body = std::move(serialize_res.value());
-    active_requests_[ctx.request_id] = std::move(callback);
-
-    request_to_cid_[ctx.request_id] = root_cid;
-
-    logger()->trace("{}: id={}", __FUNCTION__, ctx.request_id);
-
-    return ctx;
-  }
-
-  Subscription LocalRequests::newRejectedRequest(
-      Graphsync::RequestProgressCallback callback) {
-    RequestId request_id = --current_rejected_request_id_;
-    if (request_id == 0) {
-      logger()->error("{}: rejected request ids exhausted", __FUNCTION__);
-      // virtually impossible
-      return Subscription();
-    }
-    rejected_requests_[request_id] = std::move(callback);
-    asyncNotifyRejectedRequests();
-    return Subscription(request_id, weak_from_this());
-  }
-
-  void LocalRequests::onResponse(int request_id,
-                                 ResponseStatusCode status,
-                                 std::vector<Extension> extensions) {
-    auto it = active_requests_.find(request_id);
-    if (it == active_requests_.end()) {
-      logger()->error(
-          "{}: cannot find request, id={}", __FUNCTION__, request_id);
-      return;
-    }
-    if (isTerminal(status)) {
-      auto cb = std::move(it->second);
-      logger()->trace("{}: isTerminal id={}", __FUNCTION__, request_id);
-      active_requests_.erase(it);
-      cb(status, std::move(extensions));
-    } else {
-      // make copy, reentrancy is allowed here
-      auto cb = it->second;
-      cb(status, std::move(extensions));
-    }
-  }
-
-  void LocalRequests::cancelAll(LocalRequests::RequestMap &requests) {
-    if (requests.empty()) {
-      return;
-    }
-    RequestMap m;
-    std::swap(m, requests);
-    for (const auto &[_, cb] : m) {
-      cb(RS_REJECTED_LOCALLY, {});
-    }
-  }
-
-  void LocalRequests::asyncNotifyRejectedRequests() {
-    if (rejected_notify_scheduled_) {
-      return;
+    Subscription LocalRequests::newRejectedRequest( Graphsync::RequestProgressCallback callback )
+    {
+        RequestId request_id = --current_rejected_request_id_;
+        if ( request_id == 0 )
+        {
+            logger()->error( "{}: rejected request ids exhausted", __FUNCTION__ );
+            // virtually impossible
+            return Subscription();
+        }
+        rejected_requests_[request_id] = std::move( callback );
+        asyncNotifyRejectedRequests();
+        return Subscription( request_id, weak_from_this() );
     }
 
-    scheduler_
-        ->schedule([wptr = weak_from_this(), this]() {
-          if (!wptr.expired()) {
-            cancelAll(rejected_requests_);
-            if (rejected_requests_.empty()) {
-              current_rejected_request_id_ = 0;
+    void LocalRequests::onResponse( int request_id, ResponseStatusCode status, std::vector<Extension> extensions )
+    {
+        auto it = active_requests_.find( request_id );
+        if ( it == active_requests_.end() )
+        {
+            logger()->error( "{}: cannot find request, id={}", __FUNCTION__, request_id );
+            return;
+        }
+        if ( isTerminal( status ) )
+        {
+            auto cb = std::move( it->second );
+            logger()->trace( "{}: isTerminal id={}", __FUNCTION__, request_id );
+            active_requests_.erase( it );
+            cb( status, std::move( extensions ) );
+        }
+        else
+        {
+            // make copy, reentrancy is allowed here
+            auto cb = it->second;
+            cb( status, std::move( extensions ) );
+        }
+    }
+
+    void LocalRequests::cancelAll( LocalRequests::RequestMap &requests )
+    {
+        if ( requests.empty() )
+        {
+            return;
+        }
+        RequestMap m;
+        std::swap( m, requests );
+        for ( const auto &[_, cb] : m )
+        {
+            cb( RS_REJECTED_LOCALLY, {} );
+        }
+    }
+
+    void LocalRequests::asyncNotifyRejectedRequests()
+    {
+        if ( rejected_notify_scheduled_ )
+        {
+            return;
+        }
+
+        scheduler_
+            ->schedule(
+                [wptr = weak_from_this(), this]()
+                {
+                    if ( !wptr.expired() )
+                    {
+                        cancelAll( rejected_requests_ );
+                        if ( rejected_requests_.empty() )
+                        {
+                            current_rejected_request_id_ = 0;
+                        }
+                    }
+                } )
+            .detach();
+    }
+
+    void LocalRequests::cancelAll()
+    {
+        cancelAll( active_requests_ );
+        logger()->trace( "{}: cancelling all", __FUNCTION__ );
+        cancelAll( rejected_requests_ );
+    }
+
+    void LocalRequests::unsubscribe( uint64_t ticket )
+    {
+        auto request_id = static_cast<RequestId>( ticket );
+
+        if ( request_id < 0 )
+        {
+            // this is rejected request
+            rejected_requests_.erase( request_id );
+            return;
+        }
+
+        auto it = active_requests_.find( request_id );
+        if ( it == active_requests_.end() )
+        {
+            return;
+        }
+        logger()->trace( "{}: deleting it id={}", __FUNCTION__, request_id );
+        active_requests_.erase( it );
+
+        request_builder_.addCancelRequest( request_id );
+        auto serialize_res = request_builder_.serialize();
+        request_builder_.clear();
+
+        cancel_fn_( request_id, serialize_res ? serialize_res.value() : SharedData{} );
+    }
+
+    RequestId LocalRequests::nextRequestId()
+    {
+        RequestId id = id_generator_->next();
+        if ( id > 0 && active_requests_.count( id ) == 0 )
+        {
+            return id;
+        }
+
+        // In the highly unlikely case of collision, search for an unused ID
+        id = 1;
+        while ( active_requests_.count( id ) != 0 )
+        {
+            if ( ++id == 0 )
+            {
+                return 0; // exhausted
             }
-          }
-        })
-        .detach();
-  }
-
-  void LocalRequests::cancelAll() {
-    cancelAll(active_requests_);
-    logger()->trace("{}: cancelling all", __FUNCTION__);
-    cancelAll(rejected_requests_);
-  }
-
-  void LocalRequests::unsubscribe(uint64_t ticket) {
-    auto request_id = static_cast<RequestId>(ticket);
-
-    if (request_id < 0) {
-      // this is rejected request
-      rejected_requests_.erase(request_id);
-      return;
+        }
+        return id;
     }
 
-    auto it = active_requests_.find(request_id);
-    if (it == active_requests_.end()) {
-      return;
+    boost::optional<CID> LocalRequests::getRequestRootCid( RequestId request_id ) const
+    {
+        auto it = request_to_cid_.find( request_id );
+        if ( it != request_to_cid_.end() )
+        {
+            return it->second;
+        }
+        return boost::none;
     }
-    logger()->trace("{}: deleting it id={}", __FUNCTION__, request_id);
-    active_requests_.erase(it);
 
-    request_builder_.addCancelRequest(request_id);
-    auto serialize_res = request_builder_.serialize();
-    request_builder_.clear();
-
-    cancel_fn_(request_id,
-               serialize_res ? serialize_res.value() : SharedData{});
-  }
-
-  RequestId LocalRequests::nextRequestId() {
-    RequestId id = id_generator_->next();
-    if (id > 0 && active_requests_.count(id) == 0) {
-      return id;
-    }
-  
-    // In the highly unlikely case of collision, search for an unused ID
-    id = 1;
-    while (active_requests_.count(id) != 0) {
-      if (++id == 0) {
-        return 0;  // exhausted
-      }
-    }
-    return id;
-  }
-  boost::optional<CID> LocalRequests::getRequestRootCid(RequestId request_id) const {
-    auto it = request_to_cid_.find(request_id);
-    if (it != request_to_cid_.end()) {
-        return it->second;
-    }
-    return boost::none;
-  }
-  
-
-}  // namespace sgns::ipfs_lite::ipfs::graphsync
+}

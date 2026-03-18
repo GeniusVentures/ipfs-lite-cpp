@@ -4,34 +4,35 @@
 
 #include "network_fwd.hpp"
 
-namespace sgns::ipfs_lite::ipfs::graphsync {
-  
-  class LengthDelimitedMessageReader;
+namespace sgns::ipfs_lite::ipfs::graphsync
+{
 
-  /// Per-stream message reader, graphsync specific
-  class MessageReader {
-   public:
-    /// Ctor.
-    /// \param stream libp2p stream
-    /// \param feedback Owner's feedback interface
-    MessageReader(StreamPtr stream,
-                  std::shared_ptr<EndpointToPeerFeedback> feedback);
+    class LengthDelimitedMessageReader;
 
-    ~MessageReader();
+    /// Per-stream message reader, graphsync specific
+    class MessageReader
+    {
+    public:
+        /// Ctor.
+        /// \param stream libp2p stream
+        /// \param feedback Owner's feedback interface
+        MessageReader( StreamPtr stream, std::shared_ptr<EndpointToPeerFeedback> feedback );
 
-   private:
-    /// Callback for async length delimited read operations
-    /// \param stream
-    /// \param res
-    void onMessageRead(const StreamPtr &stream, IPFS::outcome::result<ByteArray> res);
+        ~MessageReader();
 
-    /// Owner's feedback interface
-    std::weak_ptr<EndpointToPeerFeedback> feedback_;
+    private:
+        /// Callback for async length delimited read operations
+        /// \param stream
+        /// \param res
+        void onMessageRead( const StreamPtr &stream, IPFS::outcome::result<ByteArray> res );
 
-    /// Stream reader, not graphsync specific
-    std::shared_ptr<LengthDelimitedMessageReader> stream_reader_;
-  };
+        /// Owner's feedback interface
+        std::weak_ptr<EndpointToPeerFeedback> feedback_;
 
-}  // namespace sgns::ipfs_lite::ipfs::graphsync
+        /// Stream reader, not graphsync specific
+        std::shared_ptr<LengthDelimitedMessageReader> stream_reader_;
+    };
 
-#endif  // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP
+}
+
+#endif // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP
