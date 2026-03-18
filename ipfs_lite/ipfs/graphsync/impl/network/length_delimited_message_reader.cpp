@@ -4,41 +4,48 @@
 
 #include <libp2p/basic/varint_reader.hpp>
 
-namespace sgns::ipfs_lite::ipfs::graphsync {
+namespace sgns::ipfs_lite::ipfs::graphsync
+{
 
-  LengthDelimitedMessageReader::LengthDelimitedMessageReader(
-      Feedback feedback, size_t max_message_size)
-      : feedback_(std::move(feedback)),
-        max_message_size_(max_message_size),
-        buffer_(std::make_shared<std::vector<uint8_t>>()) {
-    assert(feedback_);
-  }
-
-  bool LengthDelimitedMessageReader::read(StreamPtr stream) {
-    if (stream->isClosedForRead()) {
-      return false;
+    LengthDelimitedMessageReader::LengthDelimitedMessageReader( Feedback feedback, size_t max_message_size ) :
+        feedback_( std::move( feedback ) ),
+        max_message_size_( max_message_size ),
+        buffer_( std::make_shared<std::vector<uint8_t>>() )
+    {
+        assert( feedback_ );
     }
 
-    if (stream_ != stream) {
-      close();
-      stream_ = std::move(stream);
+    bool LengthDelimitedMessageReader::read( StreamPtr stream )
+    {
+        if ( stream->isClosedForRead() )
+        {
+            return false;
+        }
+
+        if ( stream_ != stream )
+        {
+            close();
+            stream_ = std::move( stream );
+        }
+
+        if ( stream_ )
+        {
+            continueReading();
+        }
+
+        return true;
     }
 
-    if (stream_) {
-      continueReading();
-    }
+    void LengthDelimitedMessageReader::continueReading()
+    {
+        assert( stream_ );
 
-    return true;
-  }
+        if ( reading_ )
+        {
+            return;
+        }
 
-  void LengthDelimitedMessageReader::continueReading() {
-    assert(stream_);
-
-    if (reading_) {
-      return;
-    }
-
-    // clang-format off
+        // clang-format off
     libp2p::basic::VarintReader::readVarint(
         stream_,
         [wptr{weak_from_this()}]
@@ -55,29 +62,33 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           }
         }
     );
-    // clang-format on
+        // clang-format on
 
-    reading_ = true;
-  }
-
-  void LengthDelimitedMessageReader::onLengthRead(size_t length) {
-    if (!reading_) {
-      return;
+        reading_ = true;
     }
 
-    if (length == 0) {
-      reading_ = false;
-      return feedback_(stream_, Error::STREAM_NOT_READABLE);
-    }
+    void LengthDelimitedMessageReader::onLengthRead( size_t length )
+    {
+        if ( !reading_ )
+        {
+            return;
+        }
 
-    if (length > max_message_size_) {
-      reading_ = false;
-      return feedback_(stream_, Error::MESSAGE_SIZE_OUT_OF_BOUNDS);
-    }
+        if ( length == 0 )
+        {
+            reading_ = false;
+            return feedback_( stream_, Error::STREAM_NOT_READABLE );
+        }
 
-    buffer_->resize(length);
+        if ( length > max_message_size_ )
+        {
+            reading_ = false;
+            return feedback_( stream_, Error::MESSAGE_SIZE_OUT_OF_BOUNDS );
+        }
 
-    // clang-format off
+        buffer_->resize( length );
+
+        // clang-format off
     stream_->read(
         gsl::span(buffer_->data(), length),
         length,
@@ -88,43 +99,50 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
           }
         }
     );
-    // clang-format on
-  }
-
-  void LengthDelimitedMessageReader::onMessageRead(
-      IPFS::outcome::result<size_t> res) {
-    if (!reading_) {
-      return;
+        // clang-format on
     }
 
-    reading_ = false;
+    void LengthDelimitedMessageReader::onMessageRead( IPFS::outcome::result<size_t> res )
+    {
+        if ( !reading_ )
+        {
+            return;
+        }
 
-    if (!res) {
-      return feedback_(stream_, res.error());
+        reading_ = false;
+
+        if ( !res )
+        {
+            return feedback_( stream_, res.error() );
+        }
+
+        if ( buffer_->size() != res.value() )
+        {
+            return feedback_( stream_, Error::MESSAGE_READ_ERROR );
+        }
+
+        feedback_( stream_, std::move( *buffer_ ) );
+
+        // if owner called close() during feedback then the stream is now reset
+        // and no further reading is needed
+        if ( stream_ )
+        {
+            continueReading();
+        }
     }
 
-    if (buffer_->size() != res.value()) {
-      return feedback_(stream_, Error::MESSAGE_READ_ERROR);
+    void LengthDelimitedMessageReader::close()
+    {
+        if ( !stream_ )
+        {
+            return;
+        }
+        reading_ = false;
+        if ( !stream_->isClosedForRead() && stream_.use_count() == 1 )
+        {
+            stream_->close( [stream{ stream_ }]( IPFS::outcome::result<void> ) {} );
+        }
+        stream_.reset();
     }
 
-    feedback_(stream_, std::move(*buffer_));
-
-    // if owner called close() during feedback then the stream is now reset
-    // and no further reading is needed
-    if (stream_) {
-      continueReading();
-    }
-  }
-
-  void LengthDelimitedMessageReader::close() {
-    if (!stream_) {
-      return;
-    }
-    reading_ = false;
-    if (!stream_->isClosedForRead() && stream_.use_count() == 1) {
-      stream_->close([stream{stream_}](IPFS::outcome::result<void>) {});
-    }
-    stream_.reset();
-  }
-
-}  // namespace sgns::ipfs_lite::ipfs::graphsync
+}

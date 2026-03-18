@@ -1,55 +1,64 @@
 
 #include "common.hpp"
 
-OUTCOME_CPP_DEFINE_CATEGORY_3(sgns::ipfs_lite::ipfs::graphsync, Error, e) {
-  using E = sgns::ipfs_lite::ipfs::graphsync::Error;
-  switch (e) {
-    case E::MESSAGE_PARSE_ERROR:
-      return "message parse error";
-    case E::MESSAGE_SIZE_OUT_OF_BOUNDS:
-      return "message size out of bounds";
-    case E::MESSAGE_VALIDATION_FAILED:
-      return "message validation failed";
-    case E::MESSAGE_SERIALIZE_ERROR:
-      return "message serialize error";
-    case E::STREAM_NOT_READABLE:
-      return "stream is not readable";
-    case E::MESSAGE_READ_ERROR:
-      return "message read error";
-    case E::STREAM_NOT_WRITABLE:
-      return "stream is not writable";
-    case E::WRITE_QUEUE_OVERFLOW:
-      return "write queue overflow";
-    case E::MESSAGE_WRITE_ERROR:
-      return "message write error";
-    default:
-      break;
-  }
-  return "unknown error";
+OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::ipfs_lite::ipfs::graphsync, Error, e )
+{
+    using E = sgns::ipfs_lite::ipfs::graphsync::Error;
+    switch ( e )
+    {
+        case E::MESSAGE_PARSE_ERROR:
+            return "message parse error";
+        case E::MESSAGE_SIZE_OUT_OF_BOUNDS:
+            return "message size out of bounds";
+        case E::MESSAGE_VALIDATION_FAILED:
+            return "message validation failed";
+        case E::MESSAGE_SERIALIZE_ERROR:
+            return "message serialize error";
+        case E::STREAM_NOT_READABLE:
+            return "stream is not readable";
+        case E::MESSAGE_READ_ERROR:
+            return "message read error";
+        case E::STREAM_NOT_WRITABLE:
+            return "stream is not writable";
+        case E::WRITE_QUEUE_OVERFLOW:
+            return "write queue overflow";
+        case E::MESSAGE_WRITE_ERROR:
+            return "message write error";
+        default:
+            break;
+    }
+    return "unknown error";
 }
 
-namespace sgns::ipfs_lite::ipfs::graphsync {
+namespace sgns::ipfs_lite::ipfs::graphsync
+{
 
-  common::Logger logger() {
-    static common::Logger graphsync_logger = common::createLogger("graphsync");
-    return graphsync_logger;
-  }
+    common::Logger logger()
+    {
+        static common::Logger graphsync_logger = common::createLogger( "graphsync" );
+        return graphsync_logger;
+    }
 
-  bool isTerminal(ResponseStatusCode code) {
-    return code < 10 || code >= 20;
-  }
+    bool isTerminal( ResponseStatusCode code )
+    {
+        return code < 10 || code >= 20;
+    }
 
-  bool isSuccess(ResponseStatusCode code) {
-    return code >= 20 && code <= 21;
-  }
+    bool isSuccess( ResponseStatusCode code )
+    {
+        return code >= 20 && code <= 21;
+    }
 
-  bool isError(ResponseStatusCode code) {
-    return code < 10 || code >= 30;
-  }
+    bool isError( ResponseStatusCode code )
+    {
+        return code < 10 || code >= 30;
+    }
 
-  std::string statusCodeToString(ResponseStatusCode code) {
-    switch (code) {
-// clang-format off
+    std::string statusCodeToString( ResponseStatusCode code )
+    {
+        switch ( code )
+        {
+            // clang-format off
 #define CHECK_CASE(X) case RS_##X: return #X;
       CHECK_CASE(NO_PEERS)
       CHECK_CASE(CANNOT_CONNECT)
@@ -70,12 +79,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync {
       CHECK_CASE(LEGAL_ISSUES)
       CHECK_CASE(NOT_FOUND)
 #undef CHECK_CASE
-        // clang-format on
+                // clang-format on
 
-      default:
-        break;
+            default:
+                break;
+        }
+        return "UNKNOWN";
     }
-    return "UNKNOWN";
-  }
 
-}  // namespace ipfs_lite::ipfs_lite::ipfs::graphsync
+}

@@ -7,30 +7,32 @@
 
 #include "ipfs_lite/ipld/ipld_link.hpp"
 
-namespace sgns::ipfs_lite::ipld {
-  class IPLDLinkImpl : public IPLDLink {
-   public:
-    /**
+namespace sgns::ipfs_lite::ipld
+{
+    class IPLDLinkImpl : public IPLDLink
+    {
+    public:
+        /**
      * @brief Construct Link
      * @param id - CID of the target object
      * @param name - name of the target object
      * @param size - total size of the target object
      */
-    IPLDLinkImpl(CID id, std::string name, size_t size);
+        IPLDLinkImpl( CID id, std::string name, size_t size );
 
-    IPLDLinkImpl() = default;
+        IPLDLinkImpl() = default;
 
-    const std::string &getName() const override;
+        const std::string &getName() const override;
 
-    const CID &getCID() const override;
+        const CID &getCID() const override;
 
-    size_t getSize() const override;
+        size_t getSize() const override;
 
-   private:
-    CID cid_;
-    std::string name_;
-    size_t size_{};
-  };
-}  // namespace sgns::ipfs_lite::ipld
+    private:
+        CID         cid_;
+        std::string name_;
+        size_t      size_{};
+    };
+}
 
 #endif

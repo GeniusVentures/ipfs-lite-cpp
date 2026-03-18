@@ -1,9 +1,10 @@
 #ifndef CPP_IPFS_LITE__COMMON_ENUM_HPP
 #define CPP_IPFS_LITE__COMMON_ENUM_HPP
 
-namespace sgns::common {
+namespace sgns::common
+{
 
-  /**
+    /**
    * @brief Convert enum class value as integer
    * Usage:
    *   Given an enum class
@@ -23,12 +24,12 @@ namespace sgns::common {
    * @param value - to convert
    * @return integer value of enum
    */
-  template <typename Enumeration>
-  auto to_int(Enumeration const value) ->
-      typename std::underlying_type<Enumeration>::type {
-    return static_cast<typename std::underlying_type<Enumeration>::type>(value);
-  }
+    template <typename Enumeration>
+    auto to_int( Enumeration const value ) -> typename std::underlying_type<Enumeration>::type
+    {
+        return static_cast<typename std::underlying_type<Enumeration>::type>( value );
+    }
 
-}  // namespace sgns::common
+}
 
-#endif  // CPP_IPFS_LITE__COMMON_ENUM_HPP
+#endif // CPP_IPFS_LITE__COMMON_ENUM_HPP

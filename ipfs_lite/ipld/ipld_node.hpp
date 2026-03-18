@@ -12,130 +12,135 @@
 #include "ipfs_lite/ipld/ipld_block.hpp"
 #include "ipfs_lite/ipld/ipld_link.hpp"
 
-namespace sgns::ipfs_lite::ipld {
-  /**
+namespace sgns::ipfs_lite::ipld
+{
+    /**
    * @interface MerkleDAG service node
    */
-  class IPLDNode {
-   protected:
-    using Buffer = common::Buffer;
+    class IPLDNode
+    {
+    protected:
+        using Buffer = common::Buffer;
 
-   public:
-    virtual ~IPLDNode() = default;
+    public:
+        virtual ~IPLDNode() = default;
 
-    /**
+        /**
      * @brief Get node's CID
      * @return node's CID
      */
-    virtual const CID &getCID() const = 0;
+        virtual const CID &getCID() const = 0;
 
-    /**
+        /**
      * @brief Get serialized node's content
      * @note This method is similar with Node::serialize, but uses internal
      * cache for each query
      * @return node raw bytes
      */
-    virtual const Buffer &getRawBytes() const = 0;
+        virtual const Buffer &getRawBytes() const = 0;
 
-    /**
+        /**
      * @brief Total size of the data including the total sizes of references
      * @return Cumulative size in bytes
      */
-    virtual size_t size() const = 0;
+        virtual size_t size() const = 0;
 
-    /**
+        /**
      * @brief Assign Node's content
      * @param input - data bytes
      * @return operation result
      */
-    virtual void assign(Buffer input) = 0;
+        virtual void assign( Buffer input ) = 0;
 
-    /**
+        /**
      * @brief Get Node data
      * @return content bytes
      */
-    virtual const Buffer &content() const = 0;
+        virtual const Buffer &content() const = 0;
 
-    /**
+        /**
      * @brief Add link to the child node
      * @param name - name of the child node
      * @param node - child object to link
      * @return operation result
      */
-    virtual IPFS::outcome::result<void> addChild(
-        const std::string &name, std::shared_ptr<const IPLDNode> node) = 0;
+        virtual IPFS::outcome::result<void> addChild( const std::string              &name,
+                                                      std::shared_ptr<const IPLDNode> node ) = 0;
 
-    /**
+        /**
      * @brief Get particular link to the child node
      * @param name - id of the link
      * @return Requested link of error, if link not found
      */
-    virtual IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
-        const std::string &name) const = 0;
+        virtual IPFS::outcome::result<std::reference_wrapper<const IPLDLink>> getLink(
+            const std::string &name ) const = 0;
 
-    /**
+        /**
      * @brief Remove link to the child node
      * @param name - name of the child node
      * @return operation result
      */
-    virtual void removeLink(const std::string &name) = 0;
+        virtual void removeLink( const std::string &name ) = 0;
 
-    /**
+        /**
      * @brief Insert link to the child node
      * @param link - object to add
      */
-    virtual void addLink(const IPLDLink &link) = 0;
+        virtual void addLink( const IPLDLink &link ) = 0;
 
-    /**
+        /**
      * @brief Get links to first-level child nodes
      * @return References to node links
      */
-    virtual std::vector<std::reference_wrapper<const IPLDLink>> getLinks()
-        const = 0;
+        virtual std::vector<std::reference_wrapper<const IPLDLink>> getLinks() const = 0;
 
-    /**
+        /**
      * @brief Serialize Node
      * @return raw bytes
      */
-    virtual Buffer serialize() const = 0;
+        virtual Buffer serialize() const = 0;
 
-    /**
+        /**
      * @brief Add a destination identifier
      * @param destination - destination string to add
      */
-    virtual void addDestination(const std::string &destination) = 0;
+        virtual void addDestination( const std::string &destination ) = 0;
 
-    /**
+        /**
      * @brief Remove a destination identifier
      * @param destination - destination string to remove
      */
-    virtual void removeDestination(const std::string &destination) = 0;
+        virtual void removeDestination( const std::string &destination ) = 0;
 
-    /**
+        /**
      * @brief Check if a destination exists
      * @param destination - destination string to check
      * @return true if destination exists, false otherwise
      */
-    virtual bool hasDestination(const std::string &destination) const = 0;
+        virtual bool hasDestination( const std::string &destination ) const = 0;
 
-    /**
+        /**
      * @brief Get all destination identifiers
      * @return Set of destination strings
      */
-    virtual const std::set<std::string> &getDestinations() const = 0;
+        virtual const std::set<std::string> &getDestinations() const = 0;
 
-    /**
+        /**
      * @brief Clear all destinations
      */
-    virtual void clearDestinations() = 0;
-  };
+        virtual void clearDestinations() = 0;
+    };
 
-  /**
+    /**
    * @class Possible Node errors
    */
-  enum class IPLDNodeError { LINK_NOT_FOUND = 1, INVALID_RAW_DATA };
-}  // namespace sgns::ipfs_lite::ipld
+    enum class IPLDNodeError
+    {
+        LINK_NOT_FOUND = 1,
+        INVALID_RAW_DATA
+    };
+}
 
-OUTCOME_HPP_DECLARE_ERROR_2(sgns::ipfs_lite::ipld, IPLDNodeError)
+OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipld, IPLDNodeError )
 
 #endif

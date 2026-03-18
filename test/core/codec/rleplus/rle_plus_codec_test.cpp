@@ -3,12 +3,12 @@
 #include "core/codec/rleplus/rle_plus_codec_tester.hpp"
 
 using sgns::codec::rle::decode;
-using sgns::codec::rle::RLEPlusDecodeError;
 using sgns::codec::rle::encode;
+using sgns::codec::rle::RLEPlusDecodeError;
 
 using types = testing::Types<uint8_t, uint16_t, uint32_t, uint64_t>;
 
-TYPED_TEST_CASE(RLEPlusCodecTester, types);
+TYPED_TEST_CASE( RLEPlusCodecTester, types );
 
 /**
  * @given Null set of data
@@ -16,8 +16,9 @@ TYPED_TEST_CASE(RLEPlusCodecTester, types);
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, NullDataSuccess) {
-  this->checkDataSet({});
+TYPED_TEST( RLEPlusCodecTester, NullDataSuccess )
+{
+    this->checkDataSet( {} );
 }
 
 /**
@@ -26,8 +27,9 @@ TYPED_TEST(RLEPlusCodecTester, NullDataSuccess) {
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, ZeroDataSuccess) {
-  this->checkDataSet({0});
+TYPED_TEST( RLEPlusCodecTester, ZeroDataSuccess )
+{
+    this->checkDataSet( { 0 } );
 }
 
 /**
@@ -36,8 +38,9 @@ TYPED_TEST(RLEPlusCodecTester, ZeroDataSuccess) {
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, OneDataSuccess) {
-  this->checkDataSet({1});
+TYPED_TEST( RLEPlusCodecTester, OneDataSuccess )
+{
+    this->checkDataSet( { 1 } );
 }
 
 /**
@@ -46,12 +49,12 @@ TYPED_TEST(RLEPlusCodecTester, OneDataSuccess) {
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, SingleBlocksFromZeroSuccess) {
-  auto &&data_set =
-      this->generateDataSet(std::numeric_limits<TypeParam>::min(),
-                            std::numeric_limits<TypeParam>::max(),
-                            [](TypeParam prev) { return prev += 2; });
-  this->checkDataSet(data_set);
+TYPED_TEST( RLEPlusCodecTester, SingleBlocksFromZeroSuccess )
+{
+    auto &&data_set = this->generateDataSet( std::numeric_limits<TypeParam>::min(),
+                                             std::numeric_limits<TypeParam>::max(),
+                                             []( TypeParam prev ) { return prev += 2; } );
+    this->checkDataSet( data_set );
 }
 
 /**
@@ -60,12 +63,12 @@ TYPED_TEST(RLEPlusCodecTester, SingleBlocksFromZeroSuccess) {
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, SignleBlocksFromMiddleSuccess) {
-  auto &&data_set =
-      this->generateDataSet(std::numeric_limits<TypeParam>::max() / 2,
-                            std::numeric_limits<TypeParam>::max(),
-                            [](TypeParam prev) { return prev += 2; });
-  this->checkDataSet(data_set);
+TYPED_TEST( RLEPlusCodecTester, SignleBlocksFromMiddleSuccess )
+{
+    auto &&data_set = this->generateDataSet( std::numeric_limits<TypeParam>::max() / 2,
+                                             std::numeric_limits<TypeParam>::max(),
+                                             []( TypeParam prev ) { return prev += 2; } );
+    this->checkDataSet( data_set );
 }
 
 /**
@@ -74,12 +77,12 @@ TYPED_TEST(RLEPlusCodecTester, SignleBlocksFromMiddleSuccess) {
  * @then Operations must be completed successfully and decoded data must be the
  * same as the given set
  */
-TYPED_TEST(RLEPlusCodecTester, MixedBlocksSuccess) {
-  auto &&data_set = this->generateDataSet(
-      std::numeric_limits<TypeParam>::min(),
-      std::numeric_limits<TypeParam>::max() / static_cast<TypeParam>(5),
-      [](TypeParam prev) -> TypeParam { return prev += (prev % 100) + 1; });
-  this->checkDataSet(data_set);
+TYPED_TEST( RLEPlusCodecTester, MixedBlocksSuccess )
+{
+    auto &&data_set = this->generateDataSet( std::numeric_limits<TypeParam>::min(),
+                                             std::numeric_limits<TypeParam>::max() / static_cast<TypeParam>( 5 ),
+                                             []( TypeParam prev ) -> TypeParam { return prev += ( prev % 100 ) + 1; } );
+    this->checkDataSet( data_set );
 }
 
 /**
@@ -87,10 +90,11 @@ TYPED_TEST(RLEPlusCodecTester, MixedBlocksSuccess) {
  * @when RLE+ decode given data
  * @then Decode operation must be failed with appropriate error code
  */
-TYPED_TEST(RLEPlusCodecTester, InvalidHeaderDecodeFailure) {
-  auto expected = RLEPlusDecodeError::VersionMismatch;
-  std::vector<uint8_t> data{0xFF, 0x8, 0x15, 0x16};
-  this->checkDecodeFailure(data, expected);
+TYPED_TEST( RLEPlusCodecTester, InvalidHeaderDecodeFailure )
+{
+    auto                 expected = RLEPlusDecodeError::VersionMismatch;
+    std::vector<uint8_t> data{ 0xFF, 0x8, 0x15, 0x16 };
+    this->checkDecodeFailure( data, expected );
 }
 
 /**
@@ -98,10 +102,11 @@ TYPED_TEST(RLEPlusCodecTester, InvalidHeaderDecodeFailure) {
  * @when RLE+ decode given data
  * @then Decode operation must be failed with appropriate error code
  */
-TYPED_TEST(RLEPlusCodecTester, InvalidStructureDecodeFailure) {
-  auto expected = RLEPlusDecodeError::DataIndexFailure;
-  std::vector<uint8_t> data{0x4, 0x8, 0x15, 0x16};
-  this->checkDecodeFailure(data, expected);
+TYPED_TEST( RLEPlusCodecTester, InvalidStructureDecodeFailure )
+{
+    auto                 expected = RLEPlusDecodeError::DataIndexFailure;
+    std::vector<uint8_t> data{ 0x4, 0x8, 0x15, 0x16 };
+    this->checkDecodeFailure( data, expected );
 }
 
 /**
@@ -110,10 +115,11 @@ TYPED_TEST(RLEPlusCodecTester, InvalidStructureDecodeFailure) {
  * @tparam Decode operation must be successful and decoded data must be the same
  * as the given
  */
-TYPED_TEST(RLEPlusCodecTester, ReferenceComparingSuccess) {
-  auto encoded = encode(this->reference_decoded_sample_);
-  EXPECT_OUTCOME_TRUE(decoded, decode<TypeParam>(encoded));
-  ASSERT_EQ(decoded, this->reference_decoded_sample_);
+TYPED_TEST( RLEPlusCodecTester, ReferenceComparingSuccess )
+{
+    auto encoded = encode( this->reference_decoded_sample_ );
+    EXPECT_OUTCOME_TRUE( decoded, decode<TypeParam>( encoded ) );
+    ASSERT_EQ( decoded, this->reference_decoded_sample_ );
 }
 
 /**
@@ -121,18 +127,19 @@ TYPED_TEST(RLEPlusCodecTester, ReferenceComparingSuccess) {
  * @when RLE+ decode given data
  * @then Decode operation must be failed with appropriate error code
  */
-TEST(RLEPlusDecode, MaxSizeExceedFailure) {
-  std::set<uint64_t> data_set;
-  constexpr size_t max_length =
-      sgns::codec::rle::OBJECT_MAX_SIZE / sizeof(uint64_t) + 1;
-  uint64_t value = 0;
-  for (size_t i = 0; i < max_length; ++i) {
-    data_set.emplace(value);
-    value += 2;
-  }
-  auto encoded = encode(data_set);
-  auto expected = RLEPlusDecodeError::MaxSizeExceed;
-  auto result = decode<uint64_t>(encoded);
-  ASSERT_TRUE(result.has_error());
-  ASSERT_EQ(result.error().value(), static_cast<int>(expected));
+TEST( RLEPlusDecode, MaxSizeExceedFailure )
+{
+    std::set<uint64_t> data_set;
+    constexpr size_t   max_length = sgns::codec::rle::OBJECT_MAX_SIZE / sizeof( uint64_t ) + 1;
+    uint64_t           value      = 0;
+    for ( size_t i = 0; i < max_length; ++i )
+    {
+        data_set.emplace( value );
+        value += 2;
+    }
+    auto encoded  = encode( data_set );
+    auto expected = RLEPlusDecodeError::MaxSizeExceed;
+    auto result   = decode<uint64_t>( encoded );
+    ASSERT_TRUE( result.has_error() );
+    ASSERT_EQ( result.error().value(), static_cast<int>( expected ) );
 }

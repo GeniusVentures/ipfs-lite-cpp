@@ -6,22 +6,24 @@
 
 #include "ipfs_lite/rocksdb/rocksdb.hpp"
 
-namespace test {
+namespace test
+{
 
-  struct Baserocksdb_Test : public BaseFS_Test {
-    using rocksdb = sgns::ipfs_lite::rocksdb;
+    struct Baserocksdb_Test : public BaseFS_Test
+    {
+        using rocksdb = sgns::ipfs_lite::rocksdb;
 
-    explicit Baserocksdb_Test(const fs::path &path);
+        explicit Baserocksdb_Test( const fs::path &path );
 
-    void open();
+        void open();
 
-    void SetUp() override;
+        void SetUp() override;
 
-    void TearDown() override;
+        void TearDown() override;
 
-    std::shared_ptr<rocksdb> db_;
-  };
+        std::shared_ptr<rocksdb> db_;
+    };
 
-}  // namespace test
+}
 
-#endif  // CPP_IPFS_LITE_BASE_rocksdb_TEST_HPP
+#endif // CPP_IPFS_LITE_BASE_rocksdb_TEST_HPP

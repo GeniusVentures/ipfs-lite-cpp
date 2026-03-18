@@ -6,32 +6,34 @@
 
 #include "primitives/cid/cid.hpp"
 
-namespace sgns::ipfs_lite::ipld {
-  class IPLDLink {
-   public:
-    /**
+namespace sgns::ipfs_lite::ipld
+{
+    class IPLDLink
+    {
+    public:
+        /**
      * @brief Destructor
      */
-    virtual ~IPLDLink() = default;
+        virtual ~IPLDLink() = default;
 
-    /**
+        /**
      * @brief Get name of the link
      * @return Name, which should be unique per object
      */
-    virtual const std::string &getName() const = 0;
+        virtual const std::string &getName() const = 0;
 
-    /**
+        /**
      * @brief Get identifier of the target object
      * @return Content identifier
      */
-    virtual const CID &getCID() const = 0;
+        virtual const CID &getCID() const = 0;
 
-    /**
+        /**
      * @brief Get target object size
      * @return Cumulative size of the target object
      */
-    virtual size_t getSize() const = 0;
-  };
-}  // namespace sgns::ipfs_lite::ipld
+        virtual size_t getSize() const = 0;
+    };
+}
 
 #endif

@@ -3,23 +3,24 @@
 
 #include "codec/cbor/cbor_decode_stream.hpp"
 
-namespace sgns::codec::cbor {
-  enum class CborResolveError {
-    INT_KEY_EXPECTED = 1,
-    KEY_NOT_FOUND,
-    CONTAINER_EXPECTED,
-    INT_KEY_TOO_BIG
-  };
+namespace sgns::codec::cbor
+{
+    enum class CborResolveError
+    {
+        INT_KEY_EXPECTED = 1,
+        KEY_NOT_FOUND,
+        CONTAINER_EXPECTED,
+        INT_KEY_TOO_BIG
+    };
 
-  using Path = gsl::span<const std::string>;
+    using Path = gsl::span<const std::string>;
 
-  IPFS::outcome::result<uint64_t> parseIndex(const std::string &str);
+    IPFS::outcome::result<uint64_t> parseIndex( const std::string &str );
 
-  /** Resolves path in CBOR object to CBOR subobject */
-  IPFS::outcome::result<void> resolve(CborDecodeStream &stream,
-                                const std::string &part);
-}  // namespace sgns::codec::cbor
+    /** Resolves path in CBOR object to CBOR subobject */
+    IPFS::outcome::result<void> resolve( CborDecodeStream &stream, const std::string &part );
+}
 
-OUTCOME_HPP_DECLARE_ERROR_2(sgns::codec::cbor, CborResolveError);
+OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::cbor, CborResolveError );
 
-#endif  // CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
+#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
