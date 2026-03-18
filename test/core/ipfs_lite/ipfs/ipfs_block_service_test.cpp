@@ -26,9 +26,9 @@ struct BlockTestImpl : IPLDBlock
     CID    cid;     /**< Block identifier */
 
     /**
-   * @brief Construct Block
-   * @param data - raw content
-   */
+     * @brief Construct Block
+     * @param data - raw content
+     */
     BlockTestImpl( std::vector<uint8_t> data ) : content{ data }, cid{ getCidOf( content ).value() } {}
 };
 
@@ -39,8 +39,8 @@ class BlockServiceTest : public ::testing::Test
 {
 public:
     /**
-   * @brief Initialize BlockService
-   */
+     * @brief Initialize BlockService
+     */
     BlockServiceTest() : block_service_( std::make_shared<InMemoryDatastore>() ) {}
 
 protected:

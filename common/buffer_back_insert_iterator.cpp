@@ -8,9 +8,9 @@ namespace std
 {
 
     /*
-   * std::back_insert_iterator is an output iterator
-   * that appends to a container for which it was constructed.
-   */
+     * std::back_insert_iterator is an output iterator
+     * that appends to a container for which it was constructed.
+     */
     template <>
     class back_insert_iterator<Buffer>
     {

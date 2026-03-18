@@ -12,8 +12,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     constexpr std::string_view kDontSendCidsProtocol     = "graphsync/do-not-send-cids";
 
     /**
-   * ExtensionData is a name/data pair for a graphsync extension
-   */
+     * ExtensionData is a name/data pair for a graphsync extension
+     */
     struct Extension
     {
         std::string          name;

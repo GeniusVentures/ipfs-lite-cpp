@@ -6,9 +6,9 @@ namespace sgns::face
 {
 
     /**
-   * An interface for an iterator
-   * @tparam Container over which the iterator would iterate
-   */
+     * An interface for an iterator
+     * @tparam Container over which the iterator would iterate
+     */
     template <typename Container>
     class GenericIterator
     {

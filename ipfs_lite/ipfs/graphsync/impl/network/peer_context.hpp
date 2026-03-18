@@ -156,9 +156,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void onNewStream( StreamPtr stream );
 
         /**
-     * @brief       Finishes the configuration of the stream
-     * @param[in]   stream: new stream
-     */
+         * @brief       Finishes the configuration of the stream
+         * @param[in]   stream: new stream
+         */
         void finishStreamConfig( StreamPtr stream );
 
         /// Closes a stream

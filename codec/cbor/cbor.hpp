@@ -10,11 +10,11 @@ namespace sgns::codec::cbor
     using common::Buffer;
 
     /**
-   * @brief CBOR encoding to byte-vector
-   * @tparam Type to be encoded
-   * @param arg data to be encoded
-   * @return encoded data
-   */
+     * @brief CBOR encoding to byte-vector
+     * @tparam Type to be encoded
+     * @param arg data to be encoded
+     * @return encoded data
+     */
     template <typename T>
     IPFS::outcome::result<Buffer> encode( const T &arg )
     {
@@ -31,12 +31,12 @@ namespace sgns::codec::cbor
     }
 
     /**
-   * @brief CBOR decoding from byte-vector
-   * @tparam T - type of the value to decode
-   * @param input - data to decode
-   * @return operation result
-   * @see cbor_errors.hpp for possible error cases
-   */
+     * @brief CBOR decoding from byte-vector
+     * @tparam T - type of the value to decode
+     * @param input - data to decode
+     * @return operation result
+     * @see cbor_errors.hpp for possible error cases
+     */
     template <typename T>
     IPFS::outcome::result<T> decode( gsl::span<const uint8_t> input )
     {

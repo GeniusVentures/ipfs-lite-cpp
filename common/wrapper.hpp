@@ -9,12 +9,12 @@ namespace sgns::common
 {
 
     /**
-   * @brief Make strongly typed structures from different concepts of the equal
-   * types. E.g. block height and round number are both uint64_t, but better to
-   * be different types. Or, ID and Signature both vectors.
-   * @tparam T wrapped type
-   * @tparam Tag unique tag
-   */
+     * @brief Make strongly typed structures from different concepts of the equal
+     * types. E.g. block height and round number are both uint64_t, but better to
+     * be different types. Or, ID and Signature both vectors.
+     * @tparam T wrapped type
+     * @tparam Tag unique tag
+     */
     template <typename T, typename Tag>
     struct Wrapper
     {

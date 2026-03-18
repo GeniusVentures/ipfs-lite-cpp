@@ -18,22 +18,22 @@ namespace sgns::data_transfer
     const libp2p::peer::Protocol kDataTransferLibp2pProtocol = "/fil/datatransfer/1.0.0";
 
     /**
-   * DataTransferNetwork provides interface for network connectivity for
-   * GraphSync
-   */
+     * DataTransferNetwork provides interface for network connectivity for
+     * GraphSync
+     */
     class DataTransferNetwork
     {
     public:
         virtual ~DataTransferNetwork() = default;
 
         /**
-     * Registers the Receiver to handle messages received from the network
-     */
+         * Registers the Receiver to handle messages received from the network
+         */
         virtual IPFS::outcome::result<void> setDelegate( std::shared_ptr<MessageReceiver> receiver ) = 0;
 
         /**
-     * Establishes a connection to the given peer
-     */
+         * Establishes a connection to the given peer
+         */
         virtual IPFS::outcome::result<void> connectTo( const PeerId &peer ) = 0;
 
         virtual IPFS::outcome::result<std::shared_ptr<MessageSender>> newMessageSender( const PeerId &peer ) = 0;

@@ -7,9 +7,9 @@ namespace sgns::ipfs_lite
 {
 
     /**
-   * @brief Instance of cursor can be used as bidirectional iterator over
-   * key-value bindings of the Map.
-   */
+     * @brief Instance of cursor can be used as bidirectional iterator over
+     * key-value bindings of the Map.
+     */
     class rocksdb::Cursor : public BufferMapCursor
     {
     public:

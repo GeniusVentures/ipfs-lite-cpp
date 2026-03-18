@@ -12,26 +12,26 @@
 namespace sgns::codec::rle
 {
     /**
-   * @class Decode RLE+ byte stream
-   */
+     * @class Decode RLE+ byte stream
+     */
     class RLEPlusDecodingStream
     {
     public:
         /**
-     * @brief Constructor
-     * @param data - RLE+ encoded bytes
-     */
+         * @brief Constructor
+         * @param data - RLE+ encoded bytes
+         */
         explicit RLEPlusDecodingStream( gsl::span<const uint8_t> data ) :
             index_{}, magnitude_{}, content_{ data.begin(), data.end() }
         {
         }
 
         /**
-     * @brief Decode RLE+
-     * @tparam T - type of output data
-     * @param output - decoded data
-     * @return Decoded stream
-     */
+         * @brief Decode RLE+
+         * @tparam T - type of output data
+         * @param output - decoded data
+         * @return Decoded stream
+         */
         template <typename T>
         RLEPlusDecodingStream &operator>>( std::set<T> &output )
         {
@@ -75,11 +75,11 @@ namespace sgns::codec::rle
         boost::dynamic_bitset<uint8_t> content_;   /**< Encoded data */
 
         /**
-     * @brief Get bit span, represented as T
-     * @tparam T - type of value to return
-     * @param count - number of bits to use
-     * @return Bits [index_ : index_ + count], represented as T
-     */
+         * @brief Get bit span, represented as T
+         * @tparam T - type of value to return
+         * @param count - number of bits to use
+         * @return Bits [index_ : index_ + count], represented as T
+         */
         template <typename T>
         T getSpan( size_t count )
         {
@@ -101,11 +101,11 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Unpack bytes to T
-     * @tparam T - type of the value to return
-     * @param data - packed bytes
-     * @return Unpacked data
-     */
+         * @brief Unpack bytes to T
+         * @tparam T - type of the value to return
+         * @param data - packed bytes
+         * @return Unpacked data
+         */
         template <typename T>
         T unpack( const std::vector<uint8_t> &data )
         {
@@ -130,11 +130,11 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Decode single RLE+ block
-     * @tparam T - type of the data to output
-     * @param current_value - index of the current number
-     * @param output - decoded data
-     */
+         * @brief Decode single RLE+ block
+         * @tparam T - type of the data to output
+         * @param current_value - index of the current number
+         * @param output - decoded data
+         */
         template <typename T>
         void decodeSingleBlock( T &current_value, std::set<T> &output )
         {
@@ -147,11 +147,11 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Decode small RLE+ block
-     * @tparam T - type of the data to output
-     * @param current_value - index of the current number
-     * @param output - decoded data
-     */
+         * @brief Decode small RLE+ block
+         * @tparam T - type of the data to output
+         * @param current_value - index of the current number
+         * @param output - decoded data
+         */
         template <typename T>
         void decodeSmallBlock( T &current_value, std::set<T> &output )
         {
@@ -171,11 +171,11 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Decode long RLE+ block
-     * @tparam T - type of the data to output
-     * @param current_value - index of the current number
-     * @param output - decoded data
-     */
+         * @brief Decode long RLE+ block
+         * @tparam T - type of the data to output
+         * @param current_value - index of the current number
+         * @param output - decoded data
+         */
         template <typename T>
         void decodeLongBlock( T &current_value, std::set<T> &output )
         {

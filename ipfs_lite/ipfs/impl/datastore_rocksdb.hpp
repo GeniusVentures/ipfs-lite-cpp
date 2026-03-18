@@ -10,26 +10,26 @@ namespace sgns::ipfs_lite::ipfs
 {
 
     /**
-   * @class RocksdbDatastore IpfsDatastore implementation based on RocksDB
-   * database wrapper
-   */
+     * @class RocksdbDatastore IpfsDatastore implementation based on RocksDB
+     * database wrapper
+     */
     class RocksdbDatastore : public IpfsDatastore
     {
     public:
         /**
-     * @brief constructor
-     * @param rocksdb shared pointer to rocksdb instance
-     */
+         * @brief constructor
+         * @param rocksdb shared pointer to rocksdb instance
+         */
         explicit RocksdbDatastore( std::shared_ptr<rocksdb> rocksdb );
 
         ~RocksdbDatastore() override = default;
 
         /**
-     * @brief creates RocksdbDatastore instance
-     * @param rocksdb_directory path to rocksdb directory
-     * @param options rocksdb database options
-     * @return shared pointer to instance
-     */
+         * @brief creates RocksdbDatastore instance
+         * @param rocksdb_directory path to rocksdb directory
+         * @param options rocksdb database options
+         * @return shared pointer to instance
+         */
         static IPFS::outcome::result<std::shared_ptr<RocksdbDatastore>> create( std::string_view rocksdb_directory,
                                                                                 rocksdb::Options options );
 

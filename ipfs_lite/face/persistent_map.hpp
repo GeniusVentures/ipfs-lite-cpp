@@ -7,18 +7,18 @@ namespace sgns::ipfs_lite::face
 {
 
     /**
-   * @brief An abstraction over a map accessible via filesystem or remove
-   * connection. It supports batching for efficiency of modifications.
-   * @tparam K key type
-   * @tparam V value type
-   */
+     * @brief An abstraction over a map accessible via filesystem or remove
+     * connection. It supports batching for efficiency of modifications.
+     * @tparam K key type
+     * @tparam V value type
+     */
     template <typename K, typename V>
     struct PersistentMap : public GenericMap<K, V>
     {
         /**
-     * @brief Creates new Write Batch - an object, which can be used to
-     * efficiently write bulk data.
-     */
+         * @brief Creates new Write Batch - an object, which can be used to
+         * efficiently write bulk data.
+         */
         virtual std::unique_ptr<WriteBatch<K, V>> batch() = 0;
     };
 

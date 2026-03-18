@@ -11,8 +11,8 @@ namespace sgns::ipfs_lite::ipld
 {
 
     /**
-   * @struct IPLD block CID and content properties
-   */
+     * @struct IPLD block CID and content properties
+     */
     struct IPLDType
     {
         using Version = CID::Version;
@@ -25,19 +25,19 @@ namespace sgns::ipfs_lite::ipld
     };
 
     /**
-   * @struct IPLD block: CID and serialized bytes
-   */
+     * @struct IPLD block: CID and serialized bytes
+     */
     struct IPLDBlock
     {
         CID            cid;
         common::Buffer bytes;
 
         /**
-     * @brief Create IPLD block from supported entity
-     * @tparam T - type of entity
-     * @param entity - source object
-     * @return constructed block
-     */
+         * @brief Create IPLD block from supported entity
+         * @tparam T - type of entity
+         * @param entity - source object
+         * @return constructed block
+         */
         template <class T>
         static IPLDBlock create( const T &entity )
         {
@@ -48,12 +48,12 @@ namespace sgns::ipfs_lite::ipld
         }
 
         /**
-     * @brief Get default IPLD block params:
-     * @note This method should be specialized for each IPLD entity,
-     *       which uses another types
-     * @tparam T - type of IPLD entity
-     * @return IPLD block params
-     */
+         * @brief Get default IPLD block params:
+         * @note This method should be specialized for each IPLD entity,
+         *       which uses another types
+         * @tparam T - type of IPLD entity
+         * @return IPLD block params
+         */
         template <class T>
         static IPLDType getType()
         {
@@ -61,13 +61,13 @@ namespace sgns::ipfs_lite::ipld
         }
 
         /**
-     * @brief CBOR serialize IPLD entity
-     * @note This method should be specialized for each IPLD entity,
-     *       which uses another serialization codec
-     * @tparam T - type of the entity
-     * @param entity - object to serialize
-     * @return serialized bytes
-     */
+         * @brief CBOR serialize IPLD entity
+         * @note This method should be specialized for each IPLD entity,
+         *       which uses another serialization codec
+         * @tparam T - type of the entity
+         * @param entity - object to serialize
+         * @return serialized bytes
+         */
         template <class T>
         static common::Buffer serialize( const T &entity )
         {

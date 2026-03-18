@@ -12,26 +12,26 @@ namespace sgns::data_transfer
     using libp2p::peer::PeerId;
 
     /**
-   * RequestValidator is an interface implemented by the client of the data
-   * transfer module to validate requests
-   */
+     * RequestValidator is an interface implemented by the client of the data
+     * transfer module to validate requests
+     */
     class RequestValidator
     {
     public:
         virtual ~RequestValidator() = default;
 
         /**
-     * ValidatePush validates a push request received from the peer that will
-     * send data
-     */
+         * ValidatePush validates a push request received from the peer that will
+         * send data
+         */
         virtual IPFS::outcome::result<void> validatePush( const PeerId             &sender,
                                                           std::vector<uint8_t>      voucher,
                                                           CID                       base_cid,
                                                           std::shared_ptr<IPLDNode> selector ) = 0;
         /**
-     * ValidatePull validates a pull request received from the peer thatF will
-     * receive data
-     */
+         * ValidatePull validates a pull request received from the peer thatF will
+         * receive data
+         */
         virtual IPFS::outcome::result<void> validatePull( const PeerId             &receiver,
                                                           std::vector<uint8_t>      voucher,
                                                           CID                       base_cid,

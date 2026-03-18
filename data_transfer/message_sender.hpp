@@ -6,8 +6,8 @@ namespace sgns::data_transfer
 {
 
     /**
-   * MessageSender is an interface to send messages to a peer
-   */
+     * MessageSender is an interface to send messages to a peer
+     */
     class MessageSender
     {
     public:

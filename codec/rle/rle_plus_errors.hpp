@@ -27,8 +27,8 @@ namespace sgns::codec::rle
     }
 
     /**
-   * @class RLE+ decode errors
-   */
+     * @class RLE+ decode errors
+     */
     enum class RLEPlusDecodeError : int
     {
         VersionMismatch = 1, /**< RLE+ data header has invalid version */

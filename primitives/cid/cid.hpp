@@ -14,11 +14,11 @@ namespace sgns
         using Multicodec = libp2p::multi::MulticodecType::Code;
 
         /**
-     * ContentIdentifier is not default-constructable, but in some cases we need
-     * default value. This value can be used to initialize class member or local
-     * variable. Trying to CBOR encode this value will yield error, to ensure
-     * proper initialization.
-     */
+         * ContentIdentifier is not default-constructable, but in some cases we need
+         * default value. This value can be used to initialize class member or local
+         * variable. Trying to CBOR encode this value will yield error, to ensure
+         * proper initialization.
+         */
         CID();
 
         explicit CID( const ContentIdentifier &cid );
@@ -42,15 +42,15 @@ namespace sgns
         CID &operator=( ContentIdentifier &&cid );
 
         /**
-     * @brief string-encodes cid
-     * @return encoded value or error
-     */
+         * @brief string-encodes cid
+         * @return encoded value or error
+         */
         IPFS::outcome::result<std::string> toString() const;
 
         /**
-     * @brief encodes CID to bytes
-     * @return byte-representation of CID
-     */
+         * @brief encodes CID to bytes
+         * @return byte-representation of CID
+         */
         IPFS::outcome::result<std::vector<uint8_t>> toBytes() const;
 
         static IPFS::outcome::result<CID> fromString( const std::string &str );

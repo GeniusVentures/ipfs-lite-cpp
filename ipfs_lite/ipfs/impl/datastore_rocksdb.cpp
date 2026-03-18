@@ -7,10 +7,10 @@ namespace sgns::ipfs_lite::ipfs
     namespace
     {
         /**
-     * @brief convenience function to encode value
-     * @param value key value to encode
-     * @return encoded value as Buffer
-     */
+         * @brief convenience function to encode value
+         * @param value key value to encode
+         * @return encoded value as Buffer
+         */
         inline IPFS::outcome::result<common::Buffer> encode( const CID &value )
         {
             BOOST_OUTCOME_TRY( auto encoded, value.toBytes() );

@@ -23,54 +23,54 @@ namespace sgns::face
         virtual ~GenericList() = default;
 
         /**
-     * Put an element to the back of the list
-     */
+         * Put an element to the back of the list
+         */
         virtual void push_back( value_type &&t )      = 0;
         virtual void push_back( const value_type &t ) = 0;
 
         /**
-     * Put an element to the front of the list
-     */
+         * Put an element to the front of the list
+         */
         virtual void push_front( value_type &&t )      = 0;
         virtual void push_front( const value_type &t ) = 0;
 
         /**
-     * Get the back of the list and then remove it
-     */
+         * Get the back of the list and then remove it
+         */
         virtual value_type pop_back() = 0;
 
         /**
-     * Get the front of the list and then remove it
-     */
+         * Get the front of the list and then remove it
+         */
         virtual value_type pop_front() = 0;
 
         /**
-     * Erase a range of elements
-     */
+         * Erase a range of elements
+         */
         virtual void erase( const iterator &begin, const iterator &end ) = 0;
 
         /*
-     * Obtain an iterator to the list
-     */
+         * Obtain an iterator to the list
+         */
         virtual iterator begin() = 0;
         virtual iterator end()   = 0;
 
         /**
-     * Tell whether list is empty
-     */
+         * Tell whether list is empty
+         */
         virtual bool empty() const = 0;
 
         /**
-     * Obtain the size of the list
-     */
+         * Obtain the size of the list
+         */
         virtual size_type size() const = 0;
     };
 
     /**
-   * As GenericIterator is abstract and cannot be instantiated, there is a
-   * concrete object that wraps a pointer to a generic iterator
-   * @tparam Container over which the iterator would iterate
-   */
+     * As GenericIterator is abstract and cannot be instantiated, there is a
+     * concrete object that wraps a pointer to a generic iterator
+     * @tparam Container over which the iterator would iterate
+     */
     template <typename Container>
     class ForwardIterator
     {

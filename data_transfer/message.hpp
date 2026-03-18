@@ -7,8 +7,8 @@ namespace sgns::data_transfer
 {
 
     /**
-   * DataTransferRequest is a request message for the data transfer protocol
-   */
+     * DataTransferRequest is a request message for the data transfer protocol
+     */
     struct DataTransferRequest
     {
         std::string          base_cid;
@@ -30,8 +30,8 @@ namespace sgns::data_transfer
     };
 
     /**
-   * DataTransferResponse is a response message for the data transfer protocol
-   */
+     * DataTransferResponse is a response message for the data transfer protocol
+     */
     struct DataTransferResponse
     {
         bool       is_accepted;
@@ -44,9 +44,9 @@ namespace sgns::data_transfer
     };
 
     /**
-   * DataTransferMessage is a message for the data transfer protocol (either
-   * request or response) that can serialize to a protobuf
-   */
+     * DataTransferMessage is a message for the data transfer protocol (either
+     * request or response) that can serialize to a protobuf
+     */
 
     struct DataTransferMessage
     {
@@ -61,15 +61,15 @@ namespace sgns::data_transfer
     };
 
     /**
-   * Creates datatransfer request message
-   * @param base_cid
-   * @param is_pull
-   * @param selector
-   * @param voucher
-   * @param voucher_type
-   * @param transfer_id
-   * @return request message
-   */
+     * Creates datatransfer request message
+     * @param base_cid
+     * @param is_pull
+     * @param selector
+     * @param voucher
+     * @param voucher_type
+     * @param transfer_id
+     * @return request message
+     */
     DataTransferMessage createRequest( std::string          base_cid,
                                        bool                 is_pull,
                                        std::vector<uint8_t> selector,
@@ -78,11 +78,11 @@ namespace sgns::data_transfer
                                        TransferId           transfer_id );
 
     /**
-   * Creates response data transfer message
-   * @param is_accepted
-   * @param transfer_id
-   * @return response message
-   */
+     * Creates response data transfer message
+     * @param is_accepted
+     * @param transfer_id
+     * @return response message
+     */
     DataTransferMessage createResponse( bool is_accepted, TransferId transfer_id );
 
     CBOR_TUPLE( DataTransferRequest,

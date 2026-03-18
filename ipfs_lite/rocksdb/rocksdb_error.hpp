@@ -6,9 +6,9 @@ namespace sgns::ipfs_lite
 {
 
     /**
-   * @brief rocksdb returns those type of errors, as described in
-   * <rocksdb/status.h>, Status::Code (it is private)
-   */
+     * @brief rocksdb returns those type of errors, as described in
+     * <rocksdb/status.h>, Status::Code (it is private)
+     */
     enum class rocksdbError
     {
         OK               = 0,

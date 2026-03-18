@@ -11,68 +11,68 @@
 namespace sgns::ipfs_lite::ipld
 {
     /**
-   * @class     Protobuf Node decoder
-   */
+     * @class     Protobuf Node decoder
+     */
     class IPLDNodeDecoderPB
     {
     public:
         /**
-     * @brief Try to decode input bytes as Protobuf-encoded Node
-     * @param input - bytes to decode
-     * @return operation result
-     */
+         * @brief Try to decode input bytes as Protobuf-encoded Node
+         * @param input - bytes to decode
+         * @return operation result
+         */
         IPFS::outcome::result<void> decode( gsl::span<const uint8_t> input );
 
         /**
-     * @brief Get Node content
-     * @return content data
-     */
+         * @brief Get Node content
+         * @return content data
+         */
         const std::string &getContent() const;
 
         /**
-     * @brief Get count of the children
-     * @return Links num
-     */
+         * @brief Get count of the children
+         * @return Links num
+         */
         size_t getLinksCount() const;
 
         /**
-     * @brief Get link to the children name
-     * @param index - id of the link
-     * @return operation result
-     */
+         * @brief Get link to the children name
+         * @param index - id of the link
+         * @return operation result
+         */
         const std::string &getLinkName( size_t index ) const;
 
         /**
-     * @brief Get CID of the children
-     * @param index - id of the link
-     * @return CID bytes
-     */
+         * @brief Get CID of the children
+         * @param index - id of the link
+         * @return CID bytes
+         */
         const std::string &getLinkCID( size_t index ) const;
 
         /**
-     * @brief Get name of the link to the children
-     * @param index - id of the link
-     * @return operation result
-     */
+         * @brief Get name of the link to the children
+         * @param index - id of the link
+         * @return operation result
+         */
         size_t getLinkSize( size_t index ) const;
 
         /**
-     * @brief Get count of destinations
-     * @return Number of destinations
-     */
+         * @brief Get count of destinations
+         * @return Number of destinations
+         */
         size_t getDestinationsCount() const;
 
         /**
-     * @brief Get destination at index
-     * @param index - destination index
-     * @return Destination string
-     */
+         * @brief Get destination at index
+         * @param index - destination index
+         * @return Destination string
+         */
         const std::string &getDestination( size_t index ) const;
 
         /**
-     * @brief Get all destinations as a vector
-     * @return Vector of destination strings
-     */
+         * @brief Get all destinations as a vector
+         * @return Vector of destination strings
+         */
         std::vector<std::string> getDestinations() const;
 
     private:
@@ -80,8 +80,8 @@ namespace sgns::ipfs_lite::ipld
     };
 
     /**
-   * @enum Possible PBNodeDecoder errors
-   */
+     * @enum Possible PBNodeDecoder errors
+     */
     enum class IPLDNodeDecoderPBError
     {
         INVALID_RAW_BYTES = 1

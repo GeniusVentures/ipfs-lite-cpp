@@ -12,15 +12,15 @@ namespace sgns::codec::json
         WRONG_CID_ARRAY_FORMAT
     };
     /**
-   * @brief json-encodes span of CID objects
-   */
+     * @brief json-encodes span of CID objects
+     */
     IPFS::outcome::result<std::string> encodeCidVector( gsl::span<const CID> span );
 
     /**
-   * @brief tries to json-decode vector of CID objects
-   * @param data source
-   * @return vector of CID objects or error
-   */
+     * @brief tries to json-decode vector of CID objects
+     * @param data source
+     * @return vector of CID objects or error
+     */
     IPFS::outcome::result<std::vector<CID>> decodeCidVector( std::string_view data );
 }
 
