@@ -10,18 +10,18 @@
 namespace sgns::codec::rle
 {
     /**
-   * @class RLE+ encoding stream
-   */
+     * @class RLE+ encoding stream
+     */
     class RLEPlusEncodingStream
     {
     public:
         /**
-     * @brief Encode integer set
-     * @tparam T - type of integer
-     * @tparam A - set's allocator
-     * @param input - content of the set to encode
-     * @return Encoded stream
-     */
+         * @brief Encode integer set
+         * @tparam T - type of integer
+         * @tparam A - set's allocator
+         * @param input - content of the set to encode
+         * @return Encoded stream
+         */
         template <typename T, typename A>
         RLEPlusEncodingStream &operator<<( const std::set<T, A> &input )
         {
@@ -52,9 +52,9 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Get encoded stream content
-     * @return Stream content
-     */
+         * @brief Get encoded stream content
+         * @return Stream content
+         */
         std::vector<uint8_t> data() const
         {
             std::vector<uint8_t> data_content;
@@ -67,15 +67,15 @@ namespace sgns::codec::rle
         boost::dynamic_bitset<uint8_t> content_{}; /**< RLE+ encoded content */
 
         /**
-     * @brief Write RLE+ header
-     */
+         * @brief Write RLE+ header
+         */
         void initContent();
 
         /**
-     * @brief Write RLE+ small block
-     * @tparam T - type of block value
-     * @param block - value to write
-     */
+         * @brief Write RLE+ small block
+         * @tparam T - type of block value
+         * @param block - value to write
+         */
         template <typename T>
         void pushSmallBlock( const T block )
         {
@@ -88,10 +88,10 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Write RLE+ long block
-     * @tparam T - type of block value
-     * @param block - value to write
-     */
+         * @brief Write RLE+ long block
+         * @tparam T - type of block value
+         * @param block - value to write
+         */
         template <typename T>
         void pushLongBlock( const T block )
         {
@@ -109,18 +109,18 @@ namespace sgns::codec::rle
         }
 
         /**
-     * @brief Write various byte
-     * @param byte - content to write
-     */
+         * @brief Write various byte
+         * @param byte - content to write
+         */
         void pushByte( uint8_t byte );
 
         /**
-     * @brief RLE+ logic - calculate periods of the integers
-     * @tparam T - type of the integers
-     * @tparam A - set's allocator
-     * @param data - input set of the integers
-     * @return Periods length
-     */
+         * @brief RLE+ logic - calculate periods of the integers
+         * @tparam T - type of the integers
+         * @tparam A - set's allocator
+         * @param data - input set of the integers
+         * @return Periods length
+         */
         template <typename T, typename A>
         std::vector<T> getPeriods( const std::set<T, A> &data ) const
         {

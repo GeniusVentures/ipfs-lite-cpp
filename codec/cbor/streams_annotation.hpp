@@ -56,11 +56,11 @@
 namespace sgns::codec::cbor
 {
     /**
-   * Default value for CBORed value instantiation
-   * In case of non default constructible type instantiate default value with
-   * any constant
-   * @tparam T - constructible type
-   */
+     * Default value for CBORed value instantiation
+     * In case of non default constructible type instantiate default value with
+     * any constant
+     * @tparam T - constructible type
+     */
     template <typename T>
     inline T kDefaultT()
     {

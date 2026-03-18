@@ -10,9 +10,9 @@ namespace sgns::ipfs_lite::ipfs
     {
     public:
         /**
-     * @brief Construct IPFS storage
-     * @param data_store - IPFS storage implementation
-     */
+         * @brief Construct IPFS storage
+         * @param data_store - IPFS storage implementation
+         */
         explicit IpfsBlockService( std::shared_ptr<IpfsDatastore> data_store );
 
         IPFS::outcome::result<bool> contains( const CID &key ) const override;

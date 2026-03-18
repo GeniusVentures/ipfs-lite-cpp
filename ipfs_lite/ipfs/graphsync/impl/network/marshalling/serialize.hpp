@@ -18,12 +18,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
     /**
-   * Tries to serialize generic protobuf message into shared array of bytes
-   * with varint length prefix
-   * @param msg protobuf message
-   * @return shared buffer to serialized bytes, none if serialize failed, i.e.
-   * not all required fields are set in the msg
-   */
+     * Tries to serialize generic protobuf message into shared array of bytes
+     * with varint length prefix
+     * @param msg protobuf message
+     * @return shared buffer to serialized bytes, none if serialize failed, i.e.
+     * not all required fields are set in the msg
+     */
     boost::optional<std::shared_ptr<const libp2p::common::ByteArray>> serializeProtobufMessage(
         const google::protobuf::MessageLite &msg );
 

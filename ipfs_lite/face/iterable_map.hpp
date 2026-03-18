@@ -8,19 +8,19 @@ namespace sgns::ipfs_lite::face
 {
 
     /**
-   * @brief An abstraction of a key-value map, that is iterable.
-   * @tparam K key type
-   * @tparam V value type
-   */
+     * @brief An abstraction of a key-value map, that is iterable.
+     * @tparam K key type
+     * @tparam V value type
+     */
     template <typename K, typename V>
     struct IterableMap
     {
         virtual ~IterableMap() = default;
 
         /**
-     * @brief Returns new key-value iterator.
-     * @return kv iterator
-     */
+         * @brief Returns new key-value iterator.
+         * @return kv iterator
+         */
         virtual std::unique_ptr<MapCursor<K, V>> cursor() = 0;
     };
 

@@ -148,7 +148,7 @@ namespace sgns::codec::cbor
         /** Returns count of items in current element list container */
         size_t listLength() const;
         /** Reads CBOR bytes of current element (and advances to the next element)
-     */
+         */
         std::vector<uint8_t> raw();
         /** Creates map container decode substream map */
         std::map<std::string, CborDecodeStream> map();

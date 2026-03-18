@@ -12,11 +12,11 @@ namespace sgns::ipfs_lite::ipld
     {
     public:
         /**
-     * @brief Construct Link
-     * @param id - CID of the target object
-     * @param name - name of the target object
-     * @param size - total size of the target object
-     */
+         * @brief Construct Link
+         * @param id - CID of the target object
+         * @param name - name of the target object
+         * @param size - total size of the target object
+         */
         IPLDLinkImpl( CID id, std::string name, size_t size );
 
         IPLDLinkImpl() = default;

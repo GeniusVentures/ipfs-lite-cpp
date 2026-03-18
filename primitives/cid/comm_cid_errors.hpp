@@ -6,8 +6,8 @@ namespace sgns::common
 {
 
     /**
-     * @brief Pieces returns these types of errors
-     */
+         * @brief Pieces returns these types of errors
+         */
     enum class CommCidError
     {
         TOO_SHORT = 1,

@@ -42,19 +42,19 @@ namespace sgns::IPFS::outcome
     using libp2p::outcome::success;
 
     /**
-   * @brief throws outcome::result error as boost exception
-   * @param t error code
-   */
+     * @brief throws outcome::result error as boost exception
+     * @param t error code
+     */
     [[noreturn]] inline void raise( const std::error_code &ec )
     {
         boost::throw_exception( std::system_error( ec ) );
     }
 
     /**
-   * @brief throws outcome::result error as boost exception
-   * @tparam T enum error type
-   * @param t error value
-   */
+     * @brief throws outcome::result error as boost exception
+     * @tparam T enum error type
+     * @param t error value
+     */
     template <typename T, typename = std::enable_if_t<std::is_enum_v<T>>>
     [[noreturn]] inline void raise( T t )
     {

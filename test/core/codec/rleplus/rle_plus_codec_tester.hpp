@@ -16,20 +16,20 @@ class RLEPlusCodecTester : public ::testing::Test
 {
 protected:
     /**
-   * @var Decoded sample, produced by reference go lang implementation
-   */
+     * @var Decoded sample, produced by reference go lang implementation
+     */
     std::set<T> reference_decoded_sample_{ 0,  2,  4,  5,  6,  11, 12, 13, 14, 15, 16,
                                            17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27 };
 
     /**
-   * @var Encoded sample, produced by reference go lang implementation
-   */
+     * @var Encoded sample, produced by reference go lang implementation
+     */
     std::set<T> reference_encoded_sample_{ 0x7C, 0x47, 0x22, 0x2 };
 
     /**
-   * @brief Codec algorithm check
-   * @param data_set - data for test
-   */
+     * @brief Codec algorithm check
+     * @param data_set - data for test
+     */
     void checkDataSet( const std::set<T> &data_set )
     {
         auto encoded = sgns::codec::rle::encode( data_set );
@@ -38,10 +38,10 @@ protected:
     }
 
     /**
-   * @brief Codec algorithm error handling check
-   * @param data - data for test
-   * @param e - expected error code
-   */
+     * @brief Codec algorithm error handling check
+     * @param data - data for test
+     * @param e - expected error code
+     */
     void checkDecodeFailure( const std::vector<uint8_t> &data, sgns::codec::rle::RLEPlusDecodeError e )
     {
         auto result = sgns::codec::rle::decode<T>( data );
@@ -50,12 +50,12 @@ protected:
     }
 
     /**
-   * @brief Generate sample data set with specific params
-   * @param value - start value of the set
-   * @param end - max data set value
-   * @param next - lambda to generate next data set value
-   * @return Generated data set
-   */
+     * @brief Generate sample data set with specific params
+     * @param value - start value of the set
+     * @param end - max data set value
+     * @param next - lambda to generate next data set value
+     * @return Generated data set
+     */
     std::set<T> generateDataSet( T value, T end, T ( *next )( T ) )
     {
         std::set<T>  data;

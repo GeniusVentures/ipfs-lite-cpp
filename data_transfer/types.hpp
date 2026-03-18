@@ -14,16 +14,16 @@ namespace sgns::data_transfer
     using sgns::ipfs_lite::ipfs::graphsync::statusCodeToString;
 
     /**
-   * TransferID is an identifier for a data transfer, shared between
-   * request/responder and unique to the requester
-   */
+     * TransferID is an identifier for a data transfer, shared between
+     * request/responder and unique to the requester
+     */
     using TransferId = uint64_t;
 
     /**
-   * Voucher is used to validate a data transfer request against the  underlying
-   * storage or retrieval deal that precipitated it. The only requirement is a
-   * voucher can read and write from bytes, and has a string identifier type
-   */
+     * Voucher is used to validate a data transfer request against the  underlying
+     * storage or retrieval deal that precipitated it. The only requirement is a
+     * voucher can read and write from bytes, and has a string identifier type
+     */
     struct Voucher
     {
         std::string          type;
@@ -31,8 +31,8 @@ namespace sgns::data_transfer
     };
 
     /**
-   * Status is the status of transfer for a given channel
-   */
+     * Status is the status of transfer for a given channel
+     */
     enum class Status : int
     {
         /** The data transfer is in progress */
@@ -46,9 +46,9 @@ namespace sgns::data_transfer
     };
 
     /**
-   * ChannelID is a unique identifier for a channel, distinct by both the other
-   * party's peer ID + the transfer ID
-   */
+     * ChannelID is a unique identifier for a channel, distinct by both the other
+     * party's peer ID + the transfer ID
+     */
     struct ChannelId
     {
         PeerId     initiator;
@@ -62,14 +62,14 @@ namespace sgns::data_transfer
     };
 
     /**
-   * Channel represents all immutable parameters for a single data transfer
-   */
+     * Channel represents all immutable parameters for a single data transfer
+     */
     struct Channel
     {
         /**
-     * an identifier for this channel shared by request and responder, set by
-     * requester through protocol
-     */
+         * an identifier for this channel shared by request and responder, set by
+         * requester through protocol
+         */
         TransferId transfer_id;
 
         /** base CID for the piece being transferred */
@@ -104,17 +104,17 @@ namespace sgns::data_transfer
     };
 
     /**
-   * EventCode is a name for an event that occurs on a data transfer channel
-   */
+     * EventCode is a name for an event that occurs on a data transfer channel
+     */
     enum class EventCode : int
     {
         /** Open is an event occurs when a channel is first opened */
         OPEN = 1,
 
         /**
-     * Progress is an event that gets emitted every time more data is
-     * transferred
-     */
+         * Progress is an event that gets emitted every time more data is
+         * transferred
+         */
         PROGRESS,
 
         /** Error is an event that emits when an error occurs in a data transfer */
@@ -125,8 +125,8 @@ namespace sgns::data_transfer
     };
 
     /**
-   * Event is a struct containing information about a data transfer event
-   */
+     * Event is a struct containing information about a data transfer event
+     */
     struct Event
     {
         EventCode   code;      // What type of event it is
@@ -135,8 +135,8 @@ namespace sgns::data_transfer
     };
 
     /**
-   * Subscriber is a callback that is called when events are emitted
-   */
+     * Subscriber is a callback that is called when events are emitted
+     */
     class Subscriber
     {
     public:

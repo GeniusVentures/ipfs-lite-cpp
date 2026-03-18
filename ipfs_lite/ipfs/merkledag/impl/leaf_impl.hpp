@@ -11,9 +11,9 @@ namespace sgns::ipfs_lite::ipfs::merkledag
     {
     public:
         /**
-     * @brief Construct leaf
-     * @param data - leaf content
-     */
+         * @brief Construct leaf
+         * @param data - leaf content
+         */
         explicit LeafImpl( common::Buffer data );
 
         const common::Buffer &content() const override;
@@ -25,11 +25,11 @@ namespace sgns::ipfs_lite::ipfs::merkledag
         std::vector<std::string_view> getSubLeafNames() const override;
 
         /**
-     * @brief Insert children leaf
-     * @param name - id of the leaf
-     * @param children - leaf to insert
-     * @return operation result
-     */
+         * @brief Insert children leaf
+         * @param name - id of the leaf
+         * @param children - leaf to insert
+         * @return operation result
+         */
         IPFS::outcome::result<void> insertSubLeaf( std::string name, LeafImpl children );
 
     private:

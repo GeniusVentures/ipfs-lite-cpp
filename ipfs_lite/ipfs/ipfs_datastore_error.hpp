@@ -6,8 +6,8 @@ namespace sgns::ipfs_lite::ipfs
 {
 
     /**
-   * @brief Type of errors returned by Keystore
-   */
+     * @brief Type of errors returned by Keystore
+     */
     enum class IpfsDatastoreError
     {
         NOT_FOUND = 1,

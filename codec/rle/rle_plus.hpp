@@ -8,12 +8,12 @@
 namespace sgns::codec::rle
 {
     /**
-   * @brief RLE+ encode
-   * @tparam T - type of elements to encode
-   * @tparam A - std::set allocator
-   * @param input - data to encode
-   * @return Encoded byte-vector
-   */
+     * @brief RLE+ encode
+     * @tparam T - type of elements to encode
+     * @tparam A - std::set allocator
+     * @param input - data to encode
+     * @return Encoded byte-vector
+     */
     template <typename T, typename A>
     std::vector<uint8_t> encode( const std::set<T, A> &input )
     {
@@ -23,11 +23,11 @@ namespace sgns::codec::rle
     }
 
     /**
-   * @brief RLE+ decode
-   * @tparam T - type of elements to decode
-   * @param input - data to decode
-   * @return Decoded data
-   */
+     * @brief RLE+ decode
+     * @tparam T - type of elements to decode
+     * @param input - data to decode
+     * @return Decoded data
+     */
     template <typename T>
     IPFS::outcome::result<std::set<T>> decode( gsl::span<const uint8_t> input )
     {

@@ -7,9 +7,9 @@ namespace sgns::ipfs_lite
 {
 
     /**
-   * @brief Class that is used to implement efficient bulk (batch) modifications
-   * of the Map.
-   */
+     * @brief Class that is used to implement efficient bulk (batch) modifications
+     * of the Map.
+     */
     class rocksdb::Batch : public BufferBatch
     {
     public:

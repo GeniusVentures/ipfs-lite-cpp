@@ -8,10 +8,10 @@ namespace sgns::ipfs_lite::face
 {
 
     /**
-   * @brief An abstraction over readable, writeable, iterable key-value map.
-   * @tparam K key type
-   * @tparam V value type
-   */
+     * @brief An abstraction over readable, writeable, iterable key-value map.
+     * @tparam K key type
+     * @tparam V value type
+     */
     template <typename K, typename V>
     struct GenericMap : public IterableMap<K, V>, public ReadableMap<K, V>, public WriteableMap<K, V>
     {

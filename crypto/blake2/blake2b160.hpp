@@ -18,17 +18,17 @@ namespace sgns::crypto::blake2b
     using Blake2b512Hash = common::Blob<BLAKE2B512_HASH_LENGTH>;
 
     /**
-   * @brief Get blake2b-160 hash
-   * @param to_hash - data to hash
-   * @return hash
-   */
+     * @brief Get blake2b-160 hash
+     * @param to_hash - data to hash
+     * @return hash
+     */
     Blake2b160Hash blake2b_160( gsl::span<const uint8_t> to_hash );
 
     /**
-   * @brief Get blake2b-256 hash
-   * @param to_hash - data to hash
-   * @return hash
-   */
+     * @brief Get blake2b-256 hash
+     * @param to_hash - data to hash
+     * @return hash
+     */
     Blake2b256Hash blake2b_256( gsl::span<const uint8_t> to_hash );
 
     Blake2b512Hash blake2b_512_from_file( std::ifstream &file_stream );

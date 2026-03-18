@@ -37,8 +37,8 @@ struct CommonFeaturesTest : public testing::TestWithParam<DataSample>
     DataSample data;
 
     /**
-   * @brief Prepare test suite
-   */
+     * @brief Prepare test suite
+     */
     void SetUp() override
     {
         std::shared_ptr<IpfsDatastore> datastore{ new InMemoryDatastore{} };
@@ -49,10 +49,10 @@ struct CommonFeaturesTest : public testing::TestWithParam<DataSample>
     }
 
     /**
-   * @brief Save nodes to the Block Service
-   * @param nodes - data to save
-   * @return operation result
-   */
+     * @brief Save nodes to the Block Service
+     * @param nodes - data to save
+     * @return operation result
+     */
     sgns::IPFS::outcome::result<void> saveToBlockService( const std::vector<std::shared_ptr<IPLDNode>> &nodes )
     {
         for ( const auto &node : nodes )
@@ -63,10 +63,10 @@ struct CommonFeaturesTest : public testing::TestWithParam<DataSample>
     }
 
     /**
-   * @brief Get CID string representation node
-   * @param node - target for retrieving id
-   * @return Base58-encoded CID v0
-   */
+     * @brief Get CID string representation node
+     * @param node - target for retrieving id
+     * @return Base58-encoded CID v0
+     */
     static std::string cidToString( const std::shared_ptr<const IPLDNode> &node )
     {
         std::string value{};
@@ -79,14 +79,14 @@ struct CommonFeaturesTest : public testing::TestWithParam<DataSample>
     }
 
     /**
-   * @brief Generate graph structure
-   *        Node without content:  {[]}
-   *        Node without children: {[content]}
-   *        Node with children:    {[content]->{[children]}]
-   * @note  This serialized graph structure uses only for tests purposes
-   * @param leaf - root node
-   * @return operation result
-   */
+     * @brief Generate graph structure
+     *        Node without content:  {[]}
+     *        Node without children: {[content]}
+     *        Node with children:    {[content]->{[children]}]
+     * @note  This serialized graph structure uses only for tests purposes
+     * @param leaf - root node
+     * @return operation result
+     */
     static std::string getGraphStructure( const Leaf &leaf )
     {
         std::string content{ "{[" };

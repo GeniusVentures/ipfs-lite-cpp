@@ -13,9 +13,9 @@ namespace sgns::data_transfer
     using libp2p::peer::PeerId;
 
     /**
-   * MessageReceiver is an interface for receiving messages from the
-   * GraphSyncNetwork.
-   */
+     * MessageReceiver is an interface for receiving messages from the
+     * GraphSyncNetwork.
+     */
     class MessageReceiver
     {
     public:
@@ -30,26 +30,26 @@ namespace sgns::data_transfer
         virtual void receiveError() = 0;
 
         /**
-     * Register validator for voucher type
-     * @param type - voucher type
-     * @param validator for voucher
-     * @return error in case of failure
-     */
+         * Register validator for voucher type
+         * @param type - voucher type
+         * @param validator for voucher
+         * @return error in case of failure
+         */
         IPFS::outcome::result<void> registerVoucherType( const std::string                &type,
                                                          std::shared_ptr<RequestValidator> validator );
 
     protected:
         /**
-     * validateVoucher converts a voucher in an incoming message to its
-     * appropriate voucher struct, then runs the validator and returns the
-     * results.
-     * @param sender
-     * @param incoming_request
-     * @return error if:
-     *  - voucherFromRequest fails
-     *  - deserialization of selector fails
-     *  - validation fails
-     */
+         * validateVoucher converts a voucher in an incoming message to its
+         * appropriate voucher struct, then runs the validator and returns the
+         * results.
+         * @param sender
+         * @param incoming_request
+         * @return error if:
+         *  - voucherFromRequest fails
+         *  - deserialization of selector fails
+         *  - validation fails
+         */
         IPFS::outcome::result<void> validateVoucher( const PeerId &sender, const DataTransferRequest &request ) const;
 
         common::Logger logger_ = common::createLogger( "data_transfer" );
@@ -59,8 +59,8 @@ namespace sgns::data_transfer
     };
 
     /**
-   * @brief Type of errors returned by Keystore
-   */
+     * @brief Type of errors returned by Keystore
+     */
     enum class MessageReceiverError
     {
         VOUCHER_VALIDATOR_ALREADY_REGISTERED,
