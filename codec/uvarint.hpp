@@ -24,7 +24,7 @@ namespace sgns::codec::uvarint
     template <auto error_length, auto error_data>
     IPFS::outcome::result<Input> readBytes( Input &input )
     {
-        OUTCOME_TRY( ( auto &&, size ), read<error_length>( input ) );
+        BOOST_OUTCOME_TRY( auto size, read<error_length>( input ) );
         if ( input.size() < static_cast<ptrdiff_t>( size ) )
         {
             return error_data;

@@ -70,8 +70,8 @@ namespace sgns::ipfs_lite::ipfs
         template <typename T>
         IPFS::outcome::result<CID> setCbor( const T &value )
         {
-            OUTCOME_TRY( ( auto &&, bytes ), codec::cbor::encode( value ) );
-            OUTCOME_TRY( ( auto &&, key ), common::getCidOf( bytes ) );
+            BOOST_OUTCOME_TRY( auto bytes, codec::cbor::encode( value ) );
+            BOOST_OUTCOME_TRY( auto key, common::getCidOf( bytes ) );
             BOOST_OUTCOME_TRYV2( auto &&, set( key, Value( bytes ) ) );
             return std::move( key );
         }
@@ -80,7 +80,7 @@ namespace sgns::ipfs_lite::ipfs
         template <typename T>
         IPFS::outcome::result<T> getCbor( const CID &key ) const
         {
-            OUTCOME_TRY( ( auto &&, bytes ), get( key ) );
+            BOOST_OUTCOME_TRY( auto bytes, get( key ) );
             return codec::cbor::decode<T>( bytes );
         }
     };

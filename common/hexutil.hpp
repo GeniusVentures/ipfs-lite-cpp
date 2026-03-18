@@ -4,14 +4,14 @@
 #include <vector>
 
 #include <gsl/span>
-#include "common/outcome.hpp"
+#include "outcome.hpp"
 
 namespace sgns::common
 {
     /**
    * @brief error codes for exceptions that may occur during unhexing
    */
-    enum class UnhexError
+    enum class UnhexError : uint8_t
     {
         NOT_ENOUGH_INPUT = 1,
         NON_HEX_INPUT,

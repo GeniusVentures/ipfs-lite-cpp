@@ -17,7 +17,7 @@ namespace sgns::codec::json
         ptree children;
         for ( const auto &it : span )
         {
-            OUTCOME_TRY( ( auto &&, encoded ), it.toString() );
+            BOOST_OUTCOME_TRY( auto encoded, it.toString() );
             ptree child;
             child.put( "", encoded );
             children.push_back( std::make_pair( "", child ) );
@@ -55,7 +55,7 @@ namespace sgns::codec::json
         for ( auto &&it : array )
         {
             auto &&val = it.second.get_value<std::string>();
-            OUTCOME_TRY( ( auto &&, cid ), CID::fromString( val ) );
+            BOOST_OUTCOME_TRY( auto cid, CID::fromString( val ) );
             cids.push_back( std::move( cid ) );
         }
 

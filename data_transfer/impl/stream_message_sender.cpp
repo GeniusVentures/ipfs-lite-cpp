@@ -12,7 +12,7 @@ namespace sgns::data_transfer
 
     IPFS::outcome::result<void> StreamMessageSender::sendMessage( const DataTransferMessage &message )
     {
-        OUTCOME_TRY( ( auto &&, encoded_message ), codec::cbor::encode( message ) );
+        BOOST_OUTCOME_TRY( auto encoded_message, codec::cbor::encode( message ) );
         stream_->write( encoded_message,
                         encoded_message.size(),
                         []( IPFS::outcome::result<size_t> rwrite )

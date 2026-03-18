@@ -5,8 +5,8 @@
 #include <boost/format.hpp>
 #include <boost/functional/hash.hpp>
 
-#include "common/hexutil.hpp"
-#include "common/span.hpp"
+#include "hexutil.hpp"
+#include "span.hpp"
 
 namespace sgns::common
 {
@@ -94,7 +94,7 @@ namespace sgns::common
      */
         static IPFS::outcome::result<Blob<size_>> fromHex( std::string_view hex )
         {
-            OUTCOME_TRY( ( auto &&, res ), unhex( hex ) );
+            BOOST_OUTCOME_TRY( auto res, unhex( hex ) );
             return fromSpan( res );
         }
 
