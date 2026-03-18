@@ -134,7 +134,7 @@ namespace sgns::ipfs_lite::ipld
         for ( size_t i = 0; i < decoder.getLinksCount(); ++i )
         {
             std::vector<uint8_t> link_cid_bytes{ decoder.getLinkCID( i ).begin(), decoder.getLinkCID( i ).end() };
-            OUTCOME_TRY( ( auto &&, link_cid ), CID::fromBytes( link_cid_bytes ) );
+            BOOST_OUTCOME_TRY( auto link_cid, CID::fromBytes( link_cid_bytes ) );
             IPLDLinkImpl link{ std::move( link_cid ), decoder.getLinkName( i ), decoder.getLinkSize( i ) };
             node->addLink( link );
         }

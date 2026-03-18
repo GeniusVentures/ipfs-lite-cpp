@@ -101,7 +101,7 @@ namespace sgns::common::libp2p
         {
             if ( !partial_head )
             {
-                OUTCOME_TRY( ( auto &&, head ), Head::first( more_bytes, input[consumed] ) );
+                BOOST_OUTCOME_TRY( auto head, Head::first( more_bytes, input[consumed] ) );
                 ++consumed;
                 partial_head = head;
             }

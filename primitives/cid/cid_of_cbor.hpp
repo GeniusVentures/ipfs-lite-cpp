@@ -15,7 +15,7 @@ namespace sgns::primitives::cid
     template <class T>
     IPFS::outcome::result<CID> getCidOfCbor( const T &value )
     {
-        OUTCOME_TRY( ( auto &&, bytes ), sgns::codec::cbor::encode( value ) );
+        BOOST_OUTCOME_TRY( auto bytes, sgns::codec::cbor::encode( value ) );
         return common::getCidOf( bytes );
     }
 }

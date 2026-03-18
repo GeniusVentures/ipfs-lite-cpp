@@ -53,7 +53,7 @@ namespace sgns::codec::cbor
         {
             if ( stream.isList() )
             {
-                OUTCOME_TRY( ( auto &&, index ), parseIndex( part ) );
+                BOOST_OUTCOME_TRY( auto index, parseIndex( part ) );
                 if ( index >= stream.listLength() )
                 {
                     return CborResolveError::KEY_NOT_FOUND;

@@ -30,7 +30,7 @@ namespace sgns::ipfs_lite::ipfs
 
     sgns::IPFS::outcome::result<Value> InMemoryDatastore::get( const CID &key ) const
     {
-        OUTCOME_TRY( ( auto &&, found ), contains( key ) );
+        BOOST_OUTCOME_TRY( auto found, contains( key ) );
         if ( !found )
         {
             return IpfsDatastoreError::NOT_FOUND;

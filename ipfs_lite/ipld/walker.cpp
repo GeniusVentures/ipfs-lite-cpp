@@ -52,7 +52,7 @@ namespace sgns::ipfs_lite::ipld::walker
                     break;
                 }
                 auto cid_bytes = link._str( 1 );
-                OUTCOME_TRY( ( auto &&, cid ), CID::fromBytes( cid_bytes ) );
+                BOOST_OUTCOME_TRY( auto cid, CID::fromBytes( cid_bytes ) );
                 cids.push_back( std::move( cid ) );
             }
             return std::move( cids );
@@ -70,7 +70,7 @@ namespace sgns::ipfs_lite::ipld::walker
         if ( visited.insert( cid ).second )
         {
             cids.push_back( cid );
-            OUTCOME_TRY( ( auto &&, bytes ), store.get( cid ) );
+            BOOST_OUTCOME_TRY( auto bytes, store.get( cid ) );
             // TODO(turuslan): what about other types?
             if ( cid.content_type == libp2p::multi::MulticodecType::Code::DAG_CBOR )
             {
@@ -86,7 +86,7 @@ namespace sgns::ipfs_lite::ipld::walker
             }
             else if ( cid.content_type == libp2p::multi::MulticodecType::Code::DAG_PB )
             {
-                OUTCOME_TRY( ( auto &&, cids ), PbNodeDecoder::links( bytes ) );
+                BOOST_OUTCOME_TRY( auto cids, PbNodeDecoder::links( bytes ) );
                 for ( auto &cid : cids )
                 {
                     BOOST_OUTCOME_TRYV2( auto &&, recursiveAll( cid ) );

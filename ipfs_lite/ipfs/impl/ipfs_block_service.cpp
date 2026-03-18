@@ -35,7 +35,7 @@ namespace sgns::ipfs_lite::ipfs
 
     IPFS::outcome::result<IpfsBlockService::Value> IpfsBlockService::get( const CID &key ) const
     {
-        OUTCOME_TRY( ( auto &&, data ), local_storage_->get( key ) );
+        BOOST_OUTCOME_TRY( auto data, local_storage_->get( key ) );
         return std::move( data );
     }
 

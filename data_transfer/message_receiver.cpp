@@ -23,8 +23,8 @@ namespace sgns::data_transfer
         {
             return MessageReceiverError::VOUCHER_VALIDATOR_NOT_FOUND;
         }
-        OUTCOME_TRY( ( auto &&, base_cid ), CID::fromString( request.base_cid ) );
-        OUTCOME_TRY( ( auto &&, selector ), IPLDNodeImpl::createFromRawBytes( request.selector ) );
+        BOOST_OUTCOME_TRY( auto base_cid, CID::fromString( request.base_cid ) );
+        BOOST_OUTCOME_TRY( auto selector, IPLDNodeImpl::createFromRawBytes( request.selector ) );
         if ( request.is_pull )
         {
             BOOST_OUTCOME_TRYV2( auto &&,

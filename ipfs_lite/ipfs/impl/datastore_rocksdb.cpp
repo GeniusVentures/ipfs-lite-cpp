@@ -13,7 +13,7 @@ namespace sgns::ipfs_lite::ipfs
      */
         inline IPFS::outcome::result<common::Buffer> encode( const CID &value )
         {
-            OUTCOME_TRY( ( auto &&, encoded ), value.toBytes() );
+            BOOST_OUTCOME_TRY( auto encoded, value.toBytes() );
             return common::Buffer( std::move( encoded ) );
         }
     } // namespace
@@ -27,27 +27,27 @@ namespace sgns::ipfs_lite::ipfs
         std::string_view rocksdb_directory,
         rocksdb::Options options )
     {
-        OUTCOME_TRY( ( auto &&, rocksdb ), rocksdb::create( rocksdb_directory, options ) );
+        BOOST_OUTCOME_TRY( auto rocksdb, rocksdb::create( rocksdb_directory, options ) );
 
         return std::make_shared<RocksdbDatastore>( std::move( rocksdb ) );
     }
 
     IPFS::outcome::result<bool> RocksdbDatastore::contains( const CID &key ) const
     {
-        OUTCOME_TRY( ( auto &&, encoded_key ), encode( key ) );
+        BOOST_OUTCOME_TRY( auto encoded_key, encode( key ) );
         return rocksdb_->contains( encoded_key );
     }
 
     IPFS::outcome::result<void> RocksdbDatastore::set( const CID &key, Value value )
     {
         // TODO(turuslan): FIL-117 maybe check value hash matches cid
-        OUTCOME_TRY( ( auto &&, encoded_key ), encode( key ) );
+        BOOST_OUTCOME_TRY( auto encoded_key, encode( key ) );
         return rocksdb_->put( encoded_key, common::Buffer( std::move( value ) ) );
     }
 
     IPFS::outcome::result<void> RocksdbDatastore::seal( const CID &key )
     {
-        OUTCOME_TRY( ( auto &&, cid_string ), key.toString() );
+        BOOST_OUTCOME_TRY( auto cid_string, key.toString() );
         cid_string += "sealed";
         common::Buffer key_buf;
         key_buf.put( cid_string );
@@ -57,7 +57,7 @@ namespace sgns::ipfs_lite::ipfs
 
     IPFS::outcome::result<bool> RocksdbDatastore::is_sealed( const CID &key ) const
     {
-        OUTCOME_TRY( ( auto &&, cid_string ), key.toString() );
+        BOOST_OUTCOME_TRY( auto cid_string, key.toString() );
         cid_string += "sealed";
         common::Buffer key_buf;
         key_buf.put( cid_string );
@@ -66,7 +66,7 @@ namespace sgns::ipfs_lite::ipfs
 
     IPFS::outcome::result<RocksdbDatastore::Value> RocksdbDatastore::get( const CID &key ) const
     {
-        OUTCOME_TRY( ( auto &&, encoded_key ), encode( key ) );
+        BOOST_OUTCOME_TRY( auto encoded_key, encode( key ) );
         auto res = rocksdb_->get( encoded_key );
         if ( res.has_error() && res.error() == sgns::ipfs_lite::rocksdbError::NOT_FOUND )
         {
@@ -77,7 +77,7 @@ namespace sgns::ipfs_lite::ipfs
 
     IPFS::outcome::result<void> RocksdbDatastore::remove( const CID &key )
     {
-        OUTCOME_TRY( ( auto &&, encoded_key ), encode( key ) );
+        BOOST_OUTCOME_TRY( auto encoded_key, encode( key ) );
         return rocksdb_->remove( encoded_key );
     }
 

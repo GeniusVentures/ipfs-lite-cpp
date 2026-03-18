@@ -16,7 +16,7 @@ namespace dataset
     sgns::IPFS::outcome::result<void> link( const std::shared_ptr<IPLDNode>       &to,
                                             const std::shared_ptr<const IPLDNode> &from )
     {
-        OUTCOME_TRY( ( auto &&, from_id ), from->getCID().toString() );
+        BOOST_OUTCOME_TRY( auto from_id, from->getCID().toString() );
         EXPECT_OUTCOME_TRUE_1( to->addChild( from_id, from ) );
         return sgns::IPFS::outcome::success();
     }

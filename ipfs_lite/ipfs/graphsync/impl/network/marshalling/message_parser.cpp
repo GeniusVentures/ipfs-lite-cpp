@@ -64,7 +64,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                     }
                     else
                     {
-                        OUTCOME_TRY( ( auto &&, cid ), CID::fromBytes( common::span::cbytes( src.root() ) ) );
+                        BOOST_OUTCOME_TRY( auto cid, CID::fromBytes( common::span::cbytes( src.root() ) ) );
                         dst.root_cid = std::move( cid );
                         dst.selector = fromString( src.selector() );
                         dst.priority = src.priority();
@@ -96,7 +96,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                 {
                     auto &dst = msg.responses.emplace_back( Message::Response() );
                     dst.id    = src.id();
-                    OUTCOME_TRY( ( auto &&, status ), extractStatusCode( src.status() ) );
+                    BOOST_OUTCOME_TRY( auto status, extractStatusCode( src.status() ) );
                     dst.status = status;
 
                     // for (const auto &[k, v] : src.extensions()) {
@@ -125,7 +125,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                 {
                     auto data          = fromString( src.data() );
                     auto prefix_reader = common::span::cbytes( src.prefix() );
-                    OUTCOME_TRY( ( auto &&, cid ), CID::read( prefix_reader, true ) );
+                    BOOST_OUTCOME_TRY( auto cid, CID::read( prefix_reader, true ) );
                     if ( !prefix_reader.empty() )
                     {
                         return Error::MESSAGE_PARSE_ERROR;

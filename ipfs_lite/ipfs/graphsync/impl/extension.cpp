@@ -131,7 +131,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                 CID cid;
                 link_p->second >> cid;
 
-                OUTCOME_TRY( ( auto &&, present ), decodeBool( present_p->second.raw() ) );
+                BOOST_OUTCOME_TRY( auto present, decodeBool( present_p->second.raw() ) );
 
                 pairs.push_back( { std::move( cid ), present } );
             }
