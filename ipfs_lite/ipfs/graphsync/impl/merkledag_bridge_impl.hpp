@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_MERKLEDAG_BRIDGE_IMPL_HPP
-#define CPP_IPFS_LITE_MERKLEDAG_BRIDGE_IMPL_HPP
+#pragma once
 
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
 
@@ -26,5 +24,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_MERKLEDAG_BRIDGE_IMPL_HPP

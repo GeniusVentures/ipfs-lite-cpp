@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_PRIMITIVES_BIG_INT_HPP
-#define CPP_IPFS_LITE_PRIMITIVES_BIG_INT_HPP
+#pragma once
 
 #include <boost/multiprecision/cpp_int.hpp>
 
@@ -43,5 +41,3 @@ namespace boost::multiprecision
         return s;
     }
 }
-
-#endif // CPP_IPFS_LITE_PRIMITIVES_BIG_INT_HPP

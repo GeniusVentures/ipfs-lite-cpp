@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_INBOUND_ENDPOINT_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_INBOUND_ENDPOINT_HPP
+#pragma once
 
 #include "marshalling/response_builder.hpp"
 #include "network_fwd.hpp"
@@ -54,5 +52,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_INBOUND_ENDPOINT_HPP

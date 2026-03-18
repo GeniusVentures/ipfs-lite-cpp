@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_BLOCK_HPP
-#define IPFS_LITE_IPLD_BLOCK_HPP
+#pragma once
 
 #include <vector>
 
@@ -78,5 +77,3 @@ namespace sgns::ipfs_lite::ipld
         }
     };
 }
-
-#endif

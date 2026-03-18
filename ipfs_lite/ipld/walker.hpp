@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_STORAGE_IPLD_WALKER_HPP
-#define CPP_IPFS_LITE_STORAGE_IPLD_WALKER_HPP
+#pragma once
 
 #include <set>
 
@@ -31,5 +29,3 @@ namespace sgns::ipfs_lite::ipld::walker
         std::vector<CID> cids;
     };
 }
-
-#endif // CPP_IPFS_LITE_STORAGE_IPLD_WALKER_HPP

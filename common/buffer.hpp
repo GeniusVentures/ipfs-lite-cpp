@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_BUFFER_HPP
-#define CPP_IPFS_LITE_BUFFER_HPP
+#pragma once
 
 #include <boost/container_hash/hash.hpp>
 #include <boost/operators.hpp>
@@ -257,5 +256,3 @@ namespace std
         }
     };
 }
-
-#endif // CPP_IPFS_LITE_BUFFER_HPP

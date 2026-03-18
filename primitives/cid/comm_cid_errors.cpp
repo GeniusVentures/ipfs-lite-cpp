@@ -1,4 +1,3 @@
-
 #include "primitives/cid/comm_cid_errors.hpp"
 
 OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::common, CommCidError, e )

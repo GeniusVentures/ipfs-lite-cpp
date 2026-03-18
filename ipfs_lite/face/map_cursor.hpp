@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_MAP_CURSOR_HPP
-#define CPP_IPFS_LITE_MAP_CURSOR_HPP
+#pragma once
 
 namespace sgns::ipfs_lite::face
 {
@@ -60,5 +58,3 @@ namespace sgns::ipfs_lite::face
     };
 
 }
-
-#endif //FILECOIN_MAP_CURSOR_HPP

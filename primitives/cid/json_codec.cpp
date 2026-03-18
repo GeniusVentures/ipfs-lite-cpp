@@ -1,4 +1,3 @@
-
 #include "primitives/cid/json_codec.hpp"
 
 #include <strstream>

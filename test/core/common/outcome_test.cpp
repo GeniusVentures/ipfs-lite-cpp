@@ -1,4 +1,3 @@
-
 #include "common/outcome.hpp"
 
 #include <gtest/gtest.h>

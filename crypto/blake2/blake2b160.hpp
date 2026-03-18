@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_BLAKE2B160_HPP
-#define CPP_IPFS_LITE_BLAKE2B160_HPP
+#pragma once
 
 #include <gsl/span>
 
@@ -36,5 +34,3 @@ namespace sgns::crypto::blake2b
     Blake2b512Hash blake2b_512_from_file( std::ifstream &file_stream );
 
 }
-
-#endif // CPP_IPFS_LITE_BLAKE2B160_HPP

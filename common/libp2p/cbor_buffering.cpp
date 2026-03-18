@@ -1,4 +1,3 @@
-
 #include "common/libp2p/cbor_buffering.hpp"
 
 OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::common::libp2p, CborBuffering::Error, e )

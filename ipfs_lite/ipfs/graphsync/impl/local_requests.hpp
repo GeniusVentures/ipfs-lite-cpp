@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_LOCAL_REQUESTS_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_LOCAL_REQUESTS_HPP
+#pragma once
 
 #include <map>
 
@@ -213,5 +211,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         std::unordered_map<RequestId, CID> request_to_cid_;
     };
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_LOCAL_REQUESTS_HPP

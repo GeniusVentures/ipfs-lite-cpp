@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_COMMON_LIBP2P_PEER_PEER_INFO_HELPER_HPP
-#define CPP_IPFS_LITE_COMMON_LIBP2P_PEER_PEER_INFO_HELPER_HPP
+#pragma once
 
 #include <libp2p/peer/peer_info.hpp>
 #include <sstream>
@@ -21,5 +19,3 @@ static std::string peerInfoToPrettyString( const PeerInfo &peer_info )
     }
     return ss.str();
 }
-
-#endif // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_PEER_INFO_HELPER_HPP

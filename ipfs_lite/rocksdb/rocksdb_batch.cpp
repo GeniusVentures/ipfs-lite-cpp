@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/rocksdb/rocksdb_batch.hpp"
 
 #include "ipfs_lite/rocksdb/rocksdb_util.hpp"

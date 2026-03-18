@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_RESPONSE_BUILDER_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_RESPONSE_BUILDER_HPP
+#pragma once
 
 #include "message_builder.hpp"
 
@@ -24,5 +22,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_RESPONSE_BUILDER_HPP

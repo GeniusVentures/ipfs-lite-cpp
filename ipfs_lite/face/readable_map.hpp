@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_READABLE_MAP_HPP
-#define CPP_IPFS_LITE_READABLE_MAP_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 #include "ipfs_lite/face/map_cursor.hpp"
@@ -34,5 +32,3 @@ namespace sgns::ipfs_lite::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_WRITEABLE_KEY_VALUE_HPP

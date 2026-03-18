@@ -1,6 +1,4 @@
-
-#ifndef IPFS_LITE_TEST_TESTUTIL_LITERALS_HPP
-#define IPFS_LITE_TEST_TESTUTIL_LITERALS_HPP
+#pragma once
 
 #include "common/blob.hpp"
 #include "common/hexutil.hpp"
@@ -45,5 +43,3 @@ inline auto operator""_cid( const char *c, size_t s )
 {
     return sgns::CID::fromBytes( sgns::common::unhex( std::string_view( c, s ) ).value() ).value();
 }
-
-#endif // IPFS_LITE_TEST_TESTUTIL_LITERALS_HPP

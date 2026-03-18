@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_VISITOR_HPP
-#define CPP_IPFS_LITE_VISITOR_HPP
+#pragma once
 
 #include <type_traits> // for std::decay
 #include <utility>     // for std::forward
@@ -99,5 +97,3 @@ namespace sgns
         return match( std::forward<T>( t ), make_visitor( std::forward<Fs>( fs )... ) );
     }
 }
-
-#endif // CPP_IPFS_LITE_VISITOR_HPP

@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_IPFS_MERKLEDAG_LEAF_IMPL_HPP
-#define CPP_IPFS_LITE_IPFS_MERKLEDAG_LEAF_IMPL_HPP
+#pragma once
 
 #include "ipfs_lite/ipfs/merkledag/leaf.hpp"
 
@@ -38,5 +37,3 @@ namespace sgns::ipfs_lite::ipfs::merkledag
         std::map<std::string, LeafImpl, std::less<>> children_;
     };
 }
-
-#endif

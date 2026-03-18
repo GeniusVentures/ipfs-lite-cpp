@@ -1,4 +1,3 @@
-
 #include "testutil/ipfs_lite/base_rocksdb_test.hpp"
 
 namespace test

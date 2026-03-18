@@ -1,6 +1,4 @@
-
-#ifndef IPFS_LITE_COMMON_OUTCOME_HPP
-#define IPFS_LITE_COMMON_OUTCOME_HPP
+#pragma once
 
 #include <boost/system/system_error.hpp>
 #include <boost/throw_exception.hpp>
@@ -70,5 +68,3 @@ namespace sgns::IPFS::outcome
 
 #define OUTCOME_ALTERNATIVE( var, expression, alternative )                                                            \
     _OUTCOME_ALTERNATIVE( _UNIQUE_NAME( _r ), var, expression, alternative )
-
-#endif // IPFS_LITE_COMMON_OUTCOME_HPP

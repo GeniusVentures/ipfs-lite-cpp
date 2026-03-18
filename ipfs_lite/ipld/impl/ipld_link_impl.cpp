@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipld/impl/ipld_link_impl.hpp"
 
 namespace sgns::ipfs_lite::ipld

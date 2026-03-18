@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_COMMON_LIBP2P_MULTI_CBOR_MULTIADDRESS_HPP
-#define CPP_IPFS_LITE_COMMON_LIBP2P_MULTI_CBOR_MULTIADDRESS_HPP
+#pragma once
 
 #include <libp2p/multi/multiaddress.hpp>
 
@@ -35,5 +34,3 @@ namespace libp2p::multi
     }
 
 }
-
-#endif // CPP_IPFS_LITE_COMMON_LIBP2P_MULTI_CBOR_MULTIADDRESS_HPP

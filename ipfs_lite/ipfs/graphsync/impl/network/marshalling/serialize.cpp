@@ -1,4 +1,3 @@
-
 #include <google/protobuf/message_lite.h>
 
 #include <libp2p/multi/uvarint.hpp>

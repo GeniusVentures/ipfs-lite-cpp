@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_NODE_IMPL_HPP
-#define IPFS_LITE_IPLD_NODE_IMPL_HPP
+#pragma once
 
 #include <map>
 #include <memory>
@@ -77,5 +76,3 @@ namespace sgns::ipfs_lite::ipld
         return entity.serialize();
     }
 }
-
-#endif

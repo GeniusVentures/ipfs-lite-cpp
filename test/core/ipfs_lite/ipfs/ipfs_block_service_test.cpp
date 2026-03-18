@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipfs/impl/ipfs_block_service.hpp"
 
 #include <memory>

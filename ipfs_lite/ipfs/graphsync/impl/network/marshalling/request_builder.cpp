@@ -1,4 +1,3 @@
-
 #include "request_builder.hpp"
 
 #include "codec/cbor/cbor_encode_stream.hpp"

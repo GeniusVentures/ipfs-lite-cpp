@@ -1,4 +1,3 @@
-
 #include "primitives/cid/comm_cid.hpp"
 #include "common/outcome.hpp"
 #include "primitives/cid/comm_cid_errors.hpp"

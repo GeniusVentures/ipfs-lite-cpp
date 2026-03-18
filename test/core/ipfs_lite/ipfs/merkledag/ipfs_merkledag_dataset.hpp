@@ -1,7 +1,4 @@
-
-
-#ifndef CORE_IPFS_LITE_IPFS_MERKLEDAG_NODE_LIBRARY
-#define CORE_IPFS_LITE_IPFS_MERKLEDAG_NODE_LIBRARY
+#pragma once
 
 #include "ipfs_lite/ipld/impl/ipld_node_impl.hpp"
 
@@ -100,5 +97,3 @@ namespace dataset
         return suite_E;
     }
 }
-
-#endif

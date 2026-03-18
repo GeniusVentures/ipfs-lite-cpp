@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_ROCKSDB_UTIL_HPP
-#define CPP_IPFS_LITE_ROCKSDB_UTIL_HPP
+#pragma once
 
 #include <rocksdb/status.h>
 #include <gsl/span>
@@ -82,5 +81,3 @@ namespace sgns::ipfs_lite
     }
 
 }
-
-#endif // CPP_IPFS_LITE_rocksdb_UTIL_HPP

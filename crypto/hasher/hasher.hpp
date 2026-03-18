@@ -1,6 +1,4 @@
-
-#ifndef IPFS_LITE_CRYPTO_HASHER_HPP
-#define IPFS_LITE_CRYPTO_HASHER_HPP
+#pragma once
 
 #include <map>
 
@@ -41,5 +39,3 @@ namespace sgns::crypto
         static Multihash blake2b_256( gsl::span<const uint8_t> buffer );
     };
 }
-
-#endif

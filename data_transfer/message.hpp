@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_HPP
+#pragma once
 
 #include "codec/cbor/streams_annotation.hpp"
 #include "data_transfer/types.hpp"
@@ -102,5 +101,3 @@ namespace sgns::data_transfer
     CBOR_TUPLE( DataTransferMessage, is_request, request, response )
 
 }
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_HPP

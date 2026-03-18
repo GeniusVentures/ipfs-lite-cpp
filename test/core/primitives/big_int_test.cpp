@@ -1,4 +1,3 @@
-
 #include "primitives/big_int.hpp"
 
 #include <gtest/gtest.h>

@@ -1,4 +1,3 @@
-
 #include "message_builder.hpp"
 
 #include "serialize.hpp"

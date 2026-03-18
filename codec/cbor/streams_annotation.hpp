@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_STREAMS_ANNOTATION_HPP
-#define CPP_IPFS_LITE_STREAMS_ANNOTATION_HPP
+#pragma once
 
 #define CBOR_ENCODE( type, var )                                                                                       \
     template <class Stream, typename = std::enable_if_t<std::remove_reference_t<Stream>::is_cbor_encoder_stream>>      \
@@ -69,5 +67,3 @@ namespace sgns::codec::cbor
         return {};
     }
 }
-
-#endif // CPP_IPFS_LITE_STREAMS_ANNOTATION_HPP

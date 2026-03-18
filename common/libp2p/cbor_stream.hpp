@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_STREAM_HPP
-#define CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_STREAM_HPP
+#pragma once
 
 #include <libp2p/connection/stream.hpp>
 
@@ -69,5 +67,3 @@ namespace sgns::common::libp2p
         size_t                  size_{};
     };
 }
-
-#endif // CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_STREAM_HPP

@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_NETWORK_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_NETWORK_HPP
+#pragma once
 
 #include <libp2p/connection/stream.hpp>
 #include <libp2p/host/host.hpp>
@@ -42,5 +40,3 @@ namespace sgns::data_transfer
     };
 
 }
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_NETWORK_HPP

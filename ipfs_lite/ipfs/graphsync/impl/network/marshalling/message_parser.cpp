@@ -1,4 +1,3 @@
-
 #include "message_parser.hpp"
 
 #include "codec/cbor/cbor_decode_stream.hpp"

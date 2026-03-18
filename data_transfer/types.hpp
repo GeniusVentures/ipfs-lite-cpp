@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_TYPES_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_TYPES_HPP
+#pragma once
 
 #include <libp2p/peer/peer_id.hpp>
 #include "clock/time.hpp"
@@ -147,5 +146,3 @@ namespace sgns::data_transfer
     };
 
 }
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_TYPES_HPP

@@ -1,4 +1,3 @@
-
 #include <cassert>
 
 #include "local_requests.hpp"

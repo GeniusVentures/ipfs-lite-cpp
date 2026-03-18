@@ -1,4 +1,3 @@
-
 #include "message_reader.hpp"
 
 #include <cassert>

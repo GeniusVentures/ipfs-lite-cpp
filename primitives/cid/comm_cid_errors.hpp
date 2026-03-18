@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_COMM_CID_ERRORS_HPP
-#define CPP_IPFS_LITE_COMM_CID_ERRORS_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 
@@ -23,5 +21,3 @@ namespace sgns::common
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::common, CommCidError );
-
-#endif //CPP_IPFS_LITE_COMM_CID_ERRORS_HPP

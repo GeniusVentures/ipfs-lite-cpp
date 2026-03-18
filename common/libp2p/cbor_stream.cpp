@@ -1,4 +1,3 @@
-
 #include "common/libp2p/cbor_stream.hpp"
 
 namespace sgns::common::libp2p

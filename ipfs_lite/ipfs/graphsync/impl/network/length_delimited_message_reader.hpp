@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_LENGTH_DELIMITED_MESSAGE_READER_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_LENGTH_DELIMITED_MESSAGE_READER_HPP
+#pragma once
 
 #include <functional>
 
@@ -67,5 +65,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_LENGH_DELIMITED_MESSAGE_READER_HPP

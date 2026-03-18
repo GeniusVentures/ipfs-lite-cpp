@@ -1,5 +1,3 @@
-
-
 #include "ipfs_lite/ipld/walker.hpp"
 
 #include <google/protobuf/io/coded_stream.h>

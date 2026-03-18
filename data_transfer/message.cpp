@@ -1,4 +1,3 @@
-
 #include "data_transfer/message.hpp"
 
 namespace sgns::data_transfer

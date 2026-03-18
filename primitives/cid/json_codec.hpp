@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP
-#define CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 #include "primitives/cid/cid.hpp"
@@ -27,5 +25,3 @@ namespace sgns::codec::json
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::json, JsonCodecError );
-
-#endif // CPP_IPFS_LITE__PRIMITIVES_CID_JSON_CODEC_HPP

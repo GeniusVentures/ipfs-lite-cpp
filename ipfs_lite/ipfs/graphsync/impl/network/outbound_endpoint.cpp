@@ -1,4 +1,3 @@
-
 #include "outbound_endpoint.hpp"
 
 #include <cassert>

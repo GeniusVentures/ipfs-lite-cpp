@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_COMMON_HPP
-#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_COMMON_HPP
+#pragma once
 
 #include <cstdint>
 
@@ -13,5 +12,3 @@ namespace sgns::codec::cbor
 {
     constexpr uint64_t kCidTag = 42;
 }
-
-#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_COMMON_HPP

@@ -1,5 +1,3 @@
-
-
 #include "ipfs_lite/ipfs/merkledag/impl/merkledag_service_impl.hpp"
 
 #include <gtest/gtest.h>

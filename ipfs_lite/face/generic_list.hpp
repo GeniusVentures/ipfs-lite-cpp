@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_GENERIC_LIST_HPP
-#define CPP_IPFS_LITE_GENERIC_LIST_HPP
+#pragma once
 
 #include <cstddef>
 #include <memory>
@@ -145,5 +144,3 @@ namespace sgns::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GENERIC_LIST_HPP

@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_SERIALIZE_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_SERIALIZE_HPP
+#pragma once
 
 // TODO(FIL-144) move this stuff to libp2p
 
@@ -30,5 +28,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         const google::protobuf::MessageLite &msg );
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_SERIALIZE_HPP

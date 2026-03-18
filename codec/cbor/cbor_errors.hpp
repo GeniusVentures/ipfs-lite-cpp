@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_ERRORS_HPP
-#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_ERRORS_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 
@@ -24,5 +23,3 @@ namespace sgns::codec::cbor
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::cbor, CborEncodeError );
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::cbor, CborDecodeError );
-
-#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_ERRORS_HPP

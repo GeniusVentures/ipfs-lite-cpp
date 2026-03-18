@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_BUFFER_MAP_HPP
-#define CPP_IPFS_LITE_BUFFER_MAP_HPP
+#pragma once
 
 /**
  * This file contains:
@@ -29,5 +28,3 @@ namespace sgns::ipfs_lite
     using BufferMapCursor = face::MapCursor<Buffer, Buffer>;
 
 }
-
-#endif // CPP_IPFS_LITE_BUFFER_MAP_HPP

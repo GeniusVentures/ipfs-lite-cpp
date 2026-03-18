@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_ENCODE_STREAM_HPP
-#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_ENCODE_STREAM_HPP
+#pragma once
 
 #include "codec/cbor/cbor_common.hpp"
 
@@ -133,5 +132,3 @@ namespace sgns::codec::cbor
         size_t               count_{ 0 };
     };
 }
-
-#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_ENCODE_STREAM_HPP

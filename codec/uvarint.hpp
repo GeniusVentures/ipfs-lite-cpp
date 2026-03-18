@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_CODEC_UVARINT_HPP
-#define CPP_IPFS_LITE_CODEC_UVARINT_HPP
+#pragma once
 
 #include <gsl/span>
 #include <libp2p/multi/uvarint.hpp>
@@ -35,5 +34,3 @@ namespace sgns::codec::uvarint
         return result;
     }
 }
-
-#endif // CPP_IPFS_LITE_CODEC_UVARINT_HPP

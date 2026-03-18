@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_IPFS_IMPL_DATASTORE_ROCKSDB_HPP
-#define CPP_IPFS_LITE_IPFS_IMPL_DATASTORE_ROCKSDB_HPP
+#pragma once
 
 #include <memory>
 
@@ -52,5 +50,3 @@ namespace sgns::ipfs_lite::ipfs
     };
 
 }
-
-#endif // CPP_IPFS_LITE_IPFS_IMPL_DATASTORE_ROCKSDB_HPP

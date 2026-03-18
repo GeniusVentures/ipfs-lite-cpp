@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_STREAM_MESSAGE_SENDER_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_STREAM_MESSAGE_SENDER_HPP
+#pragma once
 
 #include "data_transfer/message_sender.hpp"
 
@@ -25,5 +23,3 @@ namespace sgns::data_transfer
     };
 
 }
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_STREAM_MESSAGE_SENDER_HPP

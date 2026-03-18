@@ -1,7 +1,4 @@
-
-
-#ifndef CPP_IPFS_LITE__COMMON_MP_UTILS_HPP
-#define CPP_IPFS_LITE__COMMON_MP_UTILS_HPP
+#pragma once
 
 #include <boost/multiprecision/cpp_int.hpp>
 #include <gsl/span>
@@ -31,5 +28,3 @@ namespace sgns::common
     boost::multiprecision::uint256_t bytes_to_uint256_t( gsl::span<uint8_t, 32> bytes );
 
 }
-
-#endif // CPP_IPFS_LITE__COMMON_MP_UTILS_HPP

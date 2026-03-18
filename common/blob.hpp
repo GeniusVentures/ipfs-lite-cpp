@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE__COMMON_BLOB_HPP
-#define CPP_IPFS_LITE__COMMON_BLOB_HPP
+#pragma once
 
 #include <array>
 
@@ -189,5 +187,3 @@ struct std::hash<sgns::common::Blob<N>>
 };
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::common, BlobError );
-
-#endif // CPP_IPFS_LITE__COMMON_BLOB_HPP

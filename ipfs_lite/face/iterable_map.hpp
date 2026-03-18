@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_ITERABLE_MAP_HPP
-#define CPP_IPFS_LITE_ITERABLE_MAP_HPP
+#pragma once
 
 #include <memory>
 
@@ -27,5 +25,3 @@ namespace sgns::ipfs_lite::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_ITERABLE_MAP_HPP

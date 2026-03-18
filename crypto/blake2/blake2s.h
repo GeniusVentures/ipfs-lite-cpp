@@ -1,6 +1,5 @@
 
-#ifndef CORE_BLAKE2S_HASH
-#define CORE_BLAKE2S_HASH
+#pragma once
 
 #include <stdlib.h>
 
@@ -72,5 +71,3 @@ int blake2s(void *out, size_t outlen, const void *key, size_t keylen,
 #if defined(__cplusplus)
 }
 #endif
-
-#endif  // CORE_BLAKE2S_HASH

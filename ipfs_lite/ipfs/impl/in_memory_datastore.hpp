@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_IPFS_IMPL_IN_MEMORY_DATASTORE_HPP
-#define CPP_IPFS_LITE_IPFS_IMPL_IN_MEMORY_DATASTORE_HPP
+#pragma once
 
 #include <map>
 
@@ -38,5 +36,3 @@ namespace sgns::ipfs_lite::ipfs
     };
 
 }
-
-#endif // CPP_IPFS_LITE_IPFS_IMPL_IN_MEMORY_DATASTORE_HPP

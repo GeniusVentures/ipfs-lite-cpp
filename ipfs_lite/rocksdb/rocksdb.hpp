@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_ROCKSDB_HPP
-#define CPP_IPFS_LITE_ROCKSDB_HPP
+#pragma once
 
 #include <rocksdb/db.h>
 #include <rocksdb/write_batch.h>
@@ -87,5 +85,3 @@ namespace sgns::ipfs_lite
     };
 
 }
-
-#endif // CPP_IPFS_LITE_ROCKSDB_HPP

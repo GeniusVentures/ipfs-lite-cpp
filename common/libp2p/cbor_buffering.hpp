@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_BUFFERING_HPP
-#define CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_BUFFERING_HPP
+#pragma once
 
 #include <vector>
 
@@ -61,5 +60,3 @@ namespace sgns::common::libp2p
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::common::libp2p, CborBuffering::Error )
-
-#endif // CPP_IPFS_LITE_COMMON_LIBP2P_CBOR_BUFFERING_HPP

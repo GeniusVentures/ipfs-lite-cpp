@@ -1,4 +1,3 @@
-
 #include <common/mp_utils.hpp>
 
 #include <gsl/gsl_util>

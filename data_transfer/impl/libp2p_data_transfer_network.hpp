@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_LIBP2P_DATA_TRANSFER_NETWORK_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_LIBP2P_DATA_TRANSFER_NETWORK_HPP
+#pragma once
 
 #include "data_transfer/network.hpp"
 
@@ -28,5 +26,3 @@ namespace sgns::data_transfer
     };
 
 }
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_LIBP2P_DATA_TRANSFER_NETWORK_HPP
