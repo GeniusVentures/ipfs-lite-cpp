@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__COMMON_ENUM_HPP
-#define CPP_IPFS_LITE__COMMON_ENUM_HPP
+#pragma once
 
 namespace sgns::common
 {
@@ -31,5 +30,3 @@ namespace sgns::common
     }
 
 }
-
-#endif // CPP_IPFS_LITE__COMMON_ENUM_HPP

@@ -1,4 +1,3 @@
-
 #include "data_transfer/message_receiver.hpp"
 
 namespace sgns::data_transfer

@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_COMMON_SPAN_HPP
-#define CPP_IPFS_LITE_COMMON_SPAN_HPP
+#pragma once
 
 #include <gsl/span>
 
@@ -28,5 +27,3 @@ namespace sgns::common::span
         return cast<char>( span );
     }
 }
-
-#endif // CPP_IPFS_LITE_COMMON_SPAN_HPP

@@ -1,4 +1,3 @@
-
 #include "data_transfer/impl/stream_message_sender.hpp"
 
 #include "codec/cbor/cbor.hpp"

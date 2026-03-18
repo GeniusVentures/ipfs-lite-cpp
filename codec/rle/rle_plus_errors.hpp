@@ -1,6 +1,4 @@
-
-#ifndef CORE_CODEC_RLE_PLUS_ERRORS_HPP
-#define CORE_CODEC_RLE_PLUS_ERRORS_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 
@@ -41,5 +39,3 @@ namespace sgns::codec::rle
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::rle, RLEPlusDecodeError );
-
-#endif

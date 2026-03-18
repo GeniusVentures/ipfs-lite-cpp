@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_EXTENSION_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_EXTENSION_HPP
+#pragma once
 
 #include <set>
 #include <string>
@@ -46,5 +44,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     IPFS::outcome::result<std::set<CID>> decodeDontSendCids( const Extension &extension );
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_EXTENSION_HPP

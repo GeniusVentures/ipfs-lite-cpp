@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP
+#pragma once
 
 #include "network_fwd.hpp"
 
@@ -34,5 +32,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_READER_HPP

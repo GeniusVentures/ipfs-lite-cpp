@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_TEST_TESTUTIL_CBOR_HPP
-#define CPP_IPFS_LITE_TEST_TESTUTIL_CBOR_HPP
+#pragma once
 
 #include "codec/cbor/cbor.hpp"
 #include "common/hexutil.hpp"
@@ -22,5 +21,3 @@ void expectEncodeAndReencode( const T &value, const std::vector<uint8_t> &expect
     EXPECT_OUTCOME_TRUE( decoded, sgns::codec::cbor::decode<T>( expected_bytes ) );
     EXPECT_OUTCOME_EQ( sgns::codec::cbor::encode( decoded ), expected_bytes );
 }
-
-#endif // CPP_IPFS_LITE_TEST_TESTUTIL_CBOR_HPP

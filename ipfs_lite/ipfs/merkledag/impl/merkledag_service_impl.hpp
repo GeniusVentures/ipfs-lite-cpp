@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_IPFS_MERKLEDAG_SERVICE_IMPL_HPP
-#define CPP_IPFS_LITE_IPFS_MERKLEDAG_SERVICE_IMPL_HPP
+#pragma once
 
 #include <memory>
 
@@ -73,5 +72,3 @@ namespace sgns::ipfs_lite::ipfs::merkledag
             size_t                                                                            current_depth = 0 );
     };
 }
-
-#endif

@@ -1,4 +1,3 @@
-
 #include "merkledag_bridge_impl.hpp"
 
 #include <cassert>

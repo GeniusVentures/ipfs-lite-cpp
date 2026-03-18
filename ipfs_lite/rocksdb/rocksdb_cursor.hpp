@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP
-#define CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP
+#pragma once
 
 #include <rocksdb/iterator.h>
 #include "ipfs_lite/rocksdb/rocksdb.hpp"
@@ -42,5 +40,3 @@ namespace sgns::ipfs_lite
     };
 
 }
-
-#endif // CPP_IPFS_LITE_ROCKSDB_CURSOR_HPP

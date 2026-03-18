@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_COMM_CID_HPP
-#define CPP_IPFS_LITE_COMM_CID_HPP
+#pragma once
 
 #include <unordered_map>
 #include "common/blob.hpp"
@@ -79,5 +77,3 @@ namespace sgns::common
     IPFS::outcome::result<Multihash> CIDToCommitment( const CID &cid );
 
 };
-
-#endif // CPP_IPFS_LITE_COMM_CID_HPP

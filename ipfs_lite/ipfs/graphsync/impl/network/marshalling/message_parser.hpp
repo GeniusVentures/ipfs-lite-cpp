@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_PARSER_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_PARSER_HPP
+#pragma once
 
 #include "message.hpp"
 
@@ -13,5 +11,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     IPFS::outcome::result<Message> parseMessage( gsl::span<const uint8_t> bytes );
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_PARSER_HPP

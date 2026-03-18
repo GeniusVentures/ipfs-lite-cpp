@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_HPP
+#pragma once
 
 #include "ipfs_lite/ipfs/graphsync/impl/common.hpp"
 
@@ -59,5 +57,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         std::vector<std::pair<CID, common::Buffer>> data;
     };
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_MESSAGE_HPP

@@ -1,4 +1,3 @@
-
 #include "inbound_endpoint.hpp"
 
 #include "message_queue.hpp"

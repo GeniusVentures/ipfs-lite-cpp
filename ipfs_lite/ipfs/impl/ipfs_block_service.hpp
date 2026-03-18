@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_IPFS_BLOCKSERVICE_IMPL_HPP
-#define CPP_IPFS_LITE_IPFS_BLOCKSERVICE_IMPL_HPP
+#pragma once
 
 #include <memory>
 
@@ -33,5 +31,3 @@ namespace sgns::ipfs_lite::ipfs
         std::shared_ptr<IpfsDatastore> local_storage_; /**< Local data storage */
     };
 }
-
-#endif

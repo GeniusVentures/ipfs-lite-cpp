@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_ID_HPP
-#define CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_ID_HPP
+#pragma once
 
 #include <libp2p/peer/peer_id.hpp>
 
@@ -36,5 +35,3 @@ namespace libp2p::peer
     }
 
 }
-
-#endif // CPP_IPFS_LITE_COMMON_LIBP2P_PEER_CBOR_PEER_ID_HPP

@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_IPFS_MERKLEDAG_SERVICE_HPP
-#define CPP_IPFS_LITE_IPFS_MERKLEDAG_SERVICE_HPP
+#pragma once
 
 #include <memory>
 
@@ -94,5 +93,3 @@ namespace sgns::ipfs_lite::ipfs::merkledag
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipfs::merkledag, ServiceError )
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
-#define CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP
+#pragma once
 
 #include "codec/cbor/cbor_decode_stream.hpp"
 
@@ -22,5 +21,3 @@ namespace sgns::codec::cbor
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::codec::cbor, CborResolveError );
-
-#endif // CPP_IPFS_LITE__CODEC_CBOR_CBOR_RESOLVE_HPP

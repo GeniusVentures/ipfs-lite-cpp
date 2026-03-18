@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_BASE_FS_TEST_HPP
-#define CPP_IPFS_LITE_BASE_FS_TEST_HPP
+#pragma once
 
 #include <gtest/gtest.h>
 
@@ -78,5 +76,3 @@ namespace test
     };
 
 }
-
-#endif // CPP_IPFS_LITE_BASE_FS_TEST_HPP

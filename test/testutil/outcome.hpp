@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GTEST_OUTCOME_UTIL_HPP
-#define CPP_IPFS_LITE_GTEST_OUTCOME_UTIL_HPP
+#pragma once
 
 #include <gtest/gtest.h>
 #include "common/outcome.hpp"
@@ -106,5 +104,3 @@
     }
 
 #define EXPECT_OUTCOME_EQ( expr, value ) EXPECT_OUTCOME_EQ_3( _UNIQUE_NAME( _v ), expr, value )
-
-#endif // CPP_IPFS_LITE_GTEST_OUTCOME_UTIL_HPP

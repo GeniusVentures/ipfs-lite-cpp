@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipfs/impl/in_memory_datastore.hpp"
 
 namespace sgns::ipfs_lite::ipfs

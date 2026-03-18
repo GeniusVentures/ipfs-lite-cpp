@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP
-#define CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP
+#pragma once
 
 #include "primitives/cid/cid.hpp"
 #include "codec/cbor/cbor.hpp"
@@ -21,5 +19,3 @@ namespace sgns::primitives::cid
         return common::getCidOf( bytes );
     }
 }
-
-#endif // CPP_IPFS_LITE__PRIMITIVES_CID_CID_OF_CBOR_HPP

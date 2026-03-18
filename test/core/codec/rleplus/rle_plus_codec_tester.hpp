@@ -1,7 +1,4 @@
-
-
-#ifndef TEST_CORE_CODEC_RLE_PLUS_CODEC_TESTER_HPP
-#define TEST_CORE_CODEC_RLE_PLUS_CODEC_TESTER_HPP
+#pragma once
 
 #include <limits>
 
@@ -71,5 +68,3 @@ protected:
         return data;
     }
 };
-
-#endif

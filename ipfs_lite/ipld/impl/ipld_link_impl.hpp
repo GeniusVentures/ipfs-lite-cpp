@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_LINK_IMPL_HPP
-#define IPFS_LITE_IPLD_LINK_IMPL_HPP
+#pragma once
 
 #include <string>
 #include <utility>
@@ -34,5 +33,3 @@ namespace sgns::ipfs_lite::ipld
         size_t      size_{};
     };
 }
-
-#endif

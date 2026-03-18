@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_PEER_CONTEXT_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_PEER_CONTEXT_HPP
+#pragma once
 
 #include <map>
 #include <set>
@@ -249,5 +248,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_PEER_CONTEXT_HPP

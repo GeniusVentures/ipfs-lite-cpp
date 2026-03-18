@@ -1,4 +1,3 @@
-
 #include "message_queue.hpp"
 
 #include <libp2p/connection/stream.hpp>

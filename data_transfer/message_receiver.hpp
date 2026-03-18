@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_RECEIVER_HPP
-#define CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_RECEIVER_HPP
+#pragma once
 
 #include <libp2p/peer/peer_id.hpp>
 #include "common/logger.hpp"
@@ -72,5 +70,3 @@ namespace sgns::data_transfer
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::data_transfer, MessageReceiverError );
-
-#endif // CPP_IPFS_LITE_DATA_TRANSFER_MESSAGE_RECEIVER_HPP

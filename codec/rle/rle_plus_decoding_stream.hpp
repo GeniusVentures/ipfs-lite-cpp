@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_RLE_PLUS_DECODING_STREAM_HPP
-#define CPP_IPFS_LITE_RLE_PLUS_DECODING_STREAM_HPP
+#pragma once
 
 #include <vector>
 #include <set>
@@ -203,5 +202,3 @@ namespace sgns::codec::rle
         }
     };
 };
-
-#endif

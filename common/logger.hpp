@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_LOGGER_HPP
-#define CPP_IPFS_LITE_LOGGER_HPP
+#pragma once
 
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/spdlog.h>
@@ -19,5 +17,3 @@ namespace sgns
         Logger createLogger( const std::string &tag );
     }
 }
-
-#endif // CPP_IPFS_LITE_LOGGER_HPP

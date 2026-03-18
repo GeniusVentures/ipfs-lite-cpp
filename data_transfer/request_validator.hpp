@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_REQUEST_VALIDATOR_HPP
-#define CPP_IPFS_LITE_REQUEST_VALIDATOR_HPP
+#pragma once
 
 #include <libp2p/peer/peer_id.hpp>
 #include "common/outcome.hpp"
@@ -41,5 +39,3 @@ namespace sgns::data_transfer
     };
 
 }
-
-#endif // CPP_IPFS_LITE_REQUEST_VALIDATOR_HPP

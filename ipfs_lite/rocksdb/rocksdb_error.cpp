@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/rocksdb/rocksdb_error.hpp"
 
 OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::ipfs_lite, rocksdbError, e )

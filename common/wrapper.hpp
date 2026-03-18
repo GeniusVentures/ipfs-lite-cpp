@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_COMMON_WRAPPER_HPP
-#define CPP_IPFS_LITE_COMMON_WRAPPER_HPP
+#pragma once
 
 #include <memory>
 #include <type_traits>
@@ -61,5 +60,3 @@ struct std::hash<sgns::common::Wrapper<T, Tag>>
         return std::hash<T>()( w.unwrap() );
     }
 };
-
-#endif // CPP_IPFS_LITE_COMMON_WRAPPER_HPP

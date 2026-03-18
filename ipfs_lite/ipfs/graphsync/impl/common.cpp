@@ -1,4 +1,3 @@
-
 #include "common.hpp"
 
 OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::ipfs_lite::ipfs::graphsync, Error, e )

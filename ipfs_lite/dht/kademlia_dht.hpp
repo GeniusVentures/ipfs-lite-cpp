@@ -1,5 +1,4 @@
-#ifndef IPFS_PUBSUB_KAD
-#define IPFS_PUBSUB_KAD
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -52,5 +51,3 @@ namespace sgns::ipfs_lite::ipfs::dht
         boost::asio::steady_timer                             timer_;
     };
 }
-
-#endif

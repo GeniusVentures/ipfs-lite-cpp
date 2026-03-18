@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_LINK_HPP
-#define IPFS_LITE_IPLD_LINK_HPP
+#pragma once
 
 #include <string>
 #include <vector>
@@ -35,5 +34,3 @@ namespace sgns::ipfs_lite::ipld
         virtual size_t getSize() const = 0;
     };
 }
-
-#endif

@@ -1,4 +1,3 @@
-
 #include "ipfs_lite/ipfs/merkledag/impl/leaf_impl.hpp"
 
 namespace sgns::ipfs_lite::ipfs::merkledag

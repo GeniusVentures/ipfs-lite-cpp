@@ -1,4 +1,3 @@
-
 #include "codec/rle/rle_plus_errors.hpp"
 
 OUTCOME_CPP_DEFINE_CATEGORY_3( sgns::codec::rle, RLEPlusDecodeError, e )

@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_NODE_PB_DECODER
-#define IPFS_LITE_IPLD_NODE_PB_DECODER
+#pragma once
 
 #include <string>
 #include <vector>
@@ -90,5 +89,3 @@ namespace sgns::ipfs_lite::ipld
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipld, IPLDNodeDecoderPBError )
-
-#endif

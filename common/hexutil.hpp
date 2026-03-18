@@ -1,6 +1,4 @@
-
-#ifndef IPFS_LITE_COMMON_HEXUTIL_HPP
-#define IPFS_LITE_COMMON_HEXUTIL_HPP
+#pragma once
 
 #include <string_view>
 #include <vector>
@@ -58,5 +56,3 @@ namespace sgns::common
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::common, UnhexError );
-
-#endif // IPFS_LITE_COMMON_HEXUTIL_HPP

@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP
+#pragma once
 
 // #include "common/logger.hpp"
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
@@ -40,5 +38,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipfs::graphsync, Error );
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_COMMON_HPP

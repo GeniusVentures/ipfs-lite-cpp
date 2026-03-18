@@ -1,4 +1,3 @@
-
 #include "common/blob.hpp"
 
 #include <gtest/gtest.h>

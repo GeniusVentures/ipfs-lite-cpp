@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_HPP
+#pragma once
 
 #include <functional>
 
@@ -146,5 +144,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_HPP

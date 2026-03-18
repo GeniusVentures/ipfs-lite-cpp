@@ -1,4 +1,3 @@
-
 #include <gtest/gtest.h>
 
 #include "ipfs_lite/ipfs/impl/in_memory_datastore.hpp"

@@ -1,5 +1,4 @@
-#ifndef CODEC_RLE_PLUS_HPP
-#define CODEC_RLE_PLUS_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 #include "codec/rle/rle_plus_errors.hpp"
@@ -57,5 +56,3 @@ namespace sgns::codec::rle
         return data;
     }
 };
-
-#endif

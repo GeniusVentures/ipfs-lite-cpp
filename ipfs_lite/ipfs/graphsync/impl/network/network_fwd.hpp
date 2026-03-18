@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP
+#pragma once
 #include <deque>
 
 #include <libp2p/protocol/common/scheduler.hpp>
@@ -109,5 +108,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     constexpr unsigned kWindowExhaustionTimeoutMultiplier = 3;
 
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_NETWORK_FWD_HPP

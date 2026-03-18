@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GENERIC_ITERATOR_HPP
-#define CPP_IPFS_LITE_GENERIC_ITERATOR_HPP
+#pragma once
 
 #include <memory>
 
@@ -48,5 +46,3 @@ namespace sgns::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_GENERIC_ITERATOR_HPP

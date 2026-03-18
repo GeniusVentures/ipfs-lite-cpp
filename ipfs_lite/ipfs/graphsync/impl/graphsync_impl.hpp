@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GRAPHSYNC_IMPL_HPP
-#define CPP_IPFS_LITE_GRAPHSYNC_IMPL_HPP
+#pragma once
 
 #include <set>
 
@@ -129,5 +127,3 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     /// Maximum time a request can be stalled without activity before being considered failed
     constexpr unsigned kRequestActivityTimeoutMs = 180000; // 3 minutes
 }
-
-#endif // CPP_IPFS_LITE_GRAPHSYNC_IMPL_HPP

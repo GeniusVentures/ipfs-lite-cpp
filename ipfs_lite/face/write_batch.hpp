@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE_WRITE_BATCH_HPP
-#define CPP_IPFS_LITE_WRITE_BATCH_HPP
+#pragma once
 
 #include "ipfs_lite/face/writeable_map.hpp"
 
@@ -27,5 +26,3 @@ namespace sgns::ipfs_lite::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_WRITE_BATCH_HPP

@@ -1,4 +1,3 @@
-
 #include "crypto/blake2/blake2b160.hpp"
 
 #include <iostream>

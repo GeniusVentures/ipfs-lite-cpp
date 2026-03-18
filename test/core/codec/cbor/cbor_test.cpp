@@ -1,4 +1,3 @@
-
 #include "codec/cbor/cbor.hpp"
 #include "primitives/big_int.hpp"
 

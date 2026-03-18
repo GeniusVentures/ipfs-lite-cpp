@@ -1,5 +1,3 @@
-
-
 #include "primitives/cid/json_codec.hpp"
 
 #include <gtest/gtest.h>

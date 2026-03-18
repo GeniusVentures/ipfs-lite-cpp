@@ -1,4 +1,3 @@
-
 #include "network/network.hpp"
 #include "graphsync_impl.hpp"
 

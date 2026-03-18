@@ -1,4 +1,3 @@
-
 #include "common/hexutil.hpp"
 
 #include <gtest/gtest.h>

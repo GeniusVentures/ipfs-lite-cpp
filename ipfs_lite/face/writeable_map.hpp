@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_WRITEABLE_MAP_HPP
-#define CPP_IPFS_LITE_WRITEABLE_MAP_HPP
+#pragma once
 
 #include "common/outcome.hpp"
 
@@ -35,5 +33,3 @@ namespace sgns::ipfs_lite::face
     };
 
 }
-
-#endif // CPP_IPFS_LITE_WRITEABLE_MAP_HPP

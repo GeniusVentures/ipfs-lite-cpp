@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_IPFS_MERKLEDAG_LEAF_HPP
-#define CPP_IPFS_LITE_IPFS_MERKLEDAG_LEAF_HPP
+#pragma once
 
 #include <functional>
 #include <string_view>
@@ -55,5 +53,3 @@ namespace sgns::ipfs_lite::ipfs::merkledag
 }
 
 OUTCOME_HPP_DECLARE_ERROR_2( sgns::ipfs_lite::ipfs::merkledag, LeafError )
-
-#endif

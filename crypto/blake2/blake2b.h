@@ -1,6 +1,5 @@
 
-#ifndef CORE_BLAKE2B_H
-#define CORE_BLAKE2B_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -46,5 +45,3 @@ int sgns_blake2b(void *out,
 #if defined(__cplusplus)
 }
 #endif
-
-#endif  // CORE_BLAKE2B_H

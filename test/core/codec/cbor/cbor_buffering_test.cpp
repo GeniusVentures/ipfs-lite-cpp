@@ -1,4 +1,3 @@
-
 #include "common/libp2p/cbor_buffering.hpp"
 
 #include <gtest/gtest.h>

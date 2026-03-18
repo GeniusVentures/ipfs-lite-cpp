@@ -1,5 +1,4 @@
-#ifndef IPFS_LITE_IPLD_NODE_ENCODER_PB
-#define IPFS_LITE_IPLD_NODE_ENCODER_PB
+#pragma once
 
 #include <map>
 #include <memory>
@@ -118,5 +117,3 @@ namespace sgns::ipfs_lite::ipld
         static PBTag createTag( PBFieldType type, uint8_t order );
     };
 }
-
-#endif

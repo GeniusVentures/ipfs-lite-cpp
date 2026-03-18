@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_GENERIC_MAP_HPP
-#define CPP_IPFS_LITE_GENERIC_MAP_HPP
+#pragma once
 
 #include "ipfs_lite/face/iterable_map.hpp"
 #include "ipfs_lite/face/readable_map.hpp"
@@ -19,5 +17,3 @@ namespace sgns::ipfs_lite::face
     {
     };
 }
-
-#endif // CPP_IPFS_LITE_GENERIC_MAP_HPP

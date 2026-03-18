@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_IPFS_DATASTORE_HPP
-#define CPP_IPFS_LITE_IPFS_DATASTORE_HPP
+#pragma once
 
 #include <vector>
 
@@ -87,5 +85,3 @@ namespace sgns::ipfs_lite::ipfs
         }
     };
 }
-
-#endif // CPP_IPFS_LITE_IPFS_DATASTORE_HPP

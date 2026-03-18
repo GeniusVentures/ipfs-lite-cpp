@@ -1,6 +1,4 @@
-
-#ifndef CPP_IPFS_LITE_BASE_rocksdb_TEST_HPP
-#define CPP_IPFS_LITE_BASE_rocksdb_TEST_HPP
+#pragma once
 
 #include "testutil/ipfs_lite/base_fs_test.hpp"
 
@@ -25,5 +23,3 @@ namespace test
     };
 
 }
-
-#endif // CPP_IPFS_LITE_BASE_rocksdb_TEST_HPP

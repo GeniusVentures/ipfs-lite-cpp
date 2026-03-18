@@ -1,5 +1,4 @@
-#ifndef CPP_IPFS_LITE__COMMON_CID_HPP
-#define CPP_IPFS_LITE__COMMON_CID_HPP
+#pragma once
 
 #include <libp2p/multi/content_identifier.hpp>
 
@@ -88,5 +87,3 @@ namespace sgns::common
     IPFS::outcome::result<CID> getCidOf( gsl::span<const uint8_t> bytes );
 
 }
-
-#endif // CPP_IPFS_LITE__COMMON_CID_HPP
