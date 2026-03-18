@@ -22,9 +22,9 @@ namespace sgns::ipfs_lite::ipfs::dht
                  std::vector<std::string>                              bootstrapAddresses,
                  std::shared_ptr<boost::asio::io_context>              io_context );
 
-        void Start();
+        outcome::result<void> Start();
 
-        void bootstrap();
+        outcome::result<void> bootstrap();
 
         bool FindProviders(
             const libp2p::multi::ContentIdentifier &cid,
@@ -39,7 +39,9 @@ namespace sgns::ipfs_lite::ipfs::dht
         void FindPeer( const libp2p::peer::PeerId                                            &peerId,
                        std::function<void( libp2p::outcome::result<libp2p::peer::PeerInfo> )> onPeerFound );
 
-        void ProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_err, bool force = false );
+        outcome::result<void> ProvideCID( libp2p::protocol::kademlia::ContentId key,
+                                          bool                                  need_err,
+                                          bool                                  force = false );
 
     private:
         void ScheduleProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_err );
