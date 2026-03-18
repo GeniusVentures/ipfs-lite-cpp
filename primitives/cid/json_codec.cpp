@@ -1,7 +1,5 @@
 #include "primitives/cid/json_codec.hpp"
 
-#include <strstream>
-
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 

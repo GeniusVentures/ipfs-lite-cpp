@@ -12,7 +12,7 @@ namespace sgns::ipfs_lite::ipfs::dht
     {
     }
 
-    void IpfsDHT::Start()
+    outcome::result<void> IpfsDHT::Start()
     {
         auto &&bootstrapNodes = GetBootstrapNodes();
         for ( auto &bootstrap_node : bootstrapNodes )
@@ -22,12 +22,12 @@ namespace sgns::ipfs_lite::ipfs::dht
 
         kademlia_->start();
         // Bootstrap once at startup to populate routing table
-        kademlia_->bootstrap();
+        return kademlia_->bootstrap();
     }
 
-    void IpfsDHT::bootstrap()
+    outcome::result<void> IpfsDHT::bootstrap()
     {
-        kademlia_->bootstrap();
+        return kademlia_->bootstrap();
     }
 
     bool IpfsDHT::FindProviders(
@@ -92,10 +92,10 @@ namespace sgns::ipfs_lite::ipfs::dht
         [[maybe_unused]] auto res = kademlia_->findPeer( peerId, onPeerFound );
     }
 
-    void IpfsDHT::ProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_error, bool force )
+    outcome::result<void> IpfsDHT::ProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_error, bool force )
     {
         std::cout << "Provide CID:" << force << std::endl;
-        kademlia_->provide( key, need_error );
+        BOOST_OUTCOME_TRY( kademlia_->provide( key, need_error ) );
         //Schedule next provide if not a force
         if ( !force )
         {
