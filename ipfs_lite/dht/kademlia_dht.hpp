@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "libp2p/protocol/kademlia/kademlia.hpp"
-#include "libp2p/multi/content_identifier_codec.hpp"
-#include <boost/asio/steady_timer.hpp>
 #include <chrono>
+
+#include <libp2p/protocol/kademlia/kademlia.hpp>
+#include <libp2p/multi/content_identifier_codec.hpp>
+#include <boost/asio/steady_timer.hpp>
+
+#include "common/outcome.hpp"
 
 namespace sgns::ipfs_lite::ipfs::dht
 {
@@ -22,9 +25,9 @@ namespace sgns::ipfs_lite::ipfs::dht
                  std::vector<std::string>                              bootstrapAddresses,
                  std::shared_ptr<boost::asio::io_context>              io_context );
 
-        outcome::result<void> Start();
+        IPFS::outcome::result<void> Start();
 
-        outcome::result<void> bootstrap();
+        IPFS::outcome::result<void> bootstrap();
 
         bool FindProviders(
             const libp2p::multi::ContentIdentifier &cid,
@@ -39,7 +42,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         void FindPeer( const libp2p::peer::PeerId                                            &peerId,
                        std::function<void( libp2p::outcome::result<libp2p::peer::PeerInfo> )> onPeerFound );
 
-        outcome::result<void> ProvideCID( libp2p::protocol::kademlia::ContentId key,
+        IPFS::outcome::result<void> ProvideCID( libp2p::protocol::kademlia::ContentId key,
                                           bool                                  need_err,
                                           bool                                  force = false );
 
