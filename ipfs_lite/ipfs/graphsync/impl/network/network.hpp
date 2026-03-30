@@ -3,7 +3,7 @@
 #include <functional>
 
 #include <libp2p/host/host.hpp>
-#include <libp2p/protocol/common/scheduler.hpp>
+#include <libp2p/basic/scheduler.hpp>
 
 #include "common/logger.hpp"
 #include "network_fwd.hpp"
@@ -18,7 +18,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Ctor.
         /// \param host libp2p host object
         /// \param scheduler libp2p scheduler
-        Network( std::shared_ptr<libp2p::Host> host, std::shared_ptr<libp2p::protocol::Scheduler> scheduler );
+        Network( std::shared_ptr<libp2p::Host> host, std::shared_ptr<libp2p::basic::Scheduler> scheduler );
 
         ~Network() override;
 
@@ -94,7 +94,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Libp2p network server callback
         /// \param rstream Accept result, contains a new inbound stream on success
-        void onStreamAccepted( IPFS::outcome::result<StreamPtr> rstream );
+        void onStreamAccepted( libp2p::StreamAndProtocolOrError rstream );
 
         /// Closes all peers gracefully
         void closeAllPeers();
@@ -110,7 +110,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         std::shared_ptr<libp2p::Host> host_;
 
         /// libp2p scheduler object
-        std::shared_ptr<libp2p::protocol::Scheduler> scheduler_;
+        std::shared_ptr<libp2p::basic::Scheduler> scheduler_;
 
         /// libp2p peorocol ID
         libp2p::peer::Protocol protocol_id_;

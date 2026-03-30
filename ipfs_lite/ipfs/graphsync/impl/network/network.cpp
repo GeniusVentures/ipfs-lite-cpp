@@ -10,7 +10,7 @@
 namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
-    Network::Network( std::shared_ptr<libp2p::Host> host, std::shared_ptr<libp2p::protocol::Scheduler> scheduler ) :
+    Network::Network( std::shared_ptr<libp2p::Host> host, std::shared_ptr<libp2p::basic::Scheduler> scheduler ) :
         host_( std::move( host ) ), scheduler_( std::move( scheduler ) ), protocol_id_( kProtocolVersion )
     {
         assert( host_ );
@@ -31,8 +31,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         if ( first_feedback )
         {
-            host_->setProtocolHandler( protocol_id_,
-                                       [wptr = weak_from_this()]( StreamPtr rstream )
+            host_->setProtocolHandler( { protocol_id_ },
+                                       [wptr = weak_from_this()]( libp2p::StreamAndProtocol rstream )
                                        {
                                            if ( auto self = wptr.lock() )
                                            {
@@ -99,23 +99,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         ctx->enqueueRequest( request_id, std::move( request_body ) );
     }
-
-    // void Network::asyncFeedback(const PeerId &peer,
-    //                             RequestId request_id,
-    //                             ResponseStatusCode status) {
-    //   scheduler_
-    //       ->schedule(
-    //           [wptr{weak_from_this()}, p = peer, id = request_id, s = status]() {
-    //             auto self = wptr.lock();
-    //             if (self && self->started_) {
-    //               if (isTerminal(s)) {
-    //                 self->active_requests_per_peer_.erase(id);
-    //               }
-    //               self->feedback_->onResponse(p, id, s, {});
-    //             }
-    //           })
-    //       .detach();
-    // }
 
     void Network::cancelRequest( RequestId request_id, SharedData request_body )
     {
@@ -233,22 +216,21 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                          ctx->str,
                          pi.addresses.empty() ? "''" : pi.addresses[0].getStringAddress() );
 
-        // clang-format off
-    host_->newStream(
-        pi,
-        protocol_id_,
-        [wptr{ctx->weak_from_this()}]
-        (IPFS::outcome::result<StreamPtr> rstream) {
-          auto ctx_ = wptr.lock();
-          if (ctx_) {
-            ctx_->onStreamConnected(std::move(rstream));
-          }
-        },std::chrono::milliseconds(10000)
-    );
-        // clang-format on
+        host_->newStream(
+            pi,
+            { protocol_id_ },
+            [wptr{ ctx->weak_from_this() }]( libp2p::StreamAndProtocolOrError rstream )
+            {
+                auto ctx_ = wptr.lock();
+                if ( ctx_ )
+                {
+                    ctx_->onStreamConnected( std::move( rstream.value().stream ) );
+                }
+            },
+            std::chrono::milliseconds( 10000 ) );
     }
 
-    void Network::onStreamAccepted( IPFS::outcome::result<StreamPtr> rstream )
+    void Network::onStreamAccepted( libp2p::StreamAndProtocolOrError rstream )
     {
         if ( !started_ )
         {
@@ -261,7 +243,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
-        auto peer_id_res = rstream.value()->remotePeerId();
+        auto peer_id_res = rstream.value().stream->remotePeerId();
         if ( !peer_id_res )
         {
             logger()->error( "no peer id for accepted stream, msg='{}'", rstream.error().message() );
@@ -272,7 +254,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         logger()->trace( "accepted stream from peer={}", ctx->str );
 
-        ctx->onStreamAccepted( std::move( rstream.value() ) );
+        ctx->onStreamAccepted( std::move( rstream.value().stream ) );
     }
 
     void Network::closeAllPeers()

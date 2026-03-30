@@ -1,7 +1,9 @@
 #pragma once
-#include <deque>
 
-#include <libp2p/protocol/common/scheduler.hpp>
+#include <chrono>
+
+#include <libp2p/basic/scheduler.hpp>
+
 #include "marshalling/message.hpp"
 
 namespace libp2p::connection
@@ -17,10 +19,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     /// Libp2p stream, used by shared ptr
     using StreamPtr = std::shared_ptr<libp2p::connection::Stream>;
-
-    /// Libp2p scheduler
-    using Scheduler = libp2p::protocol::Scheduler;
-
     /// PeerContext used by Network component to communicate with any peer
     class PeerContext;
 
@@ -99,10 +97,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     constexpr size_t kMaxPendingBytes = 64 * 1024 * 1024;
 
     /// Cleanup delay for PeerContext, msec
-    constexpr unsigned kPeerCloseDelayMsec = 60000; // Changed from 30000 to match stream timeout
+    constexpr std::chrono::milliseconds kPeerCloseDelayMsec( 60000 ); // Changed from 30000 to match stream timeout
 
     /// Cleanup delay for stream, msec
-    constexpr unsigned kStreamCloseDelayMsec = 60000;
+    constexpr std::chrono::milliseconds kStreamCloseDelayMsec( 60000 );
 
     /// Multiplier for timeout extension when window exhaustion is detected
     constexpr unsigned kWindowExhaustionTimeoutMultiplier = 3;

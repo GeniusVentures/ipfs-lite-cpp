@@ -17,18 +17,17 @@ add_library(graphsync
     network/marshalling/message_builder.cpp
     network/marshalling/request_builder.cpp
     network/marshalling/response_builder.cpp
-    )
+)
 
 target_include_directories(graphsync PRIVATE "${CMAKE_BINARY_DIR}/generated/ipfs_lite/ipfs/graphsync/impl/network/marshalling")
 
 target_link_libraries(graphsync
     Boost::boost
     p2p::subscription
-    p2p::p2p_scheduler
     cid
     buffer
     cbor
     ipfs_lite_hasher
     graphsync_proto
     logger
-    )
+)

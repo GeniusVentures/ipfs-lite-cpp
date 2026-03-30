@@ -6,9 +6,9 @@ namespace sgns::ipfs_lite::ipfs::dht
                       std::vector<std::string>                              bootstrapAddresses,
                       std::shared_ptr<boost::asio::io_context>              io_context ) :
         kademlia_( std::move( kademlia ) ),
-        bootstrapAddresses_( bootstrapAddresses ),
-        io_context_( io_context ),
-        timer_( *io_context )
+        bootstrapAddresses_( std::move( bootstrapAddresses ) ),
+        io_context_( std::move( io_context ) ),
+        timer_( *io_context_ )
     {
     }
 
@@ -35,22 +35,11 @@ namespace sgns::ipfs_lite::ipfs::dht
         std::function<void( libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound )>
             onProvidersFound )
     {
-        std::cout << "find providers" << std::endl;
-        auto kadCID = libp2p::protocol::kademlia::ContentId::fromWire(
-            libp2p::multi::ContentIdentifierCodec::encode( cid ).value() );
-        if ( !kadCID )
-        {
-            std::cerr << "Wrong CID" << std::endl;
-            return false;
-            // TODO: pass an error to callback
-            //onProvidersFound(ERROR);
-        }
-        else
-        {
-            std::cout << "actually find providers" << std::endl;
-            [[maybe_unused]] auto res = kademlia_->findProviders( kadCID.value(), 0, onProvidersFound );
-            return true;
-        }
+        auto kadCID = libp2p::protocol::kademlia::ContentId(libp2p::multi::ContentIdentifierCodec::encode( cid ).value());
+
+        [[maybe_unused]] auto res = kademlia_->findProviders( kadCID, 0, std::move( onProvidersFound ) );
+
+        return true;
     }
 
     bool IpfsDHT::FindProviders(
@@ -89,17 +78,19 @@ namespace sgns::ipfs_lite::ipfs::dht
     void IpfsDHT::FindPeer( const libp2p::peer::PeerId                                            &peerId,
                             std::function<void( libp2p::outcome::result<libp2p::peer::PeerInfo> )> onPeerFound )
     {
-        [[maybe_unused]] auto res = kademlia_->findPeer( peerId, onPeerFound );
+        [[maybe_unused]] auto res = kademlia_->findPeer( peerId, std::move( onPeerFound ) );
     }
 
-    IPFS::outcome::result<void> IpfsDHT::ProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_error, bool force )
+    IPFS::outcome::result<void> IpfsDHT::ProvideCID( libp2p::protocol::kademlia::ContentId key,
+                                                     bool                                  need_error,
+                                                     bool                                  force )
     {
         std::cout << "Provide CID:" << force << std::endl;
         BOOST_OUTCOME_TRY( kademlia_->provide( key, need_error ) );
         //Schedule next provide if not a force
         if ( !force )
         {
-            ScheduleProvideCID( key, need_error );
+            ScheduleProvideCID( std::move(key), need_error );
         }
     }
 

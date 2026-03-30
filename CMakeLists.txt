@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.22)
 # Project
 project(ipfs-lite-cpp LANGUAGES C CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include(GNUInstallDirs)
 
 include(cmake/functions.cmake)

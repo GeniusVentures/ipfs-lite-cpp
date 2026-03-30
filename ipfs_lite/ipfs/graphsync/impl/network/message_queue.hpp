@@ -1,5 +1,7 @@
 #pragma once
 
+#include <deque>
+
 #include "network_fwd.hpp"
 
 namespace sgns::ipfs_lite::ipfs::graphsync
