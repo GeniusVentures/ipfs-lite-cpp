@@ -5,9 +5,9 @@
 namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
-    LocalRequests::LocalRequests( std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-                                  CancelRequestFn                              cancel_fn,
-                                  std::shared_ptr<RequestIdGenerator>          generator ) :
+    LocalRequests::LocalRequests( std::shared_ptr<libp2p::basic::Scheduler> scheduler,
+                                  CancelRequestFn                           cancel_fn,
+                                  std::shared_ptr<RequestIdGenerator>       generator ) :
         scheduler_( std::move( scheduler ) ),
         cancel_fn_( std::move( cancel_fn ) ),
         id_generator_( std::move( generator ) )
@@ -112,20 +112,18 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
-        scheduler_
-            ->schedule(
-                [wptr = weak_from_this(), this]()
+        scheduler_->schedule(
+            [wptr = weak_from_this(), this]()
+            {
+                if ( !wptr.expired() )
                 {
-                    if ( !wptr.expired() )
+                    cancelAll( rejected_requests_ );
+                    if ( rejected_requests_.empty() )
                     {
-                        cancelAll( rejected_requests_ );
-                        if ( rejected_requests_.empty() )
-                        {
-                            current_rejected_request_id_ = 0;
-                        }
+                        current_rejected_request_id_ = 0;
                     }
-                } )
-            .detach();
+                }
+            } );
     }
 
     void LocalRequests::cancelAll()

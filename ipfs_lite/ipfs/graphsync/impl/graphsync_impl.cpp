@@ -1,8 +1,10 @@
-#include "network/network.hpp"
 #include "graphsync_impl.hpp"
 
 #include <cassert>
+#include <utility>
+#include <fmt/chrono.h>
 
+#include "network/network.hpp"
 #include "local_requests.hpp"
 
 // #include "network/network.hpp"
@@ -21,29 +23,30 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     /// Selector that matches current node
     common::Buffer kSelectorMatcher{ 0xa1, 0x61, 0x2e, 0xa0 };
 
-    GraphsyncImpl::GraphsyncImpl( std::shared_ptr<libp2p::Host>                host,
-                                  std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-                                  std::shared_ptr<Network>                     network,
-                                  std::shared_ptr<RequestIdGenerator>          generator,
-                                  std::shared_ptr<boost::asio::io_context>     io_context ) :
+    GraphsyncImpl::GraphsyncImpl( std::shared_ptr<libp2p::Host>             host,
+                                  std::shared_ptr<libp2p::basic::Scheduler> scheduler,
+                                  std::shared_ptr<Network>                  network,
+                                  std::shared_ptr<RequestIdGenerator>       generator,
+                                  std::shared_ptr<boost::asio::io_context>  io_context ) :
         scheduler_( scheduler ),
-        network_( network ),
+        network_( std::move( network ) ),
         local_requests_( std::make_shared<LocalRequests>(
             std::move( scheduler ),
             [this]( RequestId request_id, SharedData body ) { cancelLocalRequest( request_id, std::move( body ) ); },
             generator ) ),
-        io_context_( io_context ),
-        reqgenerator_( generator )
+        io_context_( std::move( io_context ) ),
+        reqgenerator_( std::move( generator ) )
     {
-        scheduler_->schedule( kCleanupIntervalMs,
-                              [weak_this = weak_from_this()]()
-                              {
-                                  auto self = weak_this.lock();
-                                  if ( self )
-                                  {
-                                      self->cleanupOldRequests();
-                                  }
-                              } );
+        scheduler_->schedule(
+            [weak_this = weak_from_this()]()
+            {
+                auto self = weak_this.lock();
+                if ( self )
+                {
+                    self->cleanupOldRequests();
+                }
+            },
+            kCleanupIntervalMs );
     }
 
     GraphsyncImpl::~GraphsyncImpl()
@@ -235,7 +238,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         // Call the block callback first - this processes the actual data
         logger()->trace( "Block callback for CID {}", cid.toString().value() );
-        block_cb_( std::move( cid ), std::move( data ) );
+        block_cb_( cid, std::move( data ) );
 
         // Only mark as completed AFTER the block has been successfully processed
         if ( should_mark_completed )
@@ -462,15 +465,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             }
         }
         // Reschedule the next cleanup
-        scheduler_->schedule( kCleanupIntervalMs,
-                              [weak_this = weak_from_this()]()
-                              {
-                                  auto self = weak_this.lock();
-                                  if ( self )
-                                  {
-                                      self->cleanupOldRequests();
-                                  }
-                              } );
+        scheduler_->schedule(
+            [weak_this = weak_from_this()]()
+            {
+                auto self = weak_this.lock();
+                if ( self )
+                {
+                    self->cleanupOldRequests();
+                }
+            },
+            kCleanupIntervalMs );
     }
 
     IPFS::outcome::result<Graphsync::RequestState> GraphsyncImpl::getRequestState( const CID &root_cid ) const

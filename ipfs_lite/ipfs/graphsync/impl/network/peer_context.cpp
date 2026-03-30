@@ -1,6 +1,8 @@
 #include "peer_context.hpp"
 
+#include <chrono>
 #include <libp2p/connection/stream.hpp>
+#include <fmt/chrono.h>
 
 #include "inbound_endpoint.hpp"
 #include "message_queue.hpp"
@@ -30,7 +32,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     PeerContext::PeerContext( PeerId                                               peer_id,
                               std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                               PeerToNetworkFeedback                               &network_feedback,
-                              libp2p::protocol::Scheduler                         &scheduler ) :
+                              libp2p::basic::Scheduler                            &scheduler ) :
         peer( std::move( peer_id ) ),
         str( makeStringRepr( peer ) ),
         graphsync_feedbacks_( graphsync_feedbacks ),
@@ -141,7 +143,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         assert( stream );
         assert( streams_.count( stream ) == 0 );
 
-        if ( !stream || streams_.count( stream ) )
+        if ( !stream || (streams_.count( stream ) != 0) )
         {
             logger()->error( "onNewStream: inconsistency, peer={}", str );
             return;
@@ -187,15 +189,17 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         if ( streams_.empty() )
         {
-            timer_ = scheduler_.schedule( kPeerCloseDelayMsec, // Changed from kStreamCloseDelayMsec
-                                          [wptr{ weak_from_this() }]()
-                                          {
-                                              auto self = wptr.lock();
-                                              if ( self )
-                                              {
-                                                  self->onStreamCleanupTimer();
-                                              }
-                                          } );
+            timer_ = scheduler_.scheduleWithHandle(
+                [wptr{ weak_from_this() }]()
+                {
+                    auto self = wptr.lock();
+                    if ( self )
+                    {
+                        self->onStreamCleanupTimer();
+                    }
+                },
+                kPeerCloseDelayMsec // Changed from kStreamCloseDelayMsec
+            );
         }
 
         shiftExpireTime( stream_ctx );
@@ -395,8 +399,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         if ( status != RS_REJECTED_LOCALLY )
         {
-            timer_ = scheduler_.schedule( 0,
-                                          [wptr{ weak_from_this() }]()
+            timer_ = scheduler_.scheduleWithHandle( [wptr{ weak_from_this() }]()
                                           {
                                               auto self = wptr.lock();
                                               if ( self )
@@ -512,7 +515,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         else
         {
             createResponseEndpoint( stream, ctx );
-            if ( remote_requests_streams_.count( request.id ) )
+            if ( remote_requests_streams_.count( request.id ) != 0 )
             {
                 sendResponse( request.id, RS_REJECTED, {} );
             }
@@ -720,7 +723,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         }
 
         // Use extended timeout if window exhaustion is detected
-        unsigned timeout_ms = has_window_exhaustion ? ( kPeerCloseDelayMsec * kWindowExhaustionTimeoutMultiplier )
+        auto timeout_ms = has_window_exhaustion ? ( kPeerCloseDelayMsec * kWindowExhaustionTimeoutMultiplier )
                                                     : kPeerCloseDelayMsec;
 
         timer_.reschedule( timeout_ms );
@@ -733,7 +736,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onStreamCleanupTimer()
     {
-        uint64_t max_expire_time = 0;
+        std::chrono::milliseconds max_expire_time(0);
 
         if ( streams_.empty() )
         {

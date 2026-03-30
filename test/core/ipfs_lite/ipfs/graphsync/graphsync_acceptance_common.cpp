@@ -3,7 +3,8 @@
 #include <boost/di/extension/scopes/shared.hpp>
 
 #include <libp2p/injector/host_injector.hpp>
-#include <libp2p/protocol/common/asio/asio_scheduler.hpp>
+#include <libp2p/basic/scheduler/asio_scheduler_backend.hpp>
+#include <libp2p/basic/scheduler/scheduler_impl.hpp>
 
 #include "ipfs_lite/ipfs/graphsync/impl/graphsync_impl.hpp"
 #include "ipfs_lite/ipld/impl/ipld_node_impl.hpp"
@@ -38,7 +39,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test
 
         std::pair<std::shared_ptr<Graphsync>, std::shared_ptr<libp2p::Host>> objects;
         objects.second = injector.template create<std::shared_ptr<libp2p::Host>>();
-        auto scheduler = std::make_shared<libp2p::protocol::AsioScheduler>( io, libp2p::protocol::SchedulerConfig{} );
+        auto scheduler = std::make_shared<libp2p::basic::SchedulerImpl>(std::make_shared<libp2p::basic::AsioSchedulerBackend>( io ), libp2p::basic::Scheduler::Config{std::chrono::milliseconds(100)} );
         objects.first  = std::make_shared<GraphsyncImpl>( objects.second, std::move( scheduler ) );
         return objects;
     }

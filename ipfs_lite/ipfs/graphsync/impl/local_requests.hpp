@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <libp2p/protocol/common/scheduler.hpp>
+#include <libp2p/basic/scheduler.hpp>
 
 #include "network/marshalling/request_builder.hpp"
 
@@ -131,7 +131,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Ctor.
         /// \param scheduler scheduler
         /// \param cancel_fn feedback to the core component
-        explicit LocalRequests( std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
+        explicit LocalRequests( std::shared_ptr<libp2p::basic::Scheduler> scheduler,
                                 CancelRequestFn                              cancel_fn,
                                 std::shared_ptr<RequestIdGenerator>          generator );
 
@@ -182,7 +182,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         RequestId nextRequestId();
 
         /// licp2p scheduler
-        std::shared_ptr<libp2p::protocol::Scheduler> scheduler_;
+        std::shared_ptr<libp2p::basic::Scheduler> scheduler_;
 
         /// Feedback to GraphsyncImpl used to cancel requests
         CancelRequestFn cancel_fn_;

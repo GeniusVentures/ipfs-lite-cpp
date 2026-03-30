@@ -1,8 +1,10 @@
 #pragma once
 
+#include <chrono>
 #include <set>
 
-#include <libp2p/protocol/common/scheduler.hpp>
+#include <libp2p/basic/scheduler.hpp>
+#include <boost/asio/io_context.hpp>
 
 #include "network/network_fwd.hpp"
 #include <libp2p/outcome/outcome.hpp>
@@ -26,27 +28,27 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                           public PeerToGraphsyncFeedback
     {
     public:
-        enum class Error
+        enum class Error: uint8_t
         {
             REQUEST_NOT_FOUND = 0, ///< The requested CID wasn't found
         };
 
         struct RequestTrackingInfo
         {
-            RequestState state;
-            RequestId    request_id;
-            uint64_t     last_activity_time; // Last time we received data or response for this request
-            uint64_t     start_time;         // When the request was initiated
+            RequestState              state;
+            RequestId                 request_id;
+            std::chrono::milliseconds last_activity_time; // Last time we received data or response for this request
+            std::chrono::milliseconds start_time;         // When the request was initiated
         };
 
         /// Ctor.
         /// \param host libp2p host object
         /// \param scheduler libp2p scheduler
-        GraphsyncImpl( std::shared_ptr<libp2p::Host>                host,
-                       std::shared_ptr<libp2p::protocol::Scheduler> scheduler,
-                       std::shared_ptr<Network>                     network,
-                       std::shared_ptr<RequestIdGenerator>          generator,
-                       std::shared_ptr<boost::asio::io_context>     io_context );
+        GraphsyncImpl( std::shared_ptr<libp2p::Host>             host,
+                       std::shared_ptr<libp2p::basic::Scheduler> scheduler,
+                       std::shared_ptr<Network>                  network,
+                       std::shared_ptr<RequestIdGenerator>       generator,
+                       std::shared_ptr<boost::asio::io_context>  io_context );
 
         ~GraphsyncImpl() override;
 
@@ -55,10 +57,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Get detailed request information for debugging
         struct RequestInfo
         {
-            RequestState state;
-            RequestId    request_id;
-            uint64_t     time_since_start;
-            uint64_t     time_since_activity;
+            RequestState              state;
+            RequestId                 request_id;
+            std::chrono::milliseconds time_since_start;
+            std::chrono::milliseconds time_since_activity;
         };
 
         boost::optional<RequestInfo> getRequestInfo( const CID &root_cid ) const;
@@ -94,7 +96,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void doStop();
 
         /// Scheduler for libp2p
-        std::shared_ptr<libp2p::protocol::Scheduler> scheduler_;
+        std::shared_ptr<libp2p::basic::Scheduler> scheduler_;
 
         /// Network module
         std::shared_ptr<Network> network_;
@@ -122,8 +124,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         bool started_ = false;
     };
 
-    constexpr unsigned kCleanupIntervalMs = 120000;
+    constexpr std::chrono::milliseconds kCleanupIntervalMs( 120000 );
 
     /// Maximum time a request can be stalled without activity before being considered failed
-    constexpr unsigned kRequestActivityTimeoutMs = 180000; // 3 minutes
+    constexpr std::chrono::milliseconds kRequestActivityTimeoutMs( 180000 ); // 3 minutes
 }

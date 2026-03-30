@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+#include <libp2p/basic/scheduler.hpp>
 #include <map>
 #include <set>
 
@@ -33,7 +35,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         PeerContext( PeerId                                               peer_id,
                      std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
                      PeerToNetworkFeedback                               &network_feedback,
-                     libp2p::protocol::Scheduler                         &scheduler );
+                     libp2p::basic::Scheduler                         &scheduler );
 
         /// Dtor.
         ~PeerContext() override;
@@ -134,7 +136,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             /// Stream's expire time in Scheduler ticks (milliseconds in real life).
             /// Stream which is inactive during some cleanup period is closed
             /// (activity depends on remote peeris well)
-            uint64_t expire_time = 0;
+            std::chrono::milliseconds expire_time;
         };
 
         /// Container for all active streams to/from the peer
@@ -217,7 +219,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         PeerToNetworkFeedback &network_feedback_;
 
         /// Scheduler
-        Scheduler &scheduler_;
+        libp2p::basic::Scheduler &scheduler_;
+
+        /// Scheduler's handle, expiration timer
+        libp2p::basic::Scheduler::Handle timer_;
 
         /// Outbound address
         boost::optional<std::vector<libp2p::multi::Multiaddress>> connect_to_;
@@ -233,9 +238,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Active streams collection
         Streams streams_;
-
-        /// Scheduler's handle, expiration timer
-        Scheduler::Handle timer_;
 
         /// Flag, indicates that peer is closed
         bool closed_ = false;
