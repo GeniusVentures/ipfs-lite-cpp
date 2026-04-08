@@ -29,22 +29,23 @@ namespace sgns::ipfs_lite::ipfs::dht
 
         IPFS::outcome::result<void> bootstrap();
 
-        bool FindProviders(
+        IPFS::outcome::result<void> FindProviders(
             const libp2p::multi::ContentIdentifier &cid,
             std::function<void( libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound )>
                 onProvidersFound );
 
-        bool FindProviders(
+        IPFS::outcome::result<void> FindProviders(
             const libp2p::protocol::kademlia::ContentId &key,
             std::function<void( libp2p::outcome::result<std::vector<libp2p::peer::PeerInfo>> onProvidersFound )>
                 onProvidersFound );
 
-        void FindPeer( const libp2p::peer::PeerId                                            &peerId,
-                       std::function<void( libp2p::outcome::result<libp2p::peer::PeerInfo> )> onPeerFound );
+        IPFS::outcome::result<void> FindPeer(
+            const libp2p::peer::PeerId                                            &peerId,
+            std::function<void( libp2p::outcome::result<libp2p::peer::PeerInfo> )> onPeerFound );
 
         IPFS::outcome::result<void> ProvideCID( libp2p::protocol::kademlia::ContentId key,
-                                          bool                                  need_err,
-                                          bool                                  force = false );
+                                                bool                                  need_err,
+                                                bool                                  force = false );
 
     private:
         void ScheduleProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_err );
