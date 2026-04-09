@@ -91,6 +91,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         {
             ScheduleProvideCID( std::move( key ), need_error );
         }
+        return IPFS::outcome::success();
     }
 
     void IpfsDHT::ScheduleProvideCID( libp2p::protocol::kademlia::ContentId key, bool need_err )
