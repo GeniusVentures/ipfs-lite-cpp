@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <libp2p/basic/scheduler.hpp>
+#include <libp2p/connection/stream_and_protocol.hpp>
 #include <map>
 #include <set>
 
@@ -70,8 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Called on new outbound stream, connected to this peer
         /// \param rstream libp2p stream or error
-        // void onStreamConnected(IPFS::outcome::result<StreamPtr> rstream);
-        void onStreamConnected( IPFS::outcome::result<StreamPtr> rstream );
+        void onStreamConnected( libp2p::StreamAndProtocolOrError rstream );
 
         /// Called on new accepted stream from the peer
         /// \param stream libp2p stream

@@ -1,6 +1,9 @@
 #include "data_transfer/impl/libp2p_data_transfer_network.hpp"
 #include "data_transfer/message.hpp"
 
+#include <optional>
+#include <system_error>
+
 /**
  * Check IPFS::outcome and calls receiver->receiveError in case of failure
  */
@@ -92,11 +95,26 @@ namespace sgns::data_transfer
         const PeerId &peer )
     {
         std::shared_ptr<libp2p::connection::Stream> stream;
+        std::optional<std::error_code>              stream_error;
         PeerInfo                                    peer_info = host_->getPeerRepository().getPeerInfo( peer );
-        host_->newStream( peer_info,
-                          kDataTransferLibp2pProtocol,
-                          [&stream]( IPFS::outcome::result<std::shared_ptr<libp2p::connection::Stream>> s )
-                          { stream = std::move( s.value() ); } );
+        host_->newStream(
+            peer_info,
+            { kDataTransferLibp2pProtocol },
+            [&stream, &stream_error]( libp2p::StreamAndProtocolOrError s )
+            {
+                if ( !s )
+                {
+                    stream_error = s.error();
+                    return;
+                }
+                stream = std::move( s.value().stream );
+            } );
+
+        if ( !stream )
+        {
+            return stream_error.value_or( std::make_error_code( std::errc::not_connected ) );
+        }
+
         return std::make_shared<StreamMessageSender>( stream );
     }
 
