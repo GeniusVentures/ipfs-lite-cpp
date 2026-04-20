@@ -224,7 +224,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                 auto ctx_ = wptr.lock();
                 if ( ctx_ )
                 {
-                    ctx_->onStreamConnected( std::move( rstream.value().stream ) );
+                    ctx_->onStreamConnected( std::move( rstream ) );
                 }
             },
             std::chrono::milliseconds( 10000 ) );

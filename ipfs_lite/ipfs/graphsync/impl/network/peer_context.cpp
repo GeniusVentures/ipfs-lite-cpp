@@ -210,7 +210,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         streams_.emplace( std::move( stream ), std::move( stream_ctx ) );
     }
 
-    void PeerContext::onStreamConnected( IPFS::outcome::result<StreamPtr> rstream )
+    void PeerContext::onStreamConnected( libp2p::StreamAndProtocolOrError rstream )
     {
         if ( closed_ )
         {
@@ -219,7 +219,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         if ( rstream )
         {
             logger()->debug( "connected to peer={}", str );
-            onNewStream( std::move( rstream.value() ) );
+            onNewStream( std::move( rstream.value().stream ) );
         }
         else
         {
