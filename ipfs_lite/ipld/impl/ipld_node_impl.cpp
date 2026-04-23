@@ -37,7 +37,7 @@ namespace sgns::ipfs_lite::ipld
 
     IPFS::outcome::result<void> IPLDNodeImpl::addChild( const std::string &name, std::shared_ptr<const IPLDNode> node )
     {
-        IPLDLinkImpl link{ node->getCID(), name, node->size() };
+        IPLDLink link{ node->getCID(), name, node->size() };
         links_.emplace( name, std::move( link ) );
         ipld_block_        = boost::none; // Need to recalculate CID after adding link to child node
         child_nodes_size_ += node->size();
@@ -65,14 +65,14 @@ namespace sgns::ipfs_lite::ipld
 
     void IPLDNodeImpl::addLink( const IPLDLink &link )
     {
-        auto &link_impl = dynamic_cast<const IPLDLinkImpl &>( link );
-        links_.emplace( link.getName(), link_impl );
+        links_.emplace( link.getName(), link );
         ipld_block_ = boost::none; // Need to recalculate CID after adding link
     }
 
     std::vector<std::reference_wrapper<const IPLDLink>> IPLDNodeImpl::getLinks() const
     {
-        std::vector<std::reference_wrapper<const IPLDLink>> link_refs{};
+        std::vector<std::reference_wrapper<const IPLDLink>> link_refs;
+        link_refs.reserve( links_.size() );
         for ( const auto &link : links_ )
         {
             link_refs.emplace_back( link.second );
@@ -123,26 +123,29 @@ namespace sgns::ipfs_lite::ipld
 
     IPFS::outcome::result<std::shared_ptr<IPLDNode>> IPLDNodeImpl::createFromRawBytes( gsl::span<const uint8_t> input )
     {
-        IPLDNodeDecoderPB decoder;
-        if ( auto result = decoder.decode( input ); result.has_error() )
+        ::protobuf::ipld::node::PBNode pb_node;
+
+        if ( !pb_node.ParseFromArray( input.data(), input.size() ) )
         {
-            return result.error();
+            return IPLDNodeDecoderPBError::INVALID_RAW_BYTES;
         }
-        auto node = createFromString( decoder.getContent() );
+        auto node = createFromString( pb_node.data() );
 
         // Add links
-        for ( size_t i = 0; i < decoder.getLinksCount(); ++i )
+        for ( int i = 0; i < pb_node.links_size(); ++i )
         {
-            std::vector<uint8_t> link_cid_bytes{ decoder.getLinkCID( i ).begin(), decoder.getLinkCID( i ).end() };
+            auto link = pb_node.links( i );
+
+            std::vector<uint8_t> link_cid_bytes{ link.hash().begin(), link.hash().end() };
             BOOST_OUTCOME_TRY( auto link_cid, CID::fromBytes( link_cid_bytes ) );
-            IPLDLinkImpl link{ std::move( link_cid ), decoder.getLinkName( i ), decoder.getLinkSize( i ) };
-            node->addLink( link );
+            IPLDLink ipld_link{ std::move( link_cid ), link.name(), link.tsize() };
+            node->addLink( ipld_link );
         }
 
         // Add destinations
-        for ( size_t i = 0; i < decoder.getDestinationsCount(); ++i )
+        for ( int i = 0; i < pb_node.destinations_size(); ++i )
         {
-            node->addDestination( decoder.getDestination( i ) );
+            node->addDestination( pb_node.destinations( i ) );
         }
 
         return node;
