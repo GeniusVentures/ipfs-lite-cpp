@@ -3,11 +3,11 @@
 #include <map>
 #include <memory>
 #include <set>
-#include <string_view>
 #include <vector>
 
 #include <boost/optional.hpp>
-#include "ipfs_lite/ipld/impl/ipld_link_impl.hpp"
+
+#include "ipfs_lite/ipld/ipld_link.hpp"
 #include "ipfs_lite/ipld/impl/ipld_node_encoder_pb.hpp"
 #include "ipfs_lite/ipld/ipld_node.hpp"
 
@@ -56,12 +56,12 @@ namespace sgns::ipfs_lite::ipld
         void clearDestinations() override;
 
     private:
-        common::Buffer                      content_;
-        std::map<std::string, IPLDLinkImpl> links_;
-        IPLDNodeEncoderPB                   pb_node_codec_;
-        size_t                              child_nodes_size_{};
-        mutable boost::optional<IPLDBlock>  ipld_block_;
-        std::set<std::string>               destinations_;
+        common::Buffer                     content_;
+        std::map<std::string, IPLDLink>    links_;
+        IPLDNodeEncoderPB                  pb_node_codec_;
+        size_t                             child_nodes_size_{};
+        mutable boost::optional<IPLDBlock> ipld_block_;
+        std::set<std::string>              destinations_;
     };
 
     template <>
