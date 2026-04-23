@@ -57,7 +57,7 @@ namespace sgns::ipfs_lite
         return error_as_result<std::shared_ptr<rocksdb>>( status );
     }
 
-    IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create( const std::shared_ptr<DB> &db )
+    IPFS::outcome::result<std::shared_ptr<rocksdb>> rocksdb::create( std::shared_ptr<DB> db )
     {
         if ( db == nullptr )
         {
@@ -65,7 +65,7 @@ namespace sgns::ipfs_lite
         }
 
         auto l     = std::make_shared<rocksdb>();
-        l->db_     = db;
+        l->db_     = std::move( db );
         l->logger_ = common::createLogger( "rocksdb" );
         return l;
     }

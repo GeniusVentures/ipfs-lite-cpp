@@ -1,5 +1,7 @@
 #include "kademlia_dht.hpp"
 
+#include <iostream>
+
 namespace sgns::ipfs_lite::ipfs::dht
 {
     IpfsDHT::IpfsDHT( std::shared_ptr<libp2p::protocol::kademlia::Kademlia> kademlia,
@@ -25,7 +27,7 @@ namespace sgns::ipfs_lite::ipfs::dht
         return kademlia_->bootstrap();
     }
 
-    IPFS::outcome::result<void> IpfsDHT::bootstrap()
+    IPFS::outcome::result<void> IpfsDHT::Bootstrap()
     {
         return kademlia_->bootstrap();
     }
