@@ -150,7 +150,7 @@ TEST_P( CommonFeaturesTest, LinkOperationsConsistency )
         std::string                                         primary_cid = cidToString( node );
         for ( const auto &link : links )
         {
-            IPLDLinkImpl link_impl{ link.get().getCID(), link.get().getName(), link.get().getSize() };
+            IPLDLink link_impl{ link.get().getCID(), link.get().getName(), link.get().getSize() };
             EXPECT_OUTCOME_TRUE( received_link, node->getLink( link.get().getName() ) );
             std::ignore           = received_link;
             std::string link_name = link.get().getName();
