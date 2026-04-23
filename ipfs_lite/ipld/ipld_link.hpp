@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 #include "primitives/cid/cid.hpp"
 
@@ -11,26 +10,48 @@ namespace sgns::ipfs_lite::ipld
     {
     public:
         /**
-         * @brief Destructor
+         * @brief Construct Link
+         * @param id - CID of the target object
+         * @param name - name of the target object
+         * @param size - total size of the target object
          */
-        virtual ~IPLDLink() = default;
+        IPLDLink( CID id, std::string name, size_t size ) :
+            cid_( std::move( id ) ), name_( std::move( name ) ), size_( size )
+        {
+        }
+
+        ~IPLDLink() = default;
 
         /**
          * @brief Get name of the link
          * @return Name, which should be unique per object
          */
-        virtual const std::string &getName() const = 0;
+        const std::string &getName() const
+        {
+            return name_;
+        }
 
         /**
          * @brief Get identifier of the target object
          * @return Content identifier
          */
-        virtual const CID &getCID() const = 0;
+        const CID &getCID() const
+        {
+            return cid_;
+        }
 
         /**
          * @brief Get target object size
          * @return Cumulative size of the target object
          */
-        virtual size_t getSize() const = 0;
+        size_t getSize() const
+        {
+            return size_;
+        }
+
+    private:
+        CID         cid_;
+        std::string name_;
+        size_t      size_{};
     };
 }

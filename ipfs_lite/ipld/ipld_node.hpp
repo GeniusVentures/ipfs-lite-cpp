@@ -133,7 +133,7 @@ namespace sgns::ipfs_lite::ipld
     /**
      * @class Possible Node errors
      */
-    enum class IPLDNodeError
+    enum class IPLDNodeError: uint8_t
     {
         LINK_NOT_FOUND = 1,
         INVALID_RAW_DATA

@@ -11,9 +11,9 @@ using protobuf::ipld::node::PBNode;
 
 namespace sgns::ipfs_lite::ipld
 {
-    std::vector<uint8_t> IPLDNodeEncoderPB::encode( const common::Buffer                      &content,
-                                                    const std::map<std::string, IPLDLinkImpl> &links,
-                                                    const std::set<std::string>               &destinations )
+    std::vector<uint8_t> IPLDNodeEncoderPB::encode( const common::Buffer                  &content,
+                                                    const std::map<std::string, IPLDLink> &links,
+                                                    const std::set<std::string>           &destinations )
     {
         std::vector<uint8_t> links_pb        = serializeLinks( links );
         std::vector<uint8_t> content_pb      = serializeContent( content );
@@ -27,7 +27,7 @@ namespace sgns::ipfs_lite::ipld
         return result;
     }
 
-    size_t IPLDNodeEncoderPB::getLinkLengthPB( const std::string &name, const IPLDLinkImpl &link )
+    size_t IPLDNodeEncoderPB::getLinkLengthPB( const std::string &name, const IPLDLink &link )
     {
         size_t length{};
         size_t cid_bytes_size  = link.getCID().content_address.toBuffer().size();
@@ -40,7 +40,7 @@ namespace sgns::ipfs_lite::ipld
         return length;
     }
 
-    std::vector<uint8_t> IPLDNodeEncoderPB::serializeLinks( const std::map<std::string, IPLDLinkImpl> &links )
+    std::vector<uint8_t> IPLDNodeEncoderPB::serializeLinks( const std::map<std::string, IPLDLink> &links )
     {
         // Calculate links size:
         size_t              links_content_size{};
