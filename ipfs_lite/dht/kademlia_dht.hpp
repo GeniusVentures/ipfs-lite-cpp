@@ -1,14 +1,12 @@
 #pragma once
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <memory>
-#include <chrono>
 
+#include <boost/asio/steady_timer.hpp>
 #include <libp2p/protocol/kademlia/kademlia.hpp>
 #include <libp2p/multi/content_identifier_codec.hpp>
-#include <boost/asio/steady_timer.hpp>
 
 #include "common/outcome.hpp"
 
@@ -27,7 +25,7 @@ namespace sgns::ipfs_lite::ipfs::dht
 
         IPFS::outcome::result<void> Start();
 
-        IPFS::outcome::result<void> bootstrap();
+        IPFS::outcome::result<void> Bootstrap();
 
         IPFS::outcome::result<void> FindProviders(
             const libp2p::multi::ContentIdentifier &cid,
