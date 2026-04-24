@@ -34,7 +34,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             {
                 return false;
             }
-            else if ( byte == kCborTrue )
+            if ( byte == kCborTrue )
             {
                 return true;
             }
