@@ -12,40 +12,47 @@ namespace sgns::ipfs_lite::ipfs::merkledag
     {
     public:
         /**
-         * @brief Destructor
+         * @brief Construct leaf
+         * @param data - leaf content
          */
-        virtual ~Leaf() = default;
+        explicit Leaf( common::Buffer data );
 
         /**
          * @brief Get leaf content
          * @return operation result
          */
-        virtual const common::Buffer &content() const = 0;
+        const common::Buffer &content() const
+        {
+            return content_;
+        }
 
         /**
          * @brief Get count of children leaves
          * @return Count of leaves
          */
-        virtual size_t count() const = 0;
+        size_t count() const
+        {
+            return children_.size();
+        }
 
         /**
          * @brief Get children leaf
          * @param name - leaf name
          * @return operation result
          */
-        virtual IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf( std::string_view name ) const = 0;
+        IPFS::outcome::result<std::reference_wrapper<const Leaf>> subLeaf( std::string_view name );
 
-        /**
-         * @brief Get names of all sub leaves of the current leaf
-         * @return operation result
-         */
-        virtual std::vector<std::string_view> getSubLeafNames() const = 0;
+        IPFS::outcome::result<void> insertSubLeaf( std::string name, Leaf children );
+
+    private:
+        common::Buffer                           content_;
+        std::map<std::string, Leaf, std::less<>> children_;
     };
 
     /**
      * @enum Possible leaf errors
      */
-    enum class LeafError : int
+    enum class LeafError : uint8_t
     {
         LEAF_NOT_FOUND = 1,
         DUPLICATE_LEAF

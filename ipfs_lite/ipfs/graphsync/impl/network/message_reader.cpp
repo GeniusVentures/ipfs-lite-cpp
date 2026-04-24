@@ -10,7 +10,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
     MessageReader::MessageReader( StreamPtr stream, std::shared_ptr<EndpointToPeerFeedback> feedback ) :
-        feedback_( feedback )
+        feedback_( std::move( feedback ) )
     {
         assert( stream );
         assert( !stream->isClosedForRead() );
