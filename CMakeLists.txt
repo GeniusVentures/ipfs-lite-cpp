@@ -66,7 +66,6 @@ install(TARGETS ipfs_blockservice
     buffer rocksdb_wrapper cid ipld_node cbor ipfs_lite_hasher logger
     hexutil
     blake2
-    ipld_link
     outcome
     tinycbor
     ipld_block

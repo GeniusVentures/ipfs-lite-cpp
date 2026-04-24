@@ -86,7 +86,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag
     /**
      * @class Possible MerkleDAG service errors
      */
-    enum class ServiceError
+    enum class ServiceError: uint8_t
     {
         UNRESOLVED_LINK = 1 // This error can occur if child node not found
     };

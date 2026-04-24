@@ -45,24 +45,21 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
-        // clang-format off
-    libp2p::basic::VarintReader::readVarint(
-        stream_,
-        [wptr{weak_from_this()}]
-            (IPFS::outcome::result<libp2p::multi::UVarint> varint_opt) {
-          if(!varint_opt)
-          {
-            logger()->error(
-              "Varint Error msg={}", varint_opt.error().message());
-          }
-          auto self = wptr.lock();
-          if (self && self->reading_) {
-            size_t length = varint_opt ? varint_opt.value().toUInt64() : 0;
-            self->onLengthRead(length);
-          }
-        }
-    );
-        // clang-format on
+        libp2p::basic::VarintReader::readVarint(
+            stream_,
+            [wptr{ weak_from_this() }]( IPFS::outcome::result<libp2p::multi::UVarint> varint_opt )
+            {
+                if ( !varint_opt )
+                {
+                    logger()->error( "Varint Error msg={}", varint_opt.error().message() );
+                }
+                auto self = wptr.lock();
+                if ( self && self->reading_ )
+                {
+                    size_t length = varint_opt ? varint_opt.value().toUInt64() : 0;
+                    self->onLengthRead( length );
+                }
+            } );
 
         reading_ = true;
     }
@@ -88,18 +85,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         buffer_->resize( length );
 
-        // clang-format off
-    stream_->read(
-        gsl::span(buffer_->data(), length),
-        length,
-        [wptr{weak_from_this()}, buffer{buffer_}](IPFS::outcome::result<size_t> res) {
-          auto self = wptr.lock();
-          if (self && self->reading_) {
-            self->onMessageRead(res);
-          }
-        }
-    );
-        // clang-format on
+        stream_->read( gsl::span( buffer_->data(), length ),
+                       length,
+                       [wptr{ weak_from_this() }, buffer{ buffer_ }]( IPFS::outcome::result<size_t> res )
+                       {
+                           auto self = wptr.lock();
+                           if ( self && self->reading_ )
+                           {
+                               self->onMessageRead( res );
+                           }
+                       } );
     }
 
     void LengthDelimitedMessageReader::onMessageRead( IPFS::outcome::result<size_t> res )

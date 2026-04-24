@@ -1,5 +1,6 @@
 #include "inbound_endpoint.hpp"
 
+#include "ipfs_lite/ipfs/graphsync/impl/network/network_fwd.hpp"
 #include "message_queue.hpp"
 #include "peer_context.hpp"
 
@@ -7,7 +8,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
     InboundEndpoint::InboundEndpoint( std::shared_ptr<MessageQueue> queue ) :
-        max_pending_bytes_( kMaxPendingBytes ), queue_( std::move( queue ) )
+        queue_( std::move( queue ) )
     {
         assert( queue_ );
     }
@@ -18,7 +19,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     {
         auto serialized_size = response_builder_.getSerializedSize();
 
-        if ( queue_->getState().pending_bytes + serialized_size + data.size() > max_pending_bytes_ )
+        if ( queue_->getState().pending_bytes + serialized_size + data.size() > kMaxPendingBytes )
         {
             return Error::WRITE_QUEUE_OVERFLOW;
         }
@@ -48,7 +49,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return res.error();
         }
 
-        if ( queue_->getState().pending_bytes > max_pending_bytes_ )
+        if ( queue_->getState().pending_bytes > kMaxPendingBytes )
         {
             return Error::WRITE_QUEUE_OVERFLOW;
         }
