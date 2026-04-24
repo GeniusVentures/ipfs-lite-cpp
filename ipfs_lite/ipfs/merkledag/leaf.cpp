@@ -1,20 +1,10 @@
-#include "ipfs_lite/ipfs/merkledag/impl/leaf_impl.hpp"
+#include "leaf.hpp"
 
 namespace sgns::ipfs_lite::ipfs::merkledag
 {
-    LeafImpl::LeafImpl( common::Buffer data ) : content_{ std::move( data ) } {}
+    Leaf::Leaf( common::Buffer data ) : content_{ std::move( data ) } {}
 
-    const common::Buffer &LeafImpl::content() const
-    {
-        return content_;
-    }
-
-    size_t LeafImpl::count() const
-    {
-        return children_.size();
-    }
-
-    IPFS::outcome::result<std::reference_wrapper<const Leaf>> LeafImpl::subLeaf( std::string_view name ) const
+    IPFS::outcome::result<std::reference_wrapper<const Leaf>> Leaf::subLeaf( std::string_view name ) 
     {
         if ( auto iter = children_.find( name ); iter != children_.end() )
         {
@@ -23,17 +13,7 @@ namespace sgns::ipfs_lite::ipfs::merkledag
         return LeafError::LEAF_NOT_FOUND;
     }
 
-    std::vector<std::string_view> LeafImpl::getSubLeafNames() const
-    {
-        std::vector<std::string_view> names;
-        for ( const auto &child : children_ )
-        {
-            names.push_back( child.first );
-        }
-        return names;
-    }
-
-    IPFS::outcome::result<void> LeafImpl::insertSubLeaf( std::string name, LeafImpl children )
+    IPFS::outcome::result<void> Leaf::insertSubLeaf( std::string name, Leaf children )
     {
         auto result = children_.emplace( std::move( name ), std::move( children ) );
         if ( result.second )

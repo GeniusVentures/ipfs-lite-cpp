@@ -1,7 +1,7 @@
 add_library(ipfs_merkledag_service
     impl/merkledag_service_impl.cpp
-    impl/leaf_impl.cpp
-    )
+    leaf.cpp
+)
 target_link_libraries(ipfs_merkledag_service
     graphsync
     Boost::boost
