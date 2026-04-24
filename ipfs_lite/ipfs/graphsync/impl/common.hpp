@@ -1,6 +1,5 @@
 #pragma once
 
-// #include "common/logger.hpp"
 #include "ipfs_lite/ipfs/graphsync/graphsync.hpp"
 #include "common/logger.hpp"
 
@@ -8,7 +7,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
     /// Graphsync internal error codes
-    enum class Error
+    enum class Error: uint8_t
     {
         MESSAGE_SIZE_OUT_OF_BOUNDS = 1,
         MESSAGE_PARSE_ERROR,

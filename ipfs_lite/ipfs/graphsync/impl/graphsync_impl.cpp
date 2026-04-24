@@ -4,6 +4,7 @@
 #include <utility>
 #include <fmt/chrono.h>
 
+#include "ipfs_lite/ipld/ipld_node.hpp"
 #include "network/network.hpp"
 #include "local_requests.hpp"
 
@@ -54,13 +55,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         doStop();
     }
 
-    void GraphsyncImpl::start( std::shared_ptr<MerkleDagBridge> dag, Graphsync::BlockCallback callback )
+    void GraphsyncImpl::start( std::shared_ptr<merkledag::MerkleDagService> service, Graphsync::BlockCallback callback )
     {
-        assert( dag );
+        assert( service );
         assert( callback );
 
         network_->start( shared_from_this() );
-        dag_      = std::move( dag );
+        service_  = std::move( service );
         block_cb_ = std::move( callback );
         started_  = true;
     }
@@ -76,7 +77,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         {
             started_  = false;
             block_cb_ = Graphsync::BlockCallback{};
-            dag_.reset();
+            service_.reset();
             network_->stop( shared_from_this() );
             logger()->trace( "{}: Stopping all", __FUNCTION__ );
             tracked_requests_.clear();
@@ -279,7 +280,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         // Post the task to the io_context thread pool - pass shared_ptr by value for safety
         boost::asio::post(
             *io_context_,
-            [weak_self, peer_copy, request_copy, status_holder, this]()
+            [weak_self, peer_copy, request_copy, status_holder, this]
             {
                 // Convert weak_ptr to shared_ptr to check if GraphsyncImpl is still alive
                 logger()->trace( "onRemoteRequest Post" );
@@ -306,24 +307,41 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                 {
                     bool data_present = !data.empty();
 
-                    if ( data_present )
+                    if ( !data_present )
                     {
-                        // Keep peer alive during block processing
-                        self->network_->keepPeerAlive( peer_copy );
+                        return true;
+                    }
 
-                        // Use the original shared_ptr directly
-                        if ( !self->network_->addBlockToResponse( peer_copy, request_copy.id, cid, data ) )
-                        {
-                            send_response = false;
-                            return false;
-                        }
+                    // Keep peer alive during block processing
+                    self->network_->keepPeerAlive( peer_copy );
+
+                    // Use the original shared_ptr directly
+                    if ( !self->network_->addBlockToResponse( peer_copy, request_copy.id, cid, data ) )
+                    {
+                        send_response = false;
+                        return false;
                     }
 
                     return true;
                 };
 
                 // Execute the potentially heavy selection process using original shared_ptr
-                auto select_res = self->dag_->select( request_copy.root_cid, request_copy.selector, data_handler );
+                auto select_res = [&]() -> IPFS::outcome::result<size_t>
+                {
+                    auto internal_handler = [&data_handler]( std::shared_ptr<const ipld::IPLDNode> node ) -> bool
+                    { return data_handler( node->getCID(), node->getRawBytes() ); };
+
+                    if ( request_copy.selector.empty() )
+                    {
+                        BOOST_OUTCOME_TRY( auto node, service_->getNode( request_copy.root_cid ) );
+                        internal_handler( node );
+                        return 1;
+                    }
+
+                    // TODO(???): change MerkleDAG service to accept CID instead of bytes
+                    BOOST_OUTCOME_TRY( auto cid_encoded, request_copy.root_cid.toBytes() );
+                    return service_->select( cid_encoded, request_copy.selector, internal_handler );
+                }();
 
                 if ( !send_response )
                 {
@@ -333,71 +351,65 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                     return;
                 }
 
-                if ( select_res )
-                {
-                    if ( select_res.value() > 0 )
-                    {
-                        // Content found!
-                        status                = RS_FULL_CONTENT;
-                        status_holder->status = RS_FULL_CONTENT;
-
-                        // Keep peer alive before sending response
-                        self->network_->keepPeerAlive( peer_copy );
-
-                        // Verify we're still started and can send responses before attempting
-                        if ( self->started_ )
-                        {
-                            // Send the positive response immediately
-                            self->network_->sendResponse( peer_copy, request_copy.id, status, request_copy.extensions );
-                        }
-                        else
-                        {
-                            logger()->debug( "Skipping response send - GraphSync no longer started for request {}",
-                                             request_copy.id );
-                        }
-
-                        // Remove all tracking for this request
-                        self->reqgenerator_->removeRequest( request_copy.id );
-                        return;
-                    }
-                    else
-                    {
-                        // No content found
-                        status                = RS_NOT_FOUND;
-                        status_holder->status = RS_NOT_FOUND;
-
-                        // Check if all other instances also reported NOT_FOUND
-                        if ( self->reqgenerator_->allStatusesNotFound( request_copy.id ) )
-                        {
-                            // Keep peer alive before sending response
-                            self->network_->keepPeerAlive( peer_copy );
-
-                            // Verify we're still started before attempting to send
-                            if ( self->started_ )
-                            {
-                                // All instances reported NOT_FOUND, safe to send the response
-                                self->network_->sendResponse( peer_copy,
-                                                              request_copy.id,
-                                                              status,
-                                                              request_copy.extensions );
-                            }
-                            else
-                            {
-                                logger()->debug(
-                                    "Skipping NOT_FOUND response send - GraphSync no longer started for request {}",
-                                    request_copy.id );
-                            }
-
-                            // Remove all tracking for this request
-                            self->reqgenerator_->removeRequest( request_copy.id );
-                        }
-                    }
-                }
-                else
+                if ( !select_res )
                 {
                     // Selection failed
                     status_holder->status = RS_REQUEST_FAILED;
                     self->reqgenerator_->removeStatus( request_copy.id, status_holder );
+                    return;
+                }
+
+                if ( select_res.value() > 0 )
+                {
+                    // Content found!
+                    status                = RS_FULL_CONTENT;
+                    status_holder->status = RS_FULL_CONTENT;
+
+                    // Keep peer alive before sending response
+                    self->network_->keepPeerAlive( peer_copy );
+
+                    // Verify we're still started and can send responses before attempting
+                    if ( self->started_ )
+                    {
+                        // Send the positive response immediately
+                        self->network_->sendResponse( peer_copy, request_copy.id, status, request_copy.extensions );
+                    }
+                    else
+                    {
+                        logger()->debug( "Skipping response send - GraphSync no longer started for request {}",
+                                         request_copy.id );
+                    }
+
+                    // Remove all tracking for this request
+                    self->reqgenerator_->removeRequest( request_copy.id );
+                    return;
+                }
+
+                // No content found
+                status                = RS_NOT_FOUND;
+                status_holder->status = RS_NOT_FOUND;
+
+                // Check if all other instances also reported NOT_FOUND
+                if ( self->reqgenerator_->allStatusesNotFound( request_copy.id ) )
+                {
+                    // Keep peer alive before sending response
+                    self->network_->keepPeerAlive( peer_copy );
+
+                    // Verify we're still started before attempting to send
+                    if ( self->started_ )
+                    {
+                        // All instances reported NOT_FOUND, safe to send the response
+                        self->network_->sendResponse( peer_copy, request_copy.id, status, request_copy.extensions );
+                    }
+                    else
+                    {
+                        logger()->debug(
+                            "Skipping NOT_FOUND response send - GraphSync no longer started for request {}",
+                            request_copy.id );
+                    }
+
+                    // Remove all tracking for this request
+                    self->reqgenerator_->removeRequest( request_copy.id );
                 }
             } );
     }
@@ -507,5 +519,4 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                             now - it->second.start_time,
                             now - it->second.last_activity_time };
     }
-
 }

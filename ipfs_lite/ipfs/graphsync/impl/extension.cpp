@@ -54,7 +54,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return Error::MESSAGE_PARSE_ERROR;
         }
 
-    } // namespace
+    }
 
     Extension encodeMetadataRequest()
     {

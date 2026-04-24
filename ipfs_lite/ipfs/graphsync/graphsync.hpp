@@ -10,6 +10,7 @@
 #include "common/buffer.hpp"
 #include "common/outcome.hpp"
 #include "ipfs_lite/ipfs/graphsync/extension.hpp"
+#include "ipfs_lite/ipfs/merkledag/merkledag_service.hpp"
 
 namespace sgns::ipfs_lite::ipfs::merkledag
 {
@@ -22,31 +23,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     /// Subscription to any data stream, borrowed from libp2p
     using libp2p::protocol::Subscription;
 
-    /// Graphsync -> MerkleDagService bridge
-    struct MerkleDagBridge
-    {
-        /// Creates a default bridge
-        /// \param service Existing MerkleDAG service
-        /// \return Bridge object
-        static std::shared_ptr<MerkleDagBridge> create( std::shared_ptr<merkledag::MerkleDagService> service );
-
-        virtual ~MerkleDagBridge() = default;
-
-        /// Forwards select call to the service or other backend
-        /// \param cid Root CID
-        /// \param selector IPLD selector
-        /// \param handler Data handler, returns false if further search is no
-        /// longer required
-        /// \return Count of data blocks passed through handler or error
-        virtual IPFS::outcome::result<size_t> select(
-            const CID                                                        &cid,
-            gsl::span<const uint8_t>                                          selector,
-            std::function<bool( const CID &cid, const common::Buffer &data )> handler ) const = 0;
-    };
-
     /// Response status codes. Positive values are received from wire,
     /// negative are internal. Terminal codes end request-response session
-    enum ResponseStatusCode
+    enum ResponseStatusCode: int8_t
     {
         // internal codes - terminal
         RS_NO_PEERS         = -1, // no peers: cannot find peer to connect to
@@ -99,7 +78,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     class Graphsync
     {
     public:
-        enum class RequestState
+        enum class RequestState: uint8_t
         {
             IN_PROGRESS,
             COMPLETED,
@@ -114,7 +93,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// \param dag Object which allows to select in local storage as per
         /// incoming requests
         /// \param callback Callback which receives blocks of data from the network
-        virtual void start( std::shared_ptr<MerkleDagBridge> dag, BlockCallback callback ) = 0;
+        virtual void start( std::shared_ptr<merkledag::MerkleDagService> service, BlockCallback callback ) = 0;
 
         /// Stops the instance. Active requests will be cancelled and return
         /// RS_REJECTED_LOCALLY to their callbacks

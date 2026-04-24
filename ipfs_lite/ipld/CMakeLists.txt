@@ -15,7 +15,6 @@ add_library(ipld_node
 
 target_link_libraries(ipld_node
     ipld_node_protobuf
-    ipld_link
     ipld_block
     Boost::boost
     cid
