@@ -4,6 +4,8 @@
 #include "codec/cbor/cbor.hpp"
 #include "common/logger.hpp"
 #include "graphsync_acceptance_common.hpp"
+#include "ipfs_lite/ipfs/graphsync/extension.hpp"
+#include "ipfs_lite/ipfs/merkledag/merkledag_service.hpp"
 #include <boost/optional/optional_io.hpp>
 
 // logger used by these tests
@@ -28,11 +30,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test
         // n_responses_expected: count of responses received by the node after which
         // io->stop() is called
         Node( std::shared_ptr<boost::asio::io_context> io,
-              std::shared_ptr<MerkleDagBridge>         data_service,
+              std::shared_ptr<merkledag::MerkleDagService>         data_service,
               Graphsync::BlockCallback                 cb,
               size_t                                   n_responses_expected ) :
             io_( std::move( io ) ),
-            data_service_( std::move( data_service ) ),
             block_cb_( std::move( cb ) ),
             n_responses_expected_( n_responses_expected )
         {
@@ -149,7 +150,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync::test
 
         std::shared_ptr<libp2p::Host> host_;
 
-        std::shared_ptr<MerkleDagBridge> data_service_;
+        std::shared_ptr<merkledag::MerkleDagService> data_service_;
 
         Graphsync::BlockCallback block_cb_;
 

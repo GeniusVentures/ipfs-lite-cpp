@@ -1,13 +1,12 @@
 #pragma once
 
 #include <chrono>
-#include <set>
 
-#include <libp2p/basic/scheduler.hpp>
 #include <boost/asio/io_context.hpp>
+#include <libp2p/basic/scheduler.hpp>
+#include <libp2p/outcome/outcome.hpp>
 
 #include "network/network_fwd.hpp"
-#include <libp2p/outcome/outcome.hpp>
 
 namespace libp2p
 {
@@ -72,7 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void cancelLocalRequest( RequestId request_id, SharedData body );
 
         // Graphsync interface overrides
-        void         start( std::shared_ptr<MerkleDagBridge> dag, BlockCallback callback ) override;
+        void         start( std::shared_ptr<merkledag::MerkleDagService> service, BlockCallback callback ) override;
         void         stop() override;
         Subscription makeRequest( const libp2p::peer::PeerId                               &peer,
                                   boost::optional<std::vector<libp2p::multi::Multiaddress>> address,
@@ -95,32 +94,15 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// NVI for stop()
         void doStop();
 
-        /// Scheduler for libp2p
-        std::shared_ptr<libp2p::basic::Scheduler> scheduler_;
-
-        /// Network module
-        std::shared_ptr<Network> network_;
-
-        /// Local requests handling module
-        std::shared_ptr<LocalRequests> local_requests_;
-
         std::shared_ptr<boost::asio::io_context> io_context_;
-
+        std::shared_ptr<libp2p::basic::Scheduler> scheduler_;
+        std::shared_ptr<Network> network_;
+        std::shared_ptr<LocalRequests> local_requests_;
         std::shared_ptr<RequestIdGenerator> reqgenerator_;
-
-        /// Interface to MerkleDAG component
-        std::shared_ptr<MerkleDagBridge> dag_;
-
-        /// The only subscription to blocks (at the moment)
+        std::shared_ptr<merkledag::MerkleDagService> service_;
         Graphsync::BlockCallback block_cb_;
-
-        //List of requested CIDs
         std::unordered_map<CID, RequestTrackingInfo> tracked_requests_;
-
-        //CID Mutex
         mutable std::mutex requested_cids_mutex_;
-
-        /// Flag, indicates that instance is started
         bool started_ = false;
     };
 

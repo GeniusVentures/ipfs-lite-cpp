@@ -11,23 +11,20 @@
 
 namespace sgns::ipfs_lite::ipfs::graphsync
 {
-
     namespace
     {
-
         std::string makeStringRepr( const PeerId &peer_id )
         {
             return peer_id.toBase58().substr( 46 );
         }
 
         /// Needed for sets and maps
-        inline bool less( const PeerId &a, const PeerId &b )
+        bool less( const PeerId &a, const PeerId &b )
         {
             // N.B. toVector returns const std::vector&, i.e. it is fast
             return a.toVector() < b.toVector();
         }
-
-    } // namespace
+    }
 
     PeerContext::PeerContext( PeerId                                               peer_id,
                               std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> &graphsync_feedbacks,
