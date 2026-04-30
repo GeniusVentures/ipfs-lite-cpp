@@ -71,7 +71,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return res.error();
         }
 
-        if ( queue_->getState().pending_bytes > max_pending_bytes_ )
+        if ( queue_->getState().pending_bytes > kMaxPendingBytes )
         {
             return Error::WRITE_QUEUE_OVERFLOW;
         }
