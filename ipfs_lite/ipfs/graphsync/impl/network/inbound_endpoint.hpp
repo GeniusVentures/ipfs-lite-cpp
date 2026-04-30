@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+
 #include "marshalling/response_builder.hpp"
 #include "network_fwd.hpp"
 
@@ -45,5 +47,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Wire protocol response messages builder
         ResponseBuilder response_builder_;
+        std::mutex      response_mutex_;
     };
 }

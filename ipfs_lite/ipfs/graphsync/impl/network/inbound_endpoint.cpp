@@ -17,6 +17,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                                                                      const CID            &cid,
                                                                      const common::Buffer &data )
     {
+        std::lock_guard<std::mutex> lock( response_mutex_ );
         auto serialized_size = response_builder_.getSerializedSize();
 
         if ( queue_->getState().pending_bytes + serialized_size + data.size() > kMaxPendingBytes )
@@ -41,6 +42,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                                                                ResponseStatusCode            status,
                                                                const std::vector<Extension> &extensions )
     {
+        std::lock_guard<std::mutex> lock( response_mutex_ );
         response_builder_.addResponse( request_id, status, extensions );
         auto res = response_builder_.serialize();
         response_builder_.clear();
@@ -61,7 +63,21 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     IPFS::outcome::result<void> InboundEndpoint::sendPartialResponse( int request_id )
     {
         static const std::vector<Extension> dummy_extensions;
-        return sendResponse( request_id, RS_PARTIAL_CONTENT, dummy_extensions );
+        response_builder_.addResponse( request_id, RS_PARTIAL_CONTENT, dummy_extensions );
+        auto res = response_builder_.serialize();
+        response_builder_.clear();
+        if ( !res )
+        {
+            return res.error();
+        }
+
+        if ( queue_->getState().pending_bytes > max_pending_bytes_ )
+        {
+            return Error::WRITE_QUEUE_OVERFLOW;
+        }
+
+        queue_->enqueue( std::move( res.value() ) );
+        return IPFS::outcome::success();
     }
 
 }
