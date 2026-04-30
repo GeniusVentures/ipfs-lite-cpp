@@ -16,10 +16,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         const auto &varint_vec = varint_len.toVector();
         size_t      prefix_sz  = varint_vec.size();
 
-        auto buffer = std::make_shared<const libp2p::common::ByteArray>( prefix_sz + msg_sz );
+        auto buffer = std::make_shared<libp2p::common::ByteArray>( prefix_sz + msg_sz );
 
         // NOLINTNEXTLINE
-        uint8_t *data = const_cast<uint8_t *>( buffer->data() );
+        uint8_t *data = buffer->data();
 
         memcpy( data, varint_vec.data(), prefix_sz );
 
@@ -28,7 +28,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         {
             return boost::none;
         }
-        return buffer;
+        return std::static_pointer_cast<const libp2p::common::ByteArray>(buffer);
     }
 
 }
