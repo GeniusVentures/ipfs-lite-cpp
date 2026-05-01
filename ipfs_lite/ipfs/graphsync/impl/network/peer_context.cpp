@@ -78,6 +78,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::setOutboundAddress( boost::optional<std::vector<libp2p::multi::Multiaddress>> connect_to )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( connect_to )
         {
             connect_to_ = std::move( connect_to );
@@ -86,6 +87,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     bool PeerContext::needToConnect()
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( requests_endpoint_ )
         {
             return false;
@@ -107,6 +109,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     PeerContext::State PeerContext::getState() const
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         State state = can_connect;
         if ( closed_ )
         {
@@ -126,6 +129,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     libp2p::peer::PeerInfo PeerContext::getOutboundPeerInfo() const
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         libp2p::peer::PeerInfo pi{ peer, {} };
         if ( connect_to_ )
         {
@@ -137,6 +141,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onNewStream( StreamPtr stream )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         assert( stream );
         assert( streams_.count( stream ) == 0 );
 
@@ -173,6 +178,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::finishStreamConfig( StreamPtr stream )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         StreamCtx stream_ctx;
         stream_ctx.reader = std::make_unique<MessageReader>( stream, shared_from_this() );
 
@@ -209,6 +215,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onStreamConnected( libp2p::StreamAndProtocolOrError rstream )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             return;
@@ -235,6 +242,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onStreamAccepted( StreamPtr stream )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             stream->reset();
@@ -245,6 +253,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::enqueueRequest( RequestId request_id, SharedData request_body )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             logger()->warn(
@@ -289,6 +298,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::cancelRequest( RequestId request_id, SharedData request_body )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             logger()->trace( "cancelRequest: PeerContext is already closed for peer {}", str );
@@ -308,6 +318,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     PeerContext::Streams::iterator PeerContext::findResponseSink( RequestId request_id )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto r_iter = remote_requests_streams_.find( request_id );
         if ( r_iter == remote_requests_streams_.end() )
         {
@@ -324,6 +335,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     bool PeerContext::addBlockToResponse( RequestId request_id, const CID &cid, const common::Buffer &data )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto it = findResponseSink( request_id );
         if ( it == streams_.end() )
         {
@@ -348,6 +360,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                                     ResponseStatusCode            status,
                                     const std::vector<Extension> &extensions )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto it = findResponseSink( request_id );
         if ( it == streams_.end() )
         {
@@ -368,11 +381,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::keepAlive()
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         resetPeerTimeout();
     }
 
     void PeerContext::close( ResponseStatusCode status )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             return;
@@ -413,6 +428,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::closeStream( StreamPtr stream, ResponseStatusCode status )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto it = streams_.find( stream );
         if ( it == streams_.end() )
         {
@@ -447,6 +463,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::closeLocalRequests( ResponseStatusCode status )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         logger()->debug( "closeLocalRequests: peer={} status={} num_requests={}",
                          str,
                          statusCodeToString( status ),
@@ -473,6 +490,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onResponse( Message::Response &response )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto it = local_request_ids_.find( response.id );
         if ( it == local_request_ids_.end() )
         {
@@ -495,6 +513,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onRequest( const StreamPtr &stream, Message::Request &request )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         auto it = streams_.find( stream );
         if ( it == streams_.end() )
         {
@@ -537,6 +556,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::createMessageQueue( const StreamPtr &stream, PeerContext::StreamCtx &ctx )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( !ctx.queue )
         {
             ctx.queue = std::make_shared<MessageQueue>(
@@ -547,6 +567,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::createResponseEndpoint( const StreamPtr &stream, PeerContext::StreamCtx &ctx )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         createMessageQueue( stream, ctx );
         if ( !ctx.response_endpoint )
         {
@@ -556,6 +577,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onReaderEvent( const StreamPtr &stream, IPFS::outcome::result<Message> msg_res )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( !stream )
         {
             logger()->error( "stream read error: this stream is null" );
@@ -655,6 +677,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onWriterEvent( const StreamPtr &stream, IPFS::outcome::result<void> result )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             return;
@@ -685,6 +708,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::shiftExpireTime( const StreamPtr &stream )
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             return;
@@ -699,6 +723,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::resetPeerTimeout()
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         if ( closed_ )
         {
             return;
@@ -733,6 +758,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::onStreamCleanupTimer()
     {
+        std::lock_guard<StateMutex> lock( state_mutex_ );
         std::chrono::milliseconds max_expire_time(0);
 
         if ( streams_.empty() )
