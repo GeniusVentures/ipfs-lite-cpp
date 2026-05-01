@@ -4,6 +4,7 @@
 #include <libp2p/basic/scheduler.hpp>
 #include <libp2p/connection/stream_and_protocol.hpp>
 #include <map>
+#include <mutex>
 #include <set>
 
 #include <libp2p/peer/peer_info.hpp>
@@ -115,6 +116,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void close( ResponseStatusCode status );
 
     private:
+        using StateMutex = std::recursive_mutex;
+
         /// Per-stream context. Many streams are allowed by design, (i.e. only one
         /// stream sends request to the peer at the moment, but many streams
         /// can be accepted from the peer, we cannot limit other implementation in
@@ -245,6 +248,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Response status code stored to be forwarded asynchronously
         /// in the next cycle
         ResponseStatusCode close_status_ = RS_INTERNAL_ERROR;
+
+        /// Guards mutable peer state shared across async callbacks.
+        mutable StateMutex state_mutex_;
 
         static constexpr size_t GRAHPSYNC_WINDOW_SIZE = 64 * 1024 * 1024;
     };
