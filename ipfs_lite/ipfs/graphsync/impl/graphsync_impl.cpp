@@ -280,7 +280,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         // Post the task to the io_context thread pool - pass shared_ptr by value for safety
         boost::asio::post(
             *io_context_,
-            [weak_self, peer_copy, request_copy, status_holder, this]
+            [weak_self, peer_copy, request_copy, status_holder]
             {
                 // Convert weak_ptr to shared_ptr to check if GraphsyncImpl is still alive
                 logger()->trace( "onRemoteRequest Post" );
@@ -333,14 +333,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
                     if ( request_copy.selector.empty() )
                     {
-                        BOOST_OUTCOME_TRY( auto node, service_->getNode( request_copy.root_cid ) );
+                        BOOST_OUTCOME_TRY( auto node, self->service_->getNode( request_copy.root_cid ) );
                         internal_handler( node );
                         return 1;
                     }
 
                     // TODO(???): change MerkleDAG service to accept CID instead of bytes
                     BOOST_OUTCOME_TRY( auto cid_encoded, request_copy.root_cid.toBytes() );
-                    return service_->select( cid_encoded, request_copy.selector, internal_handler );
+                    return self->service_->select( cid_encoded, request_copy.selector, internal_handler );
                 }();
 
                 if ( !send_response )
