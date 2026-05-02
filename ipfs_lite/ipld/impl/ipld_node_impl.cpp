@@ -135,10 +135,16 @@ namespace sgns::ipfs_lite::ipld
         for ( int i = 0; i < pb_node.links_size(); ++i )
         {
             auto link = pb_node.links( i );
-
+            const auto tsize64 = link.tsize();
+            if( tsize64 > std::numeric_limits<size_t>::max() )
+            {
+                //tsize64 = std::numeric_limits<size_t>::max();
+                return IPLDNodeDecoderPBError::INVALID_RAW_BYTES;
+            }
+            const size_t tsize = static_cast<size_t>(tsize64);
             std::vector<uint8_t> link_cid_bytes{ link.hash().begin(), link.hash().end() };
             BOOST_OUTCOME_TRY( auto link_cid, CID::fromBytes( link_cid_bytes ) );
-            IPLDLink ipld_link{ std::move( link_cid ), link.name(), link.tsize() };
+            IPLDLink ipld_link{ std::move( link_cid ), link.name(), tsize };
             node->addLink( ipld_link );
         }
 
