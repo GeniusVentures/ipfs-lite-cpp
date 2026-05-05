@@ -561,7 +561,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         {
             ctx.queue = std::make_shared<MessageQueue>(
                 stream,
-                [this]( const StreamPtr &stream, IPFS::outcome::result<void> res ) { onWriterEvent( stream, res ); } );
+                [wptr{ weak_from_this() }]( const StreamPtr &stream, IPFS::outcome::result<void> res )
+                {
+                    auto self = wptr.lock();
+                    if ( self )
+                    {
+                        self->onWriterEvent( stream, res );
+                    }
+                } );
         }
     }
 
@@ -729,30 +736,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
-        // Check if any streams have pending data that might indicate window exhaustion
-        bool has_window_exhaustion = false;
-        for ( const auto &[stream, ctx] : streams_ )
+        // Peer timer tracks peer liveness only. Per-stream timeout extension is handled
+        // inside onStreamCleanupTimer() using each stream's own expire_time.
+        auto res = timer_.reschedule( kPeerCloseDelayMsec );
+        if ( !res )
         {
-            if ( ctx.queue )
-            {
-                auto queue_state = ctx.queue->getState();
-                if ( queue_state.pending_bytes > 0 && queue_state.writing_bytes == 0 )
-                {
-                    has_window_exhaustion = true;
-                    break;
-                }
-            }
-        }
-
-        // Use extended timeout if window exhaustion is detected
-        auto timeout_ms = has_window_exhaustion ? ( kPeerCloseDelayMsec * kWindowExhaustionTimeoutMultiplier )
-                                                    : kPeerCloseDelayMsec;
-
-        timer_.reschedule( timeout_ms );
-
-        if ( has_window_exhaustion )
-        {
-            logger()->trace( "Peer timeout reset with window exhaustion extension: {}ms for peer {}", timeout_ms, str );
+            logger()->warn( "resetPeerTimeout: cannot reschedule peer timer for peer={}, msg='{}'",
+                            str,
+                            res.error().message() );
         }
     }
 
@@ -825,11 +816,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         if ( !streams_.empty() && max_expire_time > now )
         {
-            timer_.reschedule( max_expire_time - now );
+            auto res = timer_.reschedule( max_expire_time - now );
+            if ( !res )
+            {
+                logger()->warn( "onStreamCleanupTimer: cannot reschedule timeout for peer={}, msg='{}'",
+                                str,
+                                res.error().message() );
+            }
         }
         else
         {
-            timer_.reschedule( kPeerCloseDelayMsec );
+            auto res = timer_.reschedule( kPeerCloseDelayMsec );
+            if ( !res )
+            {
+                logger()->warn( "onStreamCleanupTimer: cannot reschedule default timeout for peer={}, msg='{}'",
+                                str,
+                                res.error().message() );
+            }
         }
     }
 

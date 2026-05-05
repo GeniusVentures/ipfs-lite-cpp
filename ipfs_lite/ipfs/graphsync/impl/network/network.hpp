@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <mutex>
 
 #include <libp2p/host/host.hpp>
 #include <libp2p/basic/scheduler.hpp>
@@ -129,6 +130,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Indicates if the node is active
         bool started_ = false;
+
+        /// Guards shared Network state (started_, feedbacks_, peers_, active_requests_per_peer_)
+        mutable std::mutex state_mutex_;
     };
 
 }
