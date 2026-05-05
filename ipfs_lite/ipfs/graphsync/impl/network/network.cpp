@@ -26,6 +26,8 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     {
         assert( feedback );
 
+        std::lock_guard<std::mutex> lock( state_mutex_ );
+
         bool first_feedback = feedbacks_.empty();
         feedbacks_.emplace_back( feedback );
 
@@ -45,26 +47,38 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void Network::stop( const std::shared_ptr<PeerToGraphsyncFeedback> &feedback )
     {
-        feedbacks_.erase( std::remove_if( feedbacks_.begin(),
-                                          feedbacks_.end(),
-                                          [&]( const std::weak_ptr<PeerToGraphsyncFeedback> &f )
-                                          {
-                                              auto s = f.lock();
-                                              return !s || s == feedback;
-                                          } ),
-                          feedbacks_.end() );
-        if ( feedbacks_.empty() )
+        bool should_close = false;
         {
-            started_ = false;
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            feedbacks_.erase( std::remove_if( feedbacks_.begin(),
+                                              feedbacks_.end(),
+                                              [&]( const std::weak_ptr<PeerToGraphsyncFeedback> &f )
+                                              {
+                                                  auto s = f.lock();
+                                                  return !s || s == feedback;
+                                              } ),
+                              feedbacks_.end() );
+            if ( feedbacks_.empty() )
+            {
+                started_      = false;
+                should_close = true;
+            }
+        }
+
+        if ( should_close )
+        {
             closeAllPeers();
         }
     }
 
     bool Network::canSendRequest( const PeerId &peer )
     {
-        if ( !started_ )
         {
-            return false;
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return false;
+            }
         }
 
         auto ctx = findContext( peer, true );
@@ -72,7 +86,17 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         {
             return false;
         }
-        return ctx->getState() != PeerContext::is_closed;
+        if ( ctx->getState() == PeerContext::is_closed )
+        {
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            auto it = peers_.find( peer );
+            if ( it != peers_.end() && *it == ctx )
+            {
+                peers_.erase( it );
+            }
+            return false;
+        }
+        return true;
     }
 
     void Network::makeRequest( const PeerId                                             &peer,
@@ -102,18 +126,25 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void Network::cancelRequest( RequestId request_id, SharedData request_body )
     {
-        if ( !started_ )
+        PeerContextPtr ctx;
         {
-            return;
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return;
+            }
+
+            auto it = active_requests_per_peer_.find( request_id );
+            if ( it == active_requests_per_peer_.end() )
+            {
+                return;
+            }
+
+            ctx = it->second;
+            active_requests_per_peer_.erase( it );
         }
-        auto it = active_requests_per_peer_.find( request_id );
-        if ( it == active_requests_per_peer_.end() )
-        {
-            return;
-        }
-        auto ctx = it->second;
-        active_requests_per_peer_.erase( it );
-        if ( request_body )
+
+        if ( request_body && ctx )
         {
             ctx->cancelRequest( request_id, std::move( request_body ) );
         }
@@ -159,9 +190,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void Network::keepPeerAlive( const PeerId &peer )
     {
-        if ( !started_ )
         {
-            return;
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return;
+            }
         }
 
         auto ctx = findContext( peer, false );
@@ -169,12 +203,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         {
             return;
         }
-
         ctx->keepAlive();
     }
 
     void Network::peerClosed( const PeerId &peer, ResponseStatusCode status )
     {
+        (void)status;
+        std::lock_guard<std::mutex> lock( state_mutex_ );
         auto it = peers_.find( peer );
         if ( it != peers_.end() )
         {
@@ -184,19 +219,29 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     PeerContextPtr Network::findContext( const PeerId &peer, bool create_if_not_found )
     {
-        assert( started_ );
-
         PeerContextPtr ctx;
+        bool ctx_is_closed = false;
+
+        std::lock_guard<std::mutex> lock( state_mutex_ );
+        if ( !started_ )
+        {
+            return {};
+        }
 
         auto it = peers_.find( peer );
         if ( it != peers_.end() )
         {
             ctx = *it;
-            if ( ctx->getState() == PeerContext::is_closed )
+            ctx_is_closed = ( ctx->getState() == PeerContext::is_closed );
+        }
+
+        if ( ctx_is_closed )
+        {
+            if ( it != peers_.end() )
             {
                 peers_.erase( it );
-                ctx.reset();
             }
+            ctx.reset();
         }
 
         if ( !ctx && create_if_not_found )
@@ -232,9 +277,12 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void Network::onStreamAccepted( libp2p::StreamAndProtocolOrError rstream )
     {
-        if ( !started_ )
         {
-            return;
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return;
+            }
         }
 
         if ( !rstream )
@@ -259,14 +307,17 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void Network::closeAllPeers()
     {
-        PeerSet peers = std::move( peers_ );
+        PeerSet peers;
+        {
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            peers = std::move( peers_ );
+            active_requests_per_peer_.clear();
+        }
+
         for ( auto &ctx : peers )
         {
             ctx->close( RS_REJECTED_LOCALLY );
         }
-
-        // should be empty by the moment
-        active_requests_per_peer_.clear();
     }
 
 }
