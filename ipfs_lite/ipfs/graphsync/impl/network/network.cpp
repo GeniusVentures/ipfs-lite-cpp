@@ -220,34 +220,53 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     PeerContextPtr Network::findContext( const PeerId &peer, bool create_if_not_found )
     {
         PeerContextPtr ctx;
-        bool ctx_is_closed = false;
 
-        std::lock_guard<std::mutex> lock( state_mutex_ );
-        if ( !started_ )
+        // First phase: fetch current context under Network lock only.
         {
-            return {};
-        }
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return {};
+            }
 
-        auto it = peers_.find( peer );
-        if ( it != peers_.end() )
-        {
-            ctx = *it;
-            ctx_is_closed = ( ctx->getState() == PeerContext::is_closed );
-        }
-
-        if ( ctx_is_closed )
-        {
+            auto it = peers_.find( peer );
             if ( it != peers_.end() )
+            {
+                ctx = *it;
+            }
+        }
+
+        // Second phase: query PeerContext state without holding Network lock.
+        if ( ctx && ctx->getState() == PeerContext::is_closed )
+        {
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            auto it = peers_.find( peer );
+            if ( it != peers_.end() && *it == ctx )
             {
                 peers_.erase( it );
             }
             ctx.reset();
         }
 
+        // Third phase: create lazily if requested, with a recheck to avoid duplicates.
         if ( !ctx && create_if_not_found )
         {
-            ctx = std::make_shared<PeerContext>( peer, feedbacks_, *this, *scheduler_ );
-            peers_.insert( ctx );
+            std::lock_guard<std::mutex> lock( state_mutex_ );
+            if ( !started_ )
+            {
+                return {};
+            }
+
+            auto it = peers_.find( peer );
+            if ( it != peers_.end() )
+            {
+                ctx = *it;
+            }
+            else
+            {
+                ctx = std::make_shared<PeerContext>( peer, feedbacks_, *this, *scheduler_ );
+                peers_.insert( ctx );
+            }
         }
 
         return ctx;
