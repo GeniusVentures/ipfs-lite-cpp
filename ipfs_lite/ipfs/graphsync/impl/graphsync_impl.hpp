@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <chrono>
 
 #include <boost/asio/io_context.hpp>
@@ -99,11 +100,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         std::shared_ptr<Network> network_;
         std::shared_ptr<LocalRequests> local_requests_;
         std::shared_ptr<RequestIdGenerator> reqgenerator_;
-        std::shared_ptr<merkledag::MerkleDagService> service_;
+        // Weak: the DAG service owns this GraphsyncImpl (it passes itself to
+        // start()), so a strong ref here would form a cycle neither side escapes.
+        std::weak_ptr<merkledag::MerkleDagService> service_;
         Graphsync::BlockCallback block_cb_;
         std::unordered_map<CID, RequestTrackingInfo> tracked_requests_;
         mutable std::mutex requested_cids_mutex_;
-        bool started_ = false;
+        std::atomic<bool> started_{ false };
     };
 
     constexpr std::chrono::milliseconds kCleanupIntervalMs( 120000 );

@@ -61,7 +61,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         assert( callback );
 
         network_->start( shared_from_this() );
-        service_  = std::move( service );
+        service_  = service;
         block_cb_ = std::move( callback );
         started_  = true;
     }
@@ -78,9 +78,18 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             started_  = false;
             block_cb_ = Graphsync::BlockCallback{};
             service_.reset();
-            network_->stop( shared_from_this() );
+            // weak, not shared_from_this(): doStop() also runs from ~GraphsyncImpl,
+            // where the control block has expired and shared_from_this() throws
+            // bad_weak_ptr. Network::stop() prunes expired feedbacks regardless.
+            network_->stop( weak_from_this().lock() );
             logger()->trace( "{}: Stopping all", __FUNCTION__ );
-            tracked_requests_.clear();
+            {
+                // Scoped rather than function-wide: network_->stop() and
+                // cancelAll() call out into other components and must not run
+                // under this lock.
+                std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
+                tracked_requests_.clear();
+            }
 
             local_requests_->cancelAll();
         }
@@ -297,6 +306,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
                     return;
                 }
 
+                auto service = self->service_.lock();
+                if ( !service )
+                {
+                    logger()->trace( "onRemoteRequest service already released" );
+                    self->reqgenerator_->removeStatus( request_copy.id, status_holder );
+                    return;
+                }
+
                 // Keep peer alive at the start of processing
                 self->network_->keepPeerAlive( peer_copy );
 
@@ -333,14 +350,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
                     if ( request_copy.selector.empty() )
                     {
-                        BOOST_OUTCOME_TRY( auto node, self->service_->getNode( request_copy.root_cid ) );
+                        BOOST_OUTCOME_TRY( auto node, service->getNode( request_copy.root_cid ) );
                         internal_handler( node );
                         return 1;
                     }
 
                     // TODO(???): change MerkleDAG service to accept CID instead of bytes
                     BOOST_OUTCOME_TRY( auto cid_encoded, request_copy.root_cid.toBytes() );
-                    return self->service_->select( cid_encoded, request_copy.selector, internal_handler );
+                    return service->select( cid_encoded, request_copy.selector, internal_handler );
                 }();
 
                 if ( !send_response )
