@@ -112,21 +112,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         //  selector = kSelectorMatcher;
         //}
 
-        std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
-        auto                        it = tracked_requests_.find( root_cid );
-
-        if ( it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS )
+        // Never call into Network under requested_cids_mutex_: its callbacks re-enter onResponse.
+        LocalRequests::NewRequest newRequest;
         {
-            // Only reject if there's an in-progress request
-            logger()->trace( "makeRequest: already in progress for {}", root_cid.toString().value() );
-            return local_requests_->newRejectedRequest( std::move( callback ) );
+            std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
+            auto                        it = tracked_requests_.find( root_cid );
+
+            if ( it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS )
+            {
+                logger()->trace( "makeRequest: already in progress for {}", root_cid.toString().value() );
+                return local_requests_->newRejectedRequest( std::move( callback ) );
+            }
+
+            newRequest = local_requests_->newRequest( root_cid, selector, extensions, std::move( callback ) );
+
+            auto now                    = scheduler_->now();
+            tracked_requests_[root_cid] = { RequestState::IN_PROGRESS, newRequest.request_id, now, now };
         }
-
-        auto newRequest = local_requests_->newRequest( root_cid, selector, extensions, std::move( callback ) );
-
-        // Update or insert the tracking info with timestamps
-        auto now                    = scheduler_->now();
-        tracked_requests_[root_cid] = { RequestState::IN_PROGRESS, newRequest.request_id, now, now };
 
         if ( newRequest.request_id > 0 )
         {
@@ -438,60 +440,49 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void GraphsyncImpl::cleanupOldRequests()
     {
-        std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
-        auto                        now = scheduler_->now();
-
-        for ( auto it = tracked_requests_.begin(); it != tracked_requests_.end(); )
+        // Same rule as makeRequest: dispatch timeouts after the lock is released.
+        std::vector<RequestId> timed_out;
         {
-            bool should_remove = false;
+            std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
+            auto                        now = scheduler_->now();
 
-            // Remove COMPLETED or FAILED requests
-            if ( it->second.state != RequestState::IN_PROGRESS )
+            for ( auto it = tracked_requests_.begin(); it != tracked_requests_.end(); )
             {
-                should_remove = true;
-            }
-            // Check for stalled IN_PROGRESS requests
-            else if ( it->second.state == RequestState::IN_PROGRESS )
-            {
-                auto time_since_activity = now - it->second.last_activity_time;
-                auto time_since_start    = now - it->second.start_time;
+                bool should_remove = it->second.state != RequestState::IN_PROGRESS;
 
-                if ( time_since_activity > kRequestActivityTimeoutMs )
+                if ( !should_remove )
                 {
-                    logger()->error( "Request for CID {} has been stalled for {}ms (total: {}ms) - marking as FAILED",
-                                     it->first.toString().value(),
-                                     time_since_activity,
-                                     time_since_start );
-                    it->second.state = RequestState::FAILED;
+                    auto time_since_activity = now - it->second.last_activity_time;
+                    auto time_since_start    = now - it->second.start_time;
+                    const bool stalled       = time_since_activity > kRequestActivityTimeoutMs;
+                    const bool too_long      = time_since_start > ( kRequestActivityTimeoutMs * 2 );
 
-                    // Cancel the request in local_requests to trigger callback
-                    local_requests_->onResponse( it->second.request_id, RS_TIMEOUT, {} );
-
-                    should_remove = true;
+                    if ( stalled || too_long )
+                    {
+                        logger()->error( "Request for CID {} {} ({}ms since activity, {}ms total) - marking as FAILED",
+                                         it->first.toString().value(),
+                                         stalled ? "stalled" : "exceeded maximum duration",
+                                         time_since_activity,
+                                         time_since_start );
+                        it->second.state = RequestState::FAILED;
+                        timed_out.push_back( it->second.request_id );
+                        should_remove = true;
+                    }
                 }
-                else if ( time_since_start > ( kRequestActivityTimeoutMs * 2 ) )
+
+                if ( should_remove )
                 {
-                    // Absolute timeout - request has been running too long regardless of activity
-                    logger()->error( "Request for CID {} has exceeded maximum duration {}ms - marking as FAILED",
-                                     it->first.toString().value(),
-                                     time_since_start );
-                    it->second.state = RequestState::FAILED;
-
-                    // Cancel the request in local_requests to trigger callback
-                    local_requests_->onResponse( it->second.request_id, RS_TIMEOUT, {} );
-
-                    should_remove = true;
+                    it = tracked_requests_.erase( it );
+                }
+                else
+                {
+                    ++it;
                 }
             }
-
-            if ( should_remove )
-            {
-                it = tracked_requests_.erase( it );
-            }
-            else
-            {
-                ++it;
-            }
+        }
+        for ( auto request_id : timed_out )
+        {
+            local_requests_->onResponse( request_id, RS_TIMEOUT, {} );
         }
         // Reschedule the next cleanup
         scheduler_->schedule(
