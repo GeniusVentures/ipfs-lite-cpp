@@ -1,6 +1,7 @@
 #pragma once
 
 #include <deque>
+#include <libp2p/basic/scheduler.hpp>
 
 #include "network_fwd.hpp"
 
@@ -38,8 +39,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Ctor.
         /// \param stream libp2p stream
-        /// \param feedback Owner's callback
-        MessageQueue( StreamPtr stream, FeedbackFn feedback );
+        /// \param feedback Owner's callback, always invoked asynchronously
+        /// \param scheduler used to defer feedback raised synchronously by enqueue()
+        MessageQueue( StreamPtr stream, FeedbackFn feedback, libp2p::basic::Scheduler &scheduler );
 
         /// Returns current state
         const State &getState() const;
@@ -60,11 +62,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Initiates write operation
         void beginWrite( SharedData buffer );
 
+        /// Reports a synchronous failure through the scheduler
+        void deferFeedback( StreamPtr stream, IPFS::outcome::result<void> res );
+
         /// Async write result callback
         void onMessageWritten( IPFS::outcome::result<size_t> res );
 
         /// Owner's callback
         FeedbackFn feedback_;
+
+        libp2p::basic::Scheduler &scheduler_;
 
         /// The queue: streams allow to write messages one by one only
         std::deque<SharedData> pending_buffers_;

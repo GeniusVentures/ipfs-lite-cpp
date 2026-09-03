@@ -7,7 +7,8 @@
 namespace sgns::ipfs_lite::ipfs::graphsync
 {
 
-    MessageQueue::MessageQueue( StreamPtr stream, FeedbackFn feedback ) : feedback_( std::move( feedback ) )
+    MessageQueue::MessageQueue( StreamPtr stream, FeedbackFn feedback, libp2p::basic::Scheduler &scheduler ) :
+        feedback_( std::move( feedback ) ), scheduler_( scheduler )
     {
         assert( feedback_ );
         assert( stream );
@@ -70,26 +71,32 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         }
     }
 
+    void MessageQueue::deferFeedback( StreamPtr stream, IPFS::outcome::result<void> res )
+    {
+        // enqueue() runs under the owner's lock; the owner's callback takes that same lock.
+        scheduler_.schedule( [feedback = feedback_, stream = std::move( stream ), res] { feedback( stream, res ); } );
+    }
+
     void MessageQueue::beginWrite( SharedData buffer )
     {
         if ( !buffer )
         {
             logger()->error( "beginWrite: null buffer provided" );
-            feedback_( state_.stream, Error::MESSAGE_WRITE_ERROR );
+            deferFeedback( state_.stream, Error::MESSAGE_WRITE_ERROR );
             return;
         }
 
         if ( !state_.stream )
         {
             logger()->error( "beginWrite: stream is null - peer likely disconnected" );
-            feedback_( nullptr, Error::MESSAGE_WRITE_ERROR );
+            deferFeedback( nullptr, Error::MESSAGE_WRITE_ERROR );
             return;
         }
 
         if ( state_.stream->isClosedForWrite() )
         {
             logger()->error( "beginWrite: stream is closed for write - peer likely disconnected" );
-            feedback_( state_.stream, Error::MESSAGE_WRITE_ERROR );
+            deferFeedback( state_.stream, Error::MESSAGE_WRITE_ERROR );
             return;
         }
 

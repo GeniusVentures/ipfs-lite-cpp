@@ -1,6 +1,8 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
+#include <vector>
 #include <libp2p/basic/scheduler.hpp>
 #include <libp2p/connection/stream_and_protocol.hpp>
 #include <map>
@@ -116,7 +118,26 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void close( ResponseStatusCode status );
 
     private:
-        using StateMutex = std::recursive_mutex;
+        using StateMutex = std::mutex;
+
+        using Feedbacks = std::vector<std::weak_ptr<PeerToGraphsyncFeedback>>;
+        using Feedback  = std::function<void( PeerToGraphsyncFeedback &, const PeerId & )>;
+
+        // Private methods below assume the caller holds state_mutex_.
+
+        State getStateLocked() const;
+        void  closeLocked( ResponseStatusCode status );
+        void  sendResponseLocked( RequestId                     request_id,
+                                  ResponseStatusCode            status,
+                                  const std::vector<Extension> &extensions );
+
+        /// Locks state_mutex_ (non-reentrant) and runs pending_feedbacks_ after
+        /// unlocking. Feedbacks take their own locks and call back into this
+        /// context, so invoking them under state_mutex_ inverts lock order.
+        class StateLock;
+
+        /// Queues fn to run for every live graphsync feedback once the lock drops.
+        void deferFeedback( Feedback fn );
 
         /// Per-stream context. Many streams are allowed by design, (i.e. only one
         /// stream sends request to the peer at the moment, but many streams
@@ -195,10 +216,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// \param ctx per stream context
         void shiftExpireTime( StreamCtx &ctx );
 
-        /// Finds context by stream and shifts stream expiration time
-        /// \param stream stream
-        void shiftExpireTime( const StreamPtr &stream );
-
         /// Resets peer timeout due to data activity (receiving or sending data)
         void resetPeerTimeout();
 
@@ -216,7 +233,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
         /// Feedback to GraphsyncImpl module
         //PeerToGraphsyncFeedback &graphsync_feedback_;
-        std::vector<std::weak_ptr<PeerToGraphsyncFeedback>> graphsync_feedbacks_;
+        Feedbacks graphsync_feedbacks_;
 
         /// Feedback to Network module
         PeerToNetworkFeedback &network_feedback_;
@@ -245,12 +262,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         /// Flag, indicates that peer is closed
         bool closed_ = false;
 
-        /// Response status code stored to be forwarded asynchronously
-        /// in the next cycle
-        ResponseStatusCode close_status_ = RS_INTERNAL_ERROR;
-
         /// Guards mutable peer state shared across async callbacks.
         mutable StateMutex state_mutex_;
+
+        mutable std::vector<Feedback> pending_feedbacks_;
 
         static constexpr size_t GRAHPSYNC_WINDOW_SIZE = 64 * 1024 * 1024;
     };
