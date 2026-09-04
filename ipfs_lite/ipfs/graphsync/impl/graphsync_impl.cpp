@@ -137,7 +137,20 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
             logger()->trace( "makeRequest: sending request to peer {}", peer.toBase58().substr( 46 ) );
 
-            network_->makeRequest( peer, std::move( address ), newRequest.request_id, std::move( newRequest.body ) );
+            // libp2p streams are single-threaded: hop onto the scheduler's io thread
+            // (the host's, when wired that way) instead of writing from the caller.
+            scheduler_->schedule(
+                [weak_this = weak_from_this(),
+                 peer,
+                 address    = std::move( address ),
+                 request_id = newRequest.request_id,
+                 body       = std::move( newRequest.body )]() mutable
+                {
+                    if ( auto self = weak_this.lock(); self && self->started_ )
+                    {
+                        self->network_->makeRequest( peer, std::move( address ), request_id, std::move( body ) );
+                    }
+                } );
         }
 
         return std::move( newRequest.subscription );
@@ -227,11 +240,23 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
-        // Check if this is a tracked request before processing
+        // Check if this is a tracked request before processing. The network layer
+        // attributes every block in a message to the first block's CID, so when one
+        // message carries responses for several requests the block's own CID is the
+        // real root for all but the first; fall back to it.
         bool should_mark_completed = false;
+        CID  tracked_root          = root_cid;
         {
             std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
             auto                        it = tracked_requests_.find( root_cid );
+            if ( it == tracked_requests_.end() && cid != root_cid )
+            {
+                it = tracked_requests_.find( cid );
+                if ( it != tracked_requests_.end() )
+                {
+                    tracked_root = cid;
+                }
+            }
             if ( it == tracked_requests_.end() )
             {
                 logger()->debug( "Got a block, but we're not waiting for this root cid {} to cid{}",
@@ -256,13 +281,13 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         if ( should_mark_completed )
         {
             std::lock_guard<std::mutex> lock( requested_cids_mutex_ );
-            auto                        it = tracked_requests_.find( root_cid );
+            auto                        it = tracked_requests_.find( tracked_root );
             if ( it != tracked_requests_.end() && it->second.state == RequestState::IN_PROGRESS )
             {
                 it->second.state = RequestState::COMPLETED;
                 logger()->trace( "Request {} for root CID {} marked as COMPLETED (block processed for CID {})",
                                  it->second.request_id,
-                                 root_cid.toString().value(),
+                                 tracked_root.toString().value(),
                                  cid.toString().value() );
             }
         }
@@ -435,7 +460,14 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void GraphsyncImpl::cancelLocalRequest( RequestId request_id, SharedData body )
     {
-        network_->cancelRequest( request_id, std::move( body ) );
+        scheduler_->schedule(
+            [weak_this = weak_from_this(), request_id, body = std::move( body )]() mutable
+            {
+                if ( auto self = weak_this.lock() )
+                {
+                    self->network_->cancelRequest( request_id, std::move( body ) );
+                }
+            } );
     }
 
     void GraphsyncImpl::cleanupOldRequests()
