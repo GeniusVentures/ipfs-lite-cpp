@@ -137,20 +137,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
             logger()->trace( "makeRequest: sending request to peer {}", peer.toBase58().substr( 46 ) );
 
-            // libp2p streams are single-threaded: hop onto the scheduler's io thread
-            // (the host's, when wired that way) instead of writing from the caller.
-            scheduler_->schedule(
-                [weak_this = weak_from_this(),
-                 peer,
-                 address    = std::move( address ),
-                 request_id = newRequest.request_id,
-                 body       = std::move( newRequest.body )]() mutable
-                {
-                    if ( auto self = weak_this.lock(); self && self->started_ )
-                    {
-                        self->network_->makeRequest( peer, std::move( address ), request_id, std::move( body ) );
-                    }
-                } );
+            network_->makeRequest( peer, std::move( address ), newRequest.request_id, std::move( newRequest.body ) );
         }
 
         return std::move( newRequest.subscription );
@@ -460,14 +447,7 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void GraphsyncImpl::cancelLocalRequest( RequestId request_id, SharedData body )
     {
-        scheduler_->schedule(
-            [weak_this = weak_from_this(), request_id, body = std::move( body )]() mutable
-            {
-                if ( auto self = weak_this.lock() )
-                {
-                    self->network_->cancelRequest( request_id, std::move( body ) );
-                }
-            } );
+        network_->cancelRequest( request_id, std::move( body ) );
     }
 
     void GraphsyncImpl::cleanupOldRequests()
