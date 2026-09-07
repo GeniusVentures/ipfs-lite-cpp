@@ -364,8 +364,16 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
                     if ( request_copy.selector.empty() )
                     {
-                        BOOST_OUTCOME_TRY( auto node, service->getNode( request_copy.root_cid ) );
-                        internal_handler( node );
+                        // A block we don't have is "nothing selected", not a failed request:
+                        // the RS_REQUEST_FAILED path below answers the peer nothing at all,
+                        // leaving it to wait out its own timeout instead of failing over to
+                        // another route. RS_NOT_FOUND tells it that immediately.
+                        auto node = service->getNode( request_copy.root_cid );
+                        if ( !node )
+                        {
+                            return 0;
+                        }
+                        internal_handler( node.value() );
                         return 1;
                     }
 
