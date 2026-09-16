@@ -227,6 +227,26 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void PeerContext::finishStreamConfig( StreamPtr stream )
     {
+        // The peer can close the stream (or the local host can stop) between the
+        // window adjustment and this scheduled callback. MessageReader's ctor
+        // asserts stream readability -- fatal in Debug builds -- so a closed
+        // stream must be dropped here instead of reaching it.
+        if ( !stream || stream->isClosedForRead() )
+        {
+            logger()->warn( "finishStreamConfig: stream already closed, peer={}", str );
+            if ( stream )
+            {
+                stream->close( [stream]( IPFS::outcome::result<void> ) {
+                    logger()->trace( "closed already-finished stream" );
+                } );
+            }
+            if ( getState() == is_connecting )
+            {
+                close( RS_CANNOT_CONNECT );
+            }
+            return;
+        }
+
         StateLock lock( *this );
         StreamCtx stream_ctx;
         stream_ctx.reader = std::make_unique<MessageReader>( stream, shared_from_this() );
