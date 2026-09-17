@@ -31,6 +31,30 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             return;
         }
 
+        // Stream writes and this queue's state must only be touched on the
+        // scheduler (io) thread: enqueue() is called from request-sender threads
+        // (e.g. graphsync DAG workers), while write-completion callbacks dequeue
+        // further buffers on the io thread. Doing both from different threads
+        // races the non-thread-safe libp2p yamux WriteQueue (its accounting
+        // invariant assertion aborts Debug builds) and this queue's own
+        // pending_buffers_/writing_bytes state.
+        scheduler_.schedule(
+            [wptr{ weak_from_this() }, data = std::move( data )]() mutable
+            {
+                if ( auto self = wptr.lock() )
+                {
+                    self->enqueueOnScheduler( std::move( data ) );
+                }
+            } );
+    }
+
+    void MessageQueue::enqueueOnScheduler( SharedData data )
+    {
+        if ( !data || data->empty() || !state_.active )
+        {
+            return;
+        }
+
         if ( state_.writing_bytes > 0 )
         {
             // waiting for async write completion, enqueue

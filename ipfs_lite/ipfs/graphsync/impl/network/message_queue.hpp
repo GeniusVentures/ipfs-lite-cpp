@@ -56,6 +56,9 @@ namespace sgns::ipfs_lite::ipfs::graphsync
         void close();
 
     private:
+        /// Enqueue continuation running on the scheduler thread
+        void enqueueOnScheduler( SharedData msg );
+
         /// Dequeues message to be written
         void dequeue();
 
