@@ -34,8 +34,17 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     common::Logger logger()
     {
-        static common::Logger graphsync_logger = common::createLogger( "graphsync" );
-        return graphsync_logger;
+        // Leaked on purpose (defense-in-depth, not a fix for an observed
+        // crash): a function-local static shared_ptr is destroyed by
+        // __cxa_atexit in LIFO registration order, so it can die before
+        // other components' exit-time teardown paths log — and any throw
+        // out of a noexcept destructor terminates the process. A
+        // process-lifetime logger has no ordering hazard. (The 2026-09-19
+        // macOS app-quit SIGABRT originally suspected here was traced to
+        // the embedding app tearing its GlobalDB down while node threads
+        // were still live, and is fixed there.)
+        static common::Logger *graphsync_logger = new common::Logger( common::createLogger( "graphsync" ) );
+        return *graphsync_logger;
     }
 
     bool isTerminal( ResponseStatusCode code )

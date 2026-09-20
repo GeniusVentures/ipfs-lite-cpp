@@ -68,6 +68,10 @@ namespace sgns::ipfs_lite::ipfs::graphsync
 
     void GraphsyncImpl::stop()
     {
+        // Logged here, not in doStop(): doStop() also runs from
+        // ~GraphsyncImpl, and destructors must not log — during process-exit
+        // teardown the logging infrastructure may already be gone.
+        logger()->trace( "{}: Stopping all", __FUNCTION__ );
         doStop();
     }
 
@@ -82,7 +86,6 @@ namespace sgns::ipfs_lite::ipfs::graphsync
             // where the control block has expired and shared_from_this() throws
             // bad_weak_ptr. Network::stop() prunes expired feedbacks regardless.
             network_->stop( weak_from_this().lock() );
-            logger()->trace( "{}: Stopping all", __FUNCTION__ );
             {
                 // Scoped rather than function-wide: network_->stop() and
                 // cancelAll() call out into other components and must not run
