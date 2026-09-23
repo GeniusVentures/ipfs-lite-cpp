@@ -12,7 +12,25 @@ namespace sgns::ipfs_lite::ipfs::graphsync
     {
         assert( feedback_ );
         assert( stream );
-        assert( !stream->isClosedForWrite() );
+
+        // A stream can already be closed for write by the time this queue is
+        // constructed: PeerContext::openRequestEndpoint reuses whichever stream
+        // is currently registered, and a concurrent teardown (fault-injected
+        // peer kill, remote close, host shutdown) can close it between
+        // registration and queue creation. The previous assert aborted the
+        // whole process in Debug builds (multi_node_finality_fault_test CI
+        // failure). Degrade instead: the queue starts inactive - enqueues are
+        // dropped by the existing !state_.active path - and the owner receives
+        // the same write-error feedback the mid-life closed-stream path
+        // (beginWrite) delivers, so connection cleanup proceeds normally.
+        if ( stream->isClosedForWrite() )
+        {
+            logger()->warn( "MessageQueue: stream closed for write at construction - starting inactive" );
+            state_.stream = std::move( stream );
+            state_.active = false;
+            deferFeedback( state_.stream, Error::MESSAGE_WRITE_ERROR );
+            return;
+        }
 
         state_.stream = std::move( stream );
         state_.active = true;
