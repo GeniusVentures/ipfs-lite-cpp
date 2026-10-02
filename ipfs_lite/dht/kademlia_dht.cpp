@@ -111,7 +111,12 @@ namespace sgns::ipfs_lite::ipfs::dht
                 {
                     std::cout << "Re-providing CID to maintain DHT presence" << std::endl;
                     //re-call ProvideCID to refresh our presence in the DHT
-                    ProvideCID( key, need_err );
+                    auto provideResult = ProvideCID( key, need_err );
+                    if ( !provideResult )
+                    {
+                        std::cerr << "Failed to re-provide CID to DHT: " << provideResult.error().message()
+                                  << std::endl;
+                    }
                 }
             } );
     }
